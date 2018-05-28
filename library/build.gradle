@@ -1,0 +1,30 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion app.compile_sdk_version
+
+    defaultConfig {
+        minSdkVersion app.min_sdk_version
+        targetSdkVersion app.target_sdk_version
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // Kotlin language standard lib
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$libs.kotlin_version"
+
+    // Support libraries
+    implementation "com.android.support:appcompat-v7:$libs.support_lib_version"
+}
