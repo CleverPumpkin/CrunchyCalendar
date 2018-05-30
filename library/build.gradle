@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion app.compile_sdk_version
@@ -27,4 +29,5 @@ dependencies {
 
     // Support libraries
     implementation "com.android.support:appcompat-v7:$libs.support_lib_version"
+    implementation "com.android.support:recyclerview-v7:$libs.support_lib_version"
 }
