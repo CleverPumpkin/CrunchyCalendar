@@ -17,7 +17,7 @@ class CalendarAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
         const val MONTH_FORMAT = "LLLL yyyy"
-        const val DAY_FORMAT = "dd"
+        const val DAY_FORMAT = "d"
 
         const val DAY_VIEW_TYPE = 0
         const val MONTH_VIEW_TYPE = 1
@@ -75,6 +75,10 @@ class CalendarAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
+    fun clearItems() {
+        items.clear()
+        notifyDataSetChanged()
+    }
 
     fun setItems(calendarItems: List<CalendarItem>) {
         items.clear()
@@ -82,12 +86,16 @@ class CalendarAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         notifyDataSetChanged()
     }
 
+    fun getCalendarItemAt(position: Int) = items[position]
+
     fun addNextCalendarItems(nextCalendarItems: List<CalendarItem>) {
         items.addAll(nextCalendarItems)
+        notifyItemRangeInserted(items.size - nextCalendarItems.size, nextCalendarItems.size)
     }
 
     fun addPrevCalendarItems(prevCalendarItems: List<CalendarItem>) {
         items.addAll(0, prevCalendarItems)
+        notifyItemRangeInserted(0, prevCalendarItems.size)
     }
 
 

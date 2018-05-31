@@ -10,7 +10,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val calendarView = findViewById<CalendarView>(R.id.calendar_view)
-        calendarView.init()
+        if (savedInstanceState == null) {
+            val calendarView = findViewById<CalendarView>(R.id.calendar_view)
+            calendarView.init()
+        }
     }
 }
