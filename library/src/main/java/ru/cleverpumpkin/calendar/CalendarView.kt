@@ -1,10 +1,13 @@
 package ru.cleverpumpkin.calendar
 
 import android.content.Context
+import android.os.Bundle
+import android.os.Parcelable
 import android.support.annotation.AttrRes
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -26,34 +29,53 @@ class CalendarView @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
     companion object {
+        private const val BUNDLE_SUPER_STATE = "ru.cleverpumpkin.calendar.super_state"
+        private const val BUNDLE_INITIAL_DATE = "ru.cleverpumpkin.calendar.initial_date"
+
         private const val DAY_OF_WEEK_FORMAT = "EE"
-
         private const val DAYS_IN_WEEK = 7
-        private const val MONTHS_IN_YEAR = 12
-
         private const val MAX_SPAN_COUNT = 7
         private const val MAX_RECYCLED_DAY_VIEWS = 90
+        private const val MONTHS_PER_PAGE = 6
     }
 
-    private val positionedDaysOfWeek: List<Int> = mutableListOf<Int>().apply {
-        var currentDay = Calendar.getInstance().firstDayOfWeek
-
-        (0 until DAYS_IN_WEEK).forEach {
-            if (currentDay > DAYS_IN_WEEK) {
-                currentDay = 1
-            }
-
-            this += currentDay
-            currentDay++
-        }
-    }
+    private var calendarInitialized = false
 
     private val daysOfWeekContainer: ViewGroup
     private val recyclerView: RecyclerView
 
     private val calendarAdapter = CalendarAdapter()
 
+    private val startCalendarPointer = Calendar.getInstance()
+    private val endCalendarPointer = Calendar.getInstance()
+
+    /**
+     * List of correctly positioned days of week.
+     * For example:
+     *
+     * For US locale:
+     * [Calendar.SUNDAY], [Calendar.MONDAY], [Calendar.WEDNESDAY],
+     * [Calendar.THURSDAY], [Calendar.FRIDAY], [Calendar.SATURDAY]
+     *
+     * For RU locale:
+     * [Calendar.MONDAY], [Calendar.WEDNESDAY], [Calendar.THURSDAY],
+     * [Calendar.FRIDAY], [Calendar.SATURDAY], [Calendar.SUNDAY]
+     */
+    private val positionedDaysOfWeek = mutableListOf<Int>().apply {
+        var dayValue = Calendar.getInstance().firstDayOfWeek
+
+        (0 until DAYS_IN_WEEK).forEach {
+            if (dayValue > DAYS_IN_WEEK) {
+                dayValue = 1
+            }
+
+            this += dayValue
+            dayValue++
+        }
+    }
+
     init {
+        Log.d("CalendarView", "init")
         LayoutInflater.from(context).inflate(R.layout.view_calendar, this, true)
 
         daysOfWeekContainer = findViewById(R.id.week_days_container)
@@ -63,8 +85,52 @@ class CalendarView @JvmOverloads constructor(
         setupDaysOfWeekContainer(daysOfWeekContainer)
     }
 
+    override fun onSaveInstanceState(): Parcelable {
+        Log.d("CalendarView", "onSaveInstanceState")
+        val superState = super.onSaveInstanceState()
+
+        val bundle = Bundle()
+        bundle.putParcelable(BUNDLE_SUPER_STATE, superState)
+
+        val layoutManager = recyclerView.layoutManager
+
+        for (i in 0 until layoutManager.childCount) {
+            val child = layoutManager.getChildAt(i)
+            val childAdapterPosition = recyclerView.getChildAdapterPosition(child)
+
+            val holder = recyclerView.findViewHolderForAdapterPosition(childAdapterPosition)
+            if (holder is CalendarAdapter.DayItemViewHolder) {
+                val dayItem = calendarAdapter.getCalendarItemAt(childAdapterPosition) as DayItem
+                bundle.putLong(BUNDLE_INITIAL_DATE, dayItem.date.time)
+                break
+            }
+        }
+
+        return bundle
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        Log.d("CalendarView", "onRestoreInstanceState")
+        if (state is Bundle) {
+            if (calendarInitialized.not()) {
+                val initialDate = state.getLong(BUNDLE_INITIAL_DATE, System.currentTimeMillis())
+
+                startCalendarPointer.timeInMillis = initialDate
+                endCalendarPointer.timeInMillis = initialDate
+
+                calendarAdapter.clearItems()
+                loadNextMonthsItems()
+            }
+
+            val superState: Parcelable? = state.getParcelable(BUNDLE_SUPER_STATE)
+            super.onRestoreInstanceState(superState)
+        } else {
+            super.onRestoreInstanceState(state)
+        }
+    }
+
     private fun setupRecyclerView(recyclerView: RecyclerView) {
-        val layoutManager = GridLayoutManager(context, 7)
+        val layoutManager = GridLayoutManager(context, DAYS_IN_WEEK)
 
         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
@@ -85,6 +151,13 @@ class CalendarView @JvmOverloads constructor(
             )
 
             this.addItemDecoration(GridDividerItemDecoration())
+
+            val calendarScrollListener = CalendarScrollListener(
+                prevMonthsLoadAction = Runnable { loadPrevMonthsItems() },
+                nextMonthsLoadAction = Runnable { loadNextMonthsItems() }
+            )
+
+            this.addOnScrollListener(calendarScrollListener)
         }
     }
 
@@ -97,7 +170,7 @@ class CalendarView @JvmOverloads constructor(
         val calendar = Calendar.getInstance()
         val dayOfWeekFormatter = SimpleDateFormat(DAY_OF_WEEK_FORMAT, Locale.getDefault())
 
-        (0 until DAYS_IN_WEEK).forEach { position ->
+        for (position in 0 until DAYS_IN_WEEK) {
             val dayView = weekDaysContainer.getChildAt(position) as TextView
             val dayOfWeek = positionedDaysOfWeek[position]
 
@@ -107,23 +180,54 @@ class CalendarView @JvmOverloads constructor(
     }
 
     fun init() {
-        val calendarItems = generateCalendarItemsForYear(year = 2018)
-        calendarAdapter.setItems(calendarItems)
+        loadNextMonthsItems()
+        calendarInitialized = true
     }
 
-    private fun generateCalendarItemsForYear(year: Int): List<CalendarItem> {
+    private fun loadPrevMonthsItems() {
+        startCalendarPointer.add(Calendar.MONTH, -MONTHS_PER_PAGE)
+
+        val calendarItems = generateCalendarItemsForMonthsFromDate(
+            fromDate = startCalendarPointer.time,
+            monthCount = MONTHS_PER_PAGE
+        )
+
+        calendarAdapter.addPrevCalendarItems(calendarItems)
+    }
+
+    private fun loadNextMonthsItems() {
+        val calendarItems = generateCalendarItemsForMonthsFromDate(
+            fromDate = endCalendarPointer.time,
+            monthCount = MONTHS_PER_PAGE
+        )
+
+        calendarAdapter.addNextCalendarItems(calendarItems)
+
+        endCalendarPointer.add(Calendar.MONTH, MONTHS_PER_PAGE)
+    }
+
+    private fun generateCalendarItemsForMonthsFromDate(
+        fromDate: Date,
+        monthCount: Int
+    ): List<CalendarItem> {
+
         val calendar = Calendar.getInstance()
+        calendar.time = fromDate
+
         val calendarItems = mutableListOf<CalendarItem>()
 
-        (0 until MONTHS_IN_YEAR).forEach { month ->
-            calendar.set(Calendar.MONTH, month)
-            calendar.set(Calendar.DAY_OF_MONTH, 1)
+        repeat(monthCount) {
+
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH)
 
             val monthItem = MonthItem(calendar.time)
             val itemsForMonth = generateCalendarItemsForMonth(year, month)
 
             calendarItems += monthItem
             calendarItems += itemsForMonth
+
+            calendar.add(Calendar.MONTH, 1)
         }
 
         return calendarItems
