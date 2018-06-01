@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:id="@+id/week_days_container"
+        android:id="@+id/days_container"
         style="@style/CalendarWeekDaysBar"
         android:orientation="horizontal">
 
@@ -50,7 +50,6 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/calendar_week_days_bar_height"
-        android:saveEnabled="false" />
+        android:layout_marginTop="@dimen/calendar_week_days_bar_height" />
 
 </merge>

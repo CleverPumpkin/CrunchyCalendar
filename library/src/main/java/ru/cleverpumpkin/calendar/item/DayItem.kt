@@ -1,5 +1,5 @@
 package ru.cleverpumpkin.calendar.item
 
-import java.util.*
+import org.joda.time.LocalDate
 
-class DayItem(val date: Date) : CalendarItem
+class DayItem(val localDate: LocalDate) : CalendarItem
