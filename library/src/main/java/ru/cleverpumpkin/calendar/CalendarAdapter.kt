@@ -63,21 +63,29 @@ class CalendarAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 val dayItem = items[position] as DayItem
                 val dayItemViewHolder = holder as DayItemViewHolder
 
-                dayItemViewHolder.dayView.text = dayFormatter.format(dayItem.date)
+                dayItemViewHolder.dayView.text = dayFormatter.format(dayItem.localDate.toDate())
             }
 
             MONTH_VIEW_TYPE -> {
                 val monthItem = items[position] as MonthItem
                 val monthItemViewHolder = holder as MonthItemViewHolder
 
-                monthItemViewHolder.textView.text = monthFormatter.format(monthItem.date)
+                monthItemViewHolder.textView.text =
+                        monthFormatter.format(monthItem.localDate.toDate())
             }
         }
     }
 
-    fun clearItems() {
-        items.clear()
-        notifyDataSetChanged()
+    fun findMonthItemPosition(year: Int, month: Int): Int {
+        return items.indexOfFirst { item ->
+            if (item is MonthItem) {
+                if (item.localDate.year == year && item.localDate.monthOfYear == month) {
+                    return@indexOfFirst true
+                }
+            }
+
+            return@indexOfFirst false
+        }
     }
 
     fun setItems(calendarItems: List<CalendarItem>) {
@@ -85,8 +93,6 @@ class CalendarAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         items.addAll(calendarItems)
         notifyDataSetChanged()
     }
-
-    fun getCalendarItemAt(position: Int) = items[position]
 
     fun addNextCalendarItems(nextCalendarItems: List<CalendarItem>) {
         items.addAll(nextCalendarItems)

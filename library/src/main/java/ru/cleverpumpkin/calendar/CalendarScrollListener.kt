@@ -5,8 +5,8 @@ import android.os.Looper
 import android.support.v7.widget.RecyclerView
 
 class CalendarScrollListener(
-    private val prevMonthsLoadAction: Runnable,
-    private val nextMonthsLoadAction: Runnable
+    private val onTheTop: Runnable,
+    private val onTheBottom: Runnable
 
 ) : RecyclerView.OnScrollListener() {
 
@@ -18,14 +18,14 @@ class CalendarScrollListener(
         val lastChildAdapterPosition = recyclerView.getChildAdapterPosition(lastChild) + 1
 
         if (recyclerView.adapter.itemCount == lastChildAdapterPosition) {
-            mainThreadHandler.post(nextMonthsLoadAction)
+            mainThreadHandler.post(onTheBottom)
         }
 
         val firstChild = recyclerView.layoutManager.getChildAt(0)
         val firstChildAdapterPosition = recyclerView.getChildAdapterPosition(firstChild)
 
         if (firstChildAdapterPosition == 0) {
-            mainThreadHandler.post(prevMonthsLoadAction)
+            mainThreadHandler.post(onTheTop)
         }
     }
 }

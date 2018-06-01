@@ -1,7 +1,7 @@
 package ru.cleverpumpkin.calendar
 
 import android.content.Context
-import android.os.Bundle
+import android.os.Parcel
 import android.os.Parcelable
 import android.support.annotation.AttrRes
 import android.support.v7.widget.GridLayoutManager
@@ -12,11 +12,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
+import org.joda.time.LocalDate
 import ru.cleverpumpkin.calendar.decorations.GridDividerItemDecoration
-import ru.cleverpumpkin.calendar.item.CalendarItem
-import ru.cleverpumpkin.calendar.item.DayItem
-import ru.cleverpumpkin.calendar.item.EmptyItem
-import ru.cleverpumpkin.calendar.item.MonthItem
 import java.lang.IllegalStateException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -29,104 +26,37 @@ class CalendarView @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
     companion object {
-        private const val BUNDLE_SUPER_STATE = "ru.cleverpumpkin.calendar.super_state"
-        private const val BUNDLE_INITIAL_DATE = "ru.cleverpumpkin.calendar.initial_date"
+        private const val UNDEFINED_VALUE = -1L
 
         private const val DAY_OF_WEEK_FORMAT = "EE"
         private const val DAYS_IN_WEEK = 7
-        private const val MAX_SPAN_COUNT = 7
         private const val MAX_RECYCLED_DAY_VIEWS = 90
         private const val MONTHS_PER_PAGE = 6
     }
 
-    private var calendarInitialized = false
-
-    private val daysOfWeekContainer: ViewGroup
+    private val daysContainer: ViewGroup
     private val recyclerView: RecyclerView
 
     private val calendarAdapter = CalendarAdapter()
+    private var calendarInitialized = false
 
-    private val startCalendarPointer = Calendar.getInstance()
-    private val endCalendarPointer = Calendar.getInstance()
+    private lateinit var loadedFrom: LocalDate
+    private lateinit var loadedTo: LocalDate
 
-    /**
-     * List of correctly positioned days of week.
-     * For example:
-     *
-     * For US locale:
-     * [Calendar.SUNDAY], [Calendar.MONDAY], [Calendar.WEDNESDAY],
-     * [Calendar.THURSDAY], [Calendar.FRIDAY], [Calendar.SATURDAY]
-     *
-     * For RU locale:
-     * [Calendar.MONDAY], [Calendar.WEDNESDAY], [Calendar.THURSDAY],
-     * [Calendar.FRIDAY], [Calendar.SATURDAY], [Calendar.SUNDAY]
-     */
-    private val positionedDaysOfWeek = mutableListOf<Int>().apply {
-        var dayValue = Calendar.getInstance().firstDayOfWeek
+    private var minDate: LocalDate? = null
+    private var maxDate: LocalDate? = null
 
-        (0 until DAYS_IN_WEEK).forEach {
-            if (dayValue > DAYS_IN_WEEK) {
-                dayValue = 1
-            }
-
-            this += dayValue
-            dayValue++
-        }
-    }
+    private val calendarItemsGenerator = CalendarItemsGenerator()
 
     init {
         Log.d("CalendarView", "init")
         LayoutInflater.from(context).inflate(R.layout.view_calendar, this, true)
 
-        daysOfWeekContainer = findViewById(R.id.week_days_container)
+        daysContainer = findViewById(R.id.days_container)
         recyclerView = findViewById(R.id.recycler_view)
 
         setupRecyclerView(recyclerView)
-        setupDaysOfWeekContainer(daysOfWeekContainer)
-    }
-
-    override fun onSaveInstanceState(): Parcelable {
-        Log.d("CalendarView", "onSaveInstanceState")
-        val superState = super.onSaveInstanceState()
-
-        val bundle = Bundle()
-        bundle.putParcelable(BUNDLE_SUPER_STATE, superState)
-
-        val layoutManager = recyclerView.layoutManager
-
-        for (i in 0 until layoutManager.childCount) {
-            val child = layoutManager.getChildAt(i)
-            val childAdapterPosition = recyclerView.getChildAdapterPosition(child)
-
-            val holder = recyclerView.findViewHolderForAdapterPosition(childAdapterPosition)
-            if (holder is CalendarAdapter.DayItemViewHolder) {
-                val dayItem = calendarAdapter.getCalendarItemAt(childAdapterPosition) as DayItem
-                bundle.putLong(BUNDLE_INITIAL_DATE, dayItem.date.time)
-                break
-            }
-        }
-
-        return bundle
-    }
-
-    override fun onRestoreInstanceState(state: Parcelable?) {
-        Log.d("CalendarView", "onRestoreInstanceState")
-        if (state is Bundle) {
-            if (calendarInitialized.not()) {
-                val initialDate = state.getLong(BUNDLE_INITIAL_DATE, System.currentTimeMillis())
-
-                startCalendarPointer.timeInMillis = initialDate
-                endCalendarPointer.timeInMillis = initialDate
-
-                calendarAdapter.clearItems()
-                loadNextMonthsItems()
-            }
-
-            val superState: Parcelable? = state.getParcelable(BUNDLE_SUPER_STATE)
-            super.onRestoreInstanceState(superState)
-        } else {
-            super.onRestoreInstanceState(state)
-        }
+        setupDaysContainer(daysContainer)
     }
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
@@ -135,7 +65,7 @@ class CalendarView @JvmOverloads constructor(
         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
                 return when (recyclerView.adapter.getItemViewType(position)) {
-                    CalendarAdapter.MONTH_VIEW_TYPE -> MAX_SPAN_COUNT
+                    CalendarAdapter.MONTH_VIEW_TYPE -> DAYS_IN_WEEK
                     else -> 1
                 }
             }
@@ -153,22 +83,22 @@ class CalendarView @JvmOverloads constructor(
             this.addItemDecoration(GridDividerItemDecoration())
 
             val calendarScrollListener = CalendarScrollListener(
-                prevMonthsLoadAction = Runnable { loadPrevMonthsItems() },
-                nextMonthsLoadAction = Runnable { loadNextMonthsItems() }
+                onTheTop = Runnable { generatePrevMonthsItems() },
+                onTheBottom = Runnable { generateNextMonthsItems() }
             )
 
             this.addOnScrollListener(calendarScrollListener)
         }
     }
 
-    private fun setupDaysOfWeekContainer(weekDaysContainer: ViewGroup) {
-        val daysCount = weekDaysContainer.childCount
-        if (daysCount != DAYS_IN_WEEK) {
+    private fun setupDaysContainer(weekDaysContainer: ViewGroup) {
+        if (weekDaysContainer.childCount != DAYS_IN_WEEK) {
             throw IllegalStateException("Days container has incorrect number of child views")
         }
 
         val calendar = Calendar.getInstance()
         val dayOfWeekFormatter = SimpleDateFormat(DAY_OF_WEEK_FORMAT, Locale.getDefault())
+        val positionedDaysOfWeek = calendarItemsGenerator.positionedDaysOfWeek
 
         for (position in 0 until DAYS_IN_WEEK) {
             val dayView = weekDaysContainer.getChildAt(position) as TextView
@@ -179,99 +109,207 @@ class CalendarView @JvmOverloads constructor(
         }
     }
 
-    fun init() {
-        loadNextMonthsItems()
+    fun init(initialDate: Date = Date(), minDate: Date? = null, maxDate: Date? = null) {
+
+        when {
+            minDate == null && maxDate == null -> {
+                val loadedFrom = LocalDate.fromDateFields(initialDate)
+                    .minusMonths(MONTHS_PER_PAGE)
+
+                val loadedTo = LocalDate.fromDateFields(initialDate)
+                    .plusMonths(MONTHS_PER_PAGE)
+
+                val calendarItems = calendarItemsGenerator.generateCalendarItems(
+                    fromDate = loadedFrom.toDate(),
+                    toDate = loadedTo.toDate()
+                )
+
+                calendarAdapter.setItems(calendarItems)
+
+                this.loadedFrom = loadedFrom
+                this.loadedTo = loadedTo
+            }
+
+            minDate != null && maxDate != null -> {
+                val loadedFrom = LocalDate.fromDateFields(minDate)
+                val loadedTo = LocalDate.fromDateFields(maxDate)
+
+                val calendarItems = calendarItemsGenerator.generateCalendarItems(
+                    fromDate = loadedFrom.toDate(),
+                    toDate = loadedTo.toDate()
+                )
+
+                calendarAdapter.setItems(calendarItems)
+
+                this.minDate = loadedFrom
+                this.maxDate = loadedTo
+
+                this.loadedFrom = loadedFrom
+                this.loadedTo = loadedTo
+            }
+
+            minDate != null && maxDate == null -> {
+                val loadedFrom = LocalDate.fromDateFields(minDate)
+
+                val loadedTo = LocalDate.fromDateFields(minDate)
+                    .plusMonths(MONTHS_PER_PAGE)
+
+                val calendarItems = calendarItemsGenerator.generateCalendarItems(
+                    fromDate = loadedFrom.toDate(),
+                    toDate = loadedTo.toDate()
+                )
+
+                calendarAdapter.setItems(calendarItems)
+
+                this.minDate = loadedFrom
+
+                this.loadedFrom = loadedFrom
+                this.loadedTo = loadedTo
+            }
+
+            minDate == null && maxDate != null -> {
+                val loadedFrom = LocalDate.fromDateFields(maxDate)
+                    .minusMonths(MONTHS_PER_PAGE)
+
+                val loadedTo = LocalDate.fromDateFields(maxDate)
+
+                val calendarItems = calendarItemsGenerator.generateCalendarItems(
+                    fromDate = loadedFrom.toDate(),
+                    toDate = loadedTo.toDate()
+                )
+
+                calendarAdapter.setItems(calendarItems)
+
+                this.maxDate = loadedTo
+
+                this.loadedFrom = loadedFrom
+                this.loadedTo = loadedTo
+            }
+        }
+
+        val localInitialDate = LocalDate.fromDateFields(initialDate)
+        val initialMonthPosition = calendarAdapter.findMonthItemPosition(
+            localInitialDate.year,
+            localInitialDate.monthOfYear
+        )
+
+        if (initialMonthPosition != -1) {
+            recyclerView.scrollToPosition(initialMonthPosition)
+        }
+
         calendarInitialized = true
     }
 
-    private fun loadPrevMonthsItems() {
-        startCalendarPointer.add(Calendar.MONTH, -MONTHS_PER_PAGE)
+    private fun generatePrevMonthsItems() {
+        if (this.minDate != null) {
+            return
+        }
 
-        val calendarItems = generateCalendarItemsForMonthsFromDate(
-            fromDate = startCalendarPointer.time,
-            monthCount = MONTHS_PER_PAGE
+        val loadedTo = this.loadedFrom.minusMonths(1)
+
+        val loadedFrom = LocalDate.fromDateFields(loadedTo.toDate())
+            .minusMonths(MONTHS_PER_PAGE)
+
+        val calendarItems = calendarItemsGenerator.generateCalendarItems(
+            fromDate = loadedFrom.toDate(),
+            toDate = loadedTo.toDate()
         )
 
         calendarAdapter.addPrevCalendarItems(calendarItems)
+        this.loadedFrom = loadedFrom
     }
 
-    private fun loadNextMonthsItems() {
-        val calendarItems = generateCalendarItemsForMonthsFromDate(
-            fromDate = endCalendarPointer.time,
-            monthCount = MONTHS_PER_PAGE
+    private fun generateNextMonthsItems() {
+        if (this.maxDate != null) {
+            return
+        }
+
+        val loadedFrom = this.loadedTo.plusMonths(1)
+
+        val loadedTo = LocalDate.fromDateFields(loadedFrom.toDate())
+            .plusMonths(MONTHS_PER_PAGE)
+
+        val calendarItems = calendarItemsGenerator.generateCalendarItems(
+            fromDate = loadedFrom.toDate(),
+            toDate = loadedTo.toDate()
         )
 
         calendarAdapter.addNextCalendarItems(calendarItems)
-
-        endCalendarPointer.add(Calendar.MONTH, MONTHS_PER_PAGE)
+        this.loadedTo = loadedTo
     }
 
-    private fun generateCalendarItemsForMonthsFromDate(
-        fromDate: Date,
-        monthCount: Int
-    ): List<CalendarItem> {
+    override fun onSaveInstanceState(): Parcelable {
+        val superState = super.onSaveInstanceState()
 
-        val calendar = Calendar.getInstance()
-        calendar.time = fromDate
+        val savedState = SavedState(superState)
+        savedState.loadedFrom = loadedFrom.toDate().time
+        savedState.loadedTo = loadedTo.toDate().time
+        savedState.minDate = minDate?.toDate()?.time ?: UNDEFINED_VALUE
+        savedState.maxDate = maxDate?.toDate()?.time ?: UNDEFINED_VALUE
 
-        val calendarItems = mutableListOf<CalendarItem>()
-
-        repeat(monthCount) {
-
-            val year = calendar.get(Calendar.YEAR)
-            val month = calendar.get(Calendar.MONTH)
-
-            val monthItem = MonthItem(calendar.time)
-            val itemsForMonth = generateCalendarItemsForMonth(year, month)
-
-            calendarItems += monthItem
-            calendarItems += itemsForMonth
-
-            calendar.add(Calendar.MONTH, 1)
-        }
-
-        return calendarItems
+        return savedState
     }
 
-    @Suppress("UnnecessaryVariable")
-    private fun generateCalendarItemsForMonth(year: Int, month: Int): List<CalendarItem> {
-        val calendar = Calendar.getInstance().apply {
-            set(year, month, 1)
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        val savedState = state as SavedState
+        super.onRestoreInstanceState(savedState.superState)
+
+        if (calendarInitialized) {
+            return
         }
 
-        // First day of month - MONDAY, TUESDAY, e.t.c
-        val firstDayOfMonth = calendar.get(Calendar.DAY_OF_WEEK)
-        val positionOfFirstDayOfMonth = positionedDaysOfWeek.indexOf(firstDayOfMonth)
+        loadedFrom = LocalDate(savedState.loadedFrom)
+        loadedTo = LocalDate(savedState.loadedTo)
 
-        val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
-        calendar.set(Calendar.DAY_OF_MONTH, daysInMonth)
-
-        // Last day of month - MONDAY, TUESDAY, e.t.c
-        val lastDayOfMonth = calendar.get(Calendar.DAY_OF_WEEK)
-        val positionOfLastDayOfMonth = positionedDaysOfWeek.indexOf(lastDayOfMonth)
-
-        val startOffset = positionOfFirstDayOfMonth
-        val endOffset = (DAYS_IN_WEEK - positionOfLastDayOfMonth) - 1
-
-        // Populate items for month
-        val itemsForMonth = mutableListOf<CalendarItem>().apply {
-
-            calendar.set(Calendar.DAY_OF_MONTH, 1)
-
-            // Populate empty items for start offset
-            (1..startOffset).forEach { this += EmptyItem }
-
-            // Populate day items
-            (1..daysInMonth).forEach {
-                val date = calendar.time
-                this += DayItem(date)
-                calendar.add(Calendar.DAY_OF_MONTH, 1)
-            }
-
-            // Populate empty items for end offset
-            (1..endOffset).forEach { this += EmptyItem }
+        minDate = if (savedState.minDate == UNDEFINED_VALUE) {
+            null
+        } else {
+            LocalDate(savedState.minDate)
         }
 
-        return itemsForMonth
+        maxDate = if (savedState.maxDate == UNDEFINED_VALUE) {
+            null
+        } else {
+            LocalDate(savedState.maxDate)
+        }
+
+        val calendarItems = calendarItemsGenerator.generateCalendarItems(
+            fromDate = loadedFrom.toDate(),
+            toDate = loadedTo.toDate()
+        )
+
+        calendarAdapter.setItems(calendarItems)
+    }
+
+    class SavedState : BaseSavedState {
+        var loadedFrom: Long = 0
+        var loadedTo: Long = 0
+        var minDate: Long = 0
+        var maxDate: Long = 0
+
+        constructor(superState: Parcelable) : super(superState)
+
+        private constructor(inParcel: Parcel) : super(inParcel) {
+            loadedFrom = inParcel.readLong()
+            loadedTo = inParcel.readLong()
+            minDate = inParcel.readLong()
+            maxDate = inParcel.readLong()
+        }
+
+        override fun writeToParcel(out: Parcel, flags: Int) {
+            super.writeToParcel(out, flags)
+            out.writeLong(loadedFrom)
+            out.writeLong(loadedTo)
+            out.writeLong(minDate)
+            out.writeLong(maxDate)
+        }
+
+        @Suppress("PropertyName")
+        val CREATOR: Parcelable.Creator<SavedState> = object : Parcelable.Creator<SavedState> {
+
+            override fun createFromParcel(`in`: Parcel) = SavedState(`in`)
+
+            override fun newArray(size: Int) = arrayOfNulls<SavedState>(size)
+        }
     }
 }
