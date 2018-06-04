@@ -12,7 +12,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
-import org.joda.time.LocalDate
 import ru.cleverpumpkin.calendar.decorations.GridDividerItemDecoration
 import ru.cleverpumpkin.calendar.decorations.ItemSelectionDecoration
 import java.lang.IllegalStateException
@@ -44,14 +43,14 @@ class CalendarView @JvmOverloads constructor(
     private val calendarAdapter: CalendarAdapter
     private var calendarInitialized = false
 
-    private lateinit var displayDateRange: DisplayDateRange
-    private lateinit var limitDateRange: LimitDateRange
-    private var selectedDates = SelectedDates()
+    private lateinit var displayDatesRange: DisplayDatesRange
+    private lateinit var minMaxDatesRange: MinMaxDatesRange
+    private var selectedDatesHolder = SelectedDatesHolder()
 
     private val calendarItemsGenerator = CalendarItemsGenerator()
 
     init {
-        Log.d("CalendarView", "init")
+        Log.d("CalendarView", "setUp")
         LayoutInflater.from(context).inflate(R.layout.view_calendar, this, true)
 
         daysContainer = findViewById(R.id.days_container)
@@ -59,7 +58,7 @@ class CalendarView @JvmOverloads constructor(
 
         calendarAdapter = CalendarAdapter { date, adapterPosition ->
             Log.d("Debug: ", "Date clicked: $date")
-            selectedDates.dates.add(date)
+            selectedDatesHolder.selectedDates.add(date)
             recyclerView.adapter.notifyItemChanged(adapterPosition)
         }
 
@@ -89,11 +88,11 @@ class CalendarView @JvmOverloads constructor(
             )
 
             this.addItemDecoration(GridDividerItemDecoration())
-            this.addItemDecoration(ItemSelectionDecoration(selectedDates.dates))
+            this.addItemDecoration(ItemSelectionDecoration(selectedDatesHolder.selectedDates))
 
             val calendarScrollListener = CalendarScrollListener(
-                onTheTop = Runnable { generatePrevMonthsItems() },
-                onTheBottom = Runnable { generateNextMonthsItems() }
+                generatePrevItems = Runnable { generatePrevMonthsItems() },
+                generateNextItems = Runnable { generateNextMonthsItems() }
             )
 
             this.addOnScrollListener(calendarScrollListener)
@@ -118,15 +117,11 @@ class CalendarView @JvmOverloads constructor(
         }
     }
 
-    fun init(initialDate: Date = Date(), minDate: Date? = null, maxDate: Date? = null) {
-
+    fun setUp(initialDate: Date = Date(), minDate: Date? = null, maxDate: Date? = null) {
         when {
             minDate == null && maxDate == null -> {
-                val dateFrom = LocalDate.fromDateFields(initialDate)
-                    .minusMonths(MONTHS_PER_PAGE)
-
-                val dateTo = LocalDate.fromDateFields(initialDate)
-                    .plusMonths(MONTHS_PER_PAGE)
+                val dateFrom = SimpleLocalDate(initialDate).minusMonths(MONTHS_PER_PAGE)
+                val dateTo = SimpleLocalDate(initialDate).plusMonths(MONTHS_PER_PAGE)
 
                 val calendarItems = calendarItemsGenerator.generateCalendarItems(
                     dateFrom = dateFrom.toDate(),
@@ -135,13 +130,13 @@ class CalendarView @JvmOverloads constructor(
 
                 calendarAdapter.setItems(calendarItems)
 
-                displayDateRange = DisplayDateRange(dateFrom = dateFrom, dateTo = dateTo)
-                limitDateRange = LimitDateRange(minDate = null, maxDate = null)
+                displayDatesRange = DisplayDatesRange(dateFrom = dateFrom, dateTo = dateTo)
+                minMaxDatesRange = MinMaxDatesRange(minDate = null, maxDate = null)
             }
 
             minDate != null && maxDate != null -> {
-                val dateFrom = LocalDate.fromDateFields(minDate)
-                val dateTo = LocalDate.fromDateFields(maxDate)
+                val dateFrom = SimpleLocalDate(minDate)
+                val dateTo = SimpleLocalDate(maxDate)
 
                 val calendarItems = calendarItemsGenerator.generateCalendarItems(
                     dateFrom = dateFrom.toDate(),
@@ -150,15 +145,13 @@ class CalendarView @JvmOverloads constructor(
 
                 calendarAdapter.setItems(calendarItems)
 
-                displayDateRange = DisplayDateRange(dateFrom = dateFrom, dateTo = dateTo)
-                limitDateRange = LimitDateRange(minDate = dateFrom, maxDate = dateTo)
+                displayDatesRange = DisplayDatesRange(dateFrom = dateFrom, dateTo = dateTo)
+                minMaxDatesRange = MinMaxDatesRange(minDate = dateFrom, maxDate = dateTo)
             }
 
             minDate != null && maxDate == null -> {
-                val dateFrom = LocalDate.fromDateFields(minDate)
-
-                val dateTo = LocalDate.fromDateFields(minDate)
-                    .plusMonths(MONTHS_PER_PAGE)
+                val dateFrom = SimpleLocalDate(minDate)
+                val dateTo = SimpleLocalDate(minDate).plusMonths(MONTHS_PER_PAGE)
 
                 val calendarItems = calendarItemsGenerator.generateCalendarItems(
                     dateFrom = dateFrom.toDate(),
@@ -167,15 +160,13 @@ class CalendarView @JvmOverloads constructor(
 
                 calendarAdapter.setItems(calendarItems)
 
-                displayDateRange = DisplayDateRange(dateFrom = dateFrom, dateTo = dateTo)
-                limitDateRange = LimitDateRange(minDate = dateFrom, maxDate = null)
+                displayDatesRange = DisplayDatesRange(dateFrom = dateFrom, dateTo = dateTo)
+                minMaxDatesRange = MinMaxDatesRange(minDate = dateFrom, maxDate = null)
             }
 
             minDate == null && maxDate != null -> {
-                val dateFrom = LocalDate.fromDateFields(maxDate)
-                    .minusMonths(MONTHS_PER_PAGE)
-
-                val dateTo = LocalDate.fromDateFields(maxDate)
+                val dateFrom = SimpleLocalDate(maxDate).minusMonths(MONTHS_PER_PAGE)
+                val dateTo = SimpleLocalDate(maxDate)
 
                 val calendarItems = calendarItemsGenerator.generateCalendarItems(
                     dateFrom = dateFrom.toDate(),
@@ -184,15 +175,15 @@ class CalendarView @JvmOverloads constructor(
 
                 calendarAdapter.setItems(calendarItems)
 
-                displayDateRange = DisplayDateRange(dateFrom = dateFrom, dateTo = dateTo)
-                limitDateRange = LimitDateRange(minDate = null, maxDate = dateTo)
+                displayDatesRange = DisplayDatesRange(dateFrom = dateFrom, dateTo = dateTo)
+                minMaxDatesRange = MinMaxDatesRange(minDate = null, maxDate = dateTo)
             }
         }
 
-        val localInitialDate = LocalDate.fromDateFields(initialDate)
+        val localInitialDate = SimpleLocalDate(initialDate)
         val initialMonthPosition = calendarAdapter.findMonthItemPosition(
             localInitialDate.year,
-            localInitialDate.monthOfYear
+            localInitialDate.month
         )
 
         if (initialMonthPosition != -1) {
@@ -203,33 +194,29 @@ class CalendarView @JvmOverloads constructor(
     }
 
     private fun generatePrevMonthsItems() {
-        if (this.limitDateRange.minDate != null) {
+        if (this.minMaxDatesRange.minDate != null) {
             return
         }
 
-        val toDate = displayDateRange.dateFrom.minusMonths(1)
-
-        val fromDate = LocalDate.fromDateFields(toDate.toDate())
-            .minusMonths(MONTHS_PER_PAGE)
+        val dateTo = displayDatesRange.dateFrom.minusMonths(1)
+        val dateFrom = dateTo.minusMonths(MONTHS_PER_PAGE)
 
         val calendarItems = calendarItemsGenerator.generateCalendarItems(
-            dateFrom = fromDate.toDate(),
-            dateTo = toDate.toDate()
+            dateFrom = dateFrom.toDate(),
+            dateTo = dateTo.toDate()
         )
 
         calendarAdapter.addPrevCalendarItems(calendarItems)
-        displayDateRange = displayDateRange.copy(dateFrom = fromDate)
+        displayDatesRange = displayDatesRange.copy(dateFrom = dateFrom)
     }
 
     private fun generateNextMonthsItems() {
-        if (this.limitDateRange.maxDate != null) {
+        if (this.minMaxDatesRange.maxDate != null) {
             return
         }
 
-        val fromDate = displayDateRange.dateTo.plusMonths(1)
-
-        val toDate = LocalDate.fromDateFields(fromDate.toDate())
-            .plusMonths(MONTHS_PER_PAGE)
+        val fromDate = displayDatesRange.dateTo.plusMonths(1)
+        val toDate = fromDate.plusMonths(MONTHS_PER_PAGE)
 
         val calendarItems = calendarItemsGenerator.generateCalendarItems(
             dateFrom = fromDate.toDate(),
@@ -237,7 +224,7 @@ class CalendarView @JvmOverloads constructor(
         )
 
         calendarAdapter.addNextCalendarItems(calendarItems)
-        displayDateRange = displayDateRange.copy(dateTo = toDate)
+        displayDatesRange = displayDatesRange.copy(dateTo = toDate)
     }
 
     override fun onSaveInstanceState(): Parcelable {
@@ -245,19 +232,19 @@ class CalendarView @JvmOverloads constructor(
 
         return Bundle().apply {
             putParcelable(BUNDLE_SUPER_STATE, superState)
-            putParcelable(BUNDLE_DISPLAY_DATE_RANGE, displayDateRange)
-            putParcelable(BUNDLE_LIMIT_DATE_RANGE, limitDateRange)
-            putLongArray(BUNDLE_SELECTED_DATES, selectedDates.mapSelectedDatesToLongArray())
+            putParcelable(BUNDLE_DISPLAY_DATE_RANGE, displayDatesRange)
+            putParcelable(BUNDLE_LIMIT_DATE_RANGE, minMaxDatesRange)
+            putLongArray(BUNDLE_SELECTED_DATES, selectedDatesHolder.mapSelectedDatesToLongArray())
         }
     }
 
     override fun onRestoreInstanceState(state: Parcelable?) {
         if (state is Bundle) {
-            displayDateRange = state.getParcelable(BUNDLE_DISPLAY_DATE_RANGE)
-            limitDateRange = state.getParcelable(BUNDLE_LIMIT_DATE_RANGE)
+            displayDatesRange = state.getParcelable(BUNDLE_DISPLAY_DATE_RANGE)
+            minMaxDatesRange = state.getParcelable(BUNDLE_LIMIT_DATE_RANGE)
 
             val selectedDatesLongArray = state.getLongArray(BUNDLE_SELECTED_DATES)
-            selectedDates.restoreSelectedDatesFromLongArray(selectedDatesLongArray)
+            selectedDatesHolder.restoreSelectedDatesFromLongArray(selectedDatesLongArray)
 
             val superState: Parcelable? = state.getParcelable(BUNDLE_SUPER_STATE)
             super.onRestoreInstanceState(superState)
@@ -266,8 +253,8 @@ class CalendarView @JvmOverloads constructor(
         }
 
         val calendarItems = calendarItemsGenerator.generateCalendarItems(
-            dateFrom = displayDateRange.dateFrom.toDate(),
-            dateTo = displayDateRange.dateTo.toDate()
+            dateFrom = displayDatesRange.dateFrom.toDate(),
+            dateTo = displayDatesRange.dateTo.toDate()
         )
 
         calendarAdapter.setItems(calendarItems)

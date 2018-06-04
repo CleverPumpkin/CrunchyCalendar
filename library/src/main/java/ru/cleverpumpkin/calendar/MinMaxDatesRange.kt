@@ -2,32 +2,31 @@ package ru.cleverpumpkin.calendar
 
 import android.os.Parcel
 import android.os.Parcelable
-import org.joda.time.LocalDate
 
-class LimitDateRange(val minDate: LocalDate?, val maxDate: LocalDate?) : Parcelable {
+class MinMaxDatesRange(val minDate: SimpleLocalDate?, val maxDate: SimpleLocalDate?) : Parcelable {
 
     companion object {
         private const val UNDEFINED_DATE = -1L
 
-        private fun Long.toLocaleDate(): LocalDate? {
+        private fun Long.toDateItem(): SimpleLocalDate? {
             return if (this != UNDEFINED_DATE) {
-                LocalDate(this)
+                SimpleLocalDate(this)
             } else {
                 null
             }
         }
 
         @JvmField
-        val CREATOR = object : Parcelable.Creator<LimitDateRange> {
-            override fun createFromParcel(parcel: Parcel) = LimitDateRange(parcel)
+        val CREATOR = object : Parcelable.Creator<MinMaxDatesRange> {
+            override fun createFromParcel(parcel: Parcel) = MinMaxDatesRange(parcel)
 
-            override fun newArray(size: Int) = arrayOfNulls<LimitDateRange>(size)
+            override fun newArray(size: Int) = arrayOfNulls<MinMaxDatesRange>(size)
         }
     }
 
     constructor(parcel: Parcel) : this(
-        minDate = parcel.readLong().toLocaleDate(),
-        maxDate = parcel.readLong().toLocaleDate()
+        minDate = parcel.readLong().toDateItem(),
+        maxDate = parcel.readLong().toDateItem()
     )
 
     override fun writeToParcel(dest: Parcel, flags: Int) {

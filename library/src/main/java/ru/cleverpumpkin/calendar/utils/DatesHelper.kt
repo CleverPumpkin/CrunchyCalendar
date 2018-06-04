@@ -1,14 +1,16 @@
 package ru.cleverpumpkin.calendar.utils
 
-import org.joda.time.LocalDate
 import java.util.*
 
 fun monthsBetweenTwoDates(startDate: Date, endDate: Date): Int {
-    val startLocalDate = LocalDate.fromDateFields(startDate)
-    val endLocalDate = LocalDate.fromDateFields(endDate)
+    val startCalendar = Calendar.getInstance()
+    startCalendar.time = startDate
 
-    val diffYear = endLocalDate.year - startLocalDate.year
-    val diffMonth = endLocalDate.monthOfYear - startLocalDate.monthOfYear
+    val endCalendar = Calendar.getInstance()
+    endCalendar.time = endDate
+
+    val diffYear = endCalendar.get(Calendar.YEAR) - startCalendar.get(Calendar.YEAR)
+    val diffMonth = endCalendar.get(Calendar.MONTH) - startCalendar.get(Calendar.MONTH)
 
     return diffYear * 12 + diffMonth
 }

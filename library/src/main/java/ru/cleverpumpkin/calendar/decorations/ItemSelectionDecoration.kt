@@ -5,11 +5,11 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.support.v7.widget.RecyclerView
-import org.joda.time.LocalDate
 import ru.cleverpumpkin.calendar.CalendarAdapter
+import ru.cleverpumpkin.calendar.SimpleLocalDate
 
 class ItemSelectionDecoration(
-    private val selectedDatesSet: Collection<LocalDate>
+    private val selectedDatesSet: Collection<SimpleLocalDate>
 ) : RecyclerView.ItemDecoration() {
 
     private val fillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -28,7 +28,7 @@ class ItemSelectionDecoration(
                     as? CalendarAdapter.DayItemViewHolder
                     ?: continue
 
-            if (selectedDatesSet.contains(dayItemViewHolder.localDate)) {
+            if (selectedDatesSet.contains(dayItemViewHolder.dateItem)) {
                 lineRect.set(
                     child.left.toFloat(),
                     child.top.toFloat(),
