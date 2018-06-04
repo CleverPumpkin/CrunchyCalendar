@@ -15,16 +15,21 @@ class MainActivity : AppCompatActivity() {
             val calendarView = findViewById<CalendarView>(R.id.calendar_view)
 
             val calendar = Calendar.getInstance()
-            calendar.set(2018, 5, 1)
+            calendar.set(2018, 5, 15)
             val minDate = calendar.time
 
-            calendar.set(2018, 7, 1)
+            calendar.set(2018, 7, 16)
             val maxDate = calendar.time
 
             calendar.set(2018, 6, 1)
             val initialDate = calendar.time
 
-            calendarView.setUp(initialDate = initialDate, minDate = minDate, maxDate = maxDate)
+            calendarView.setUp(
+                initialDate = initialDate,
+                minDate = minDate,
+                maxDate = maxDate,
+                selectionMode = CalendarView.SelectionMode.SINGLE
+            )
         }
     }
 }

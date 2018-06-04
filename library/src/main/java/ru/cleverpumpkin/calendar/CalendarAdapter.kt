@@ -1,7 +1,7 @@
 package ru.cleverpumpkin.calendar
 
+import android.graphics.Color
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +15,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class CalendarAdapter(
-    private val onDateClick: (SimpleLocalDate, Int) -> Unit
+    private val dateInfoProvider: DateInfoProvider,
+    private val onDateClickHandler: (SimpleLocalDate, Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -27,12 +28,12 @@ class CalendarAdapter(
         const val EMPTY_VIEW_TYPE = 2
     }
 
-    private val items = mutableListOf<CalendarItem>()
+    private val calendarItems = mutableListOf<CalendarItem>()
 
     private val monthFormatter = SimpleDateFormat(MONTH_FORMAT, Locale.getDefault())
     private val dayFormatter = SimpleDateFormat(DAY_FORMAT, Locale.getDefault())
 
-    override fun getItemViewType(position: Int) = when (items[position]) {
+    override fun getItemViewType(position: Int) = when (calendarItems[position]) {
         is DateItem -> DAY_VIEW_TYPE
         is MonthItem -> MONTH_VIEW_TYPE
         is EmptyItem -> EMPTY_VIEW_TYPE
@@ -41,9 +42,8 @@ class CalendarAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
         DAY_VIEW_TYPE -> {
-            Log.d("View", "onCreateViewHolder")
             val dayView = CalendarDayView(parent.context)
-            val dayItemViewHolder = DayItemViewHolder(dayView)
+            val dayItemViewHolder = DateItemViewHolder(dayView)
 
             dayItemViewHolder.dayView.setOnClickListener {
                 val adapterPosition = dayItemViewHolder.adapterPosition
@@ -51,8 +51,8 @@ class CalendarAdapter(
                     return@setOnClickListener
                 }
 
-                val dayItem = items[adapterPosition] as DateItem
-                onDateClick.invoke(dayItem.localDate, adapterPosition)
+                val dateItem = calendarItems[adapterPosition] as DateItem
+                onDateClickHandler.invoke(dateItem.localDate, adapterPosition)
             }
 
             dayItemViewHolder
@@ -71,27 +71,27 @@ class CalendarAdapter(
         else -> throw IllegalStateException("Unknown view type")
     }
 
-    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
-        super.onViewRecycled(holder)
-        if (holder is DayItemViewHolder) {
-            Log.d("View", "onViewRecycled")
-        }
-    }
-
-    override fun getItemCount() = items.size
-
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (getItemViewType(position)) {
             DAY_VIEW_TYPE -> {
-                val dayItem = items[position] as DateItem
-                val dayItemViewHolder = holder as DayItemViewHolder
+                val dateItem = calendarItems[position] as DateItem
+                val dateItemViewHolder = holder as DateItemViewHolder
 
-                dayItemViewHolder.dayView.text = dayFormatter.format(dayItem.localDate.toDate())
-                dayItemViewHolder.dateItem = dayItem.localDate
+                dateItemViewHolder.dayView.text = dayFormatter.format(dateItem.localDate.toDate())
+
+                if (dateInfoProvider.isDateEnabled(dateItem.localDate)) {
+                    if (dateInfoProvider.isDateSelected(dateItem.localDate)) {
+                        dateItemViewHolder.itemView.setBackgroundColor(Color.BLUE)
+                    } else {
+                        dateItemViewHolder.itemView.setBackgroundColor(Color.WHITE)
+                    }
+                } else {
+                    dateItemViewHolder.itemView.setBackgroundColor(Color.GRAY)
+                }
             }
 
             MONTH_VIEW_TYPE -> {
-                val monthItem = items[position] as MonthItem
+                val monthItem = calendarItems[position] as MonthItem
                 val monthItemViewHolder = holder as MonthItemViewHolder
 
                 monthItemViewHolder.textView.text =
@@ -100,8 +100,10 @@ class CalendarAdapter(
         }
     }
 
+    override fun getItemCount() = calendarItems.size
+
     fun findMonthItemPosition(year: Int, month: Int): Int {
-        return items.indexOfFirst { item ->
+        return calendarItems.indexOfFirst { item ->
             if (item is MonthItem) {
                 if (item.localDate.year == year && item.localDate.month == month) {
                     return@indexOfFirst true
@@ -112,27 +114,36 @@ class CalendarAdapter(
         }
     }
 
+    fun findDateItemPosition(localDate: SimpleLocalDate): Int {
+        return calendarItems.indexOfFirst { item ->
+            if (item is DateItem) {
+                if (item.localDate == localDate) {
+                    return@indexOfFirst true
+                }
+            }
+
+            return@indexOfFirst false
+        }
+    }
+
     fun setItems(calendarItems: List<CalendarItem>) {
-        items.clear()
-        items.addAll(calendarItems)
+        this.calendarItems.clear()
+        this.calendarItems.addAll(calendarItems)
         notifyDataSetChanged()
     }
 
     fun addNextCalendarItems(nextCalendarItems: List<CalendarItem>) {
-        items.addAll(nextCalendarItems)
-        notifyItemRangeInserted(items.size - nextCalendarItems.size, nextCalendarItems.size)
+        calendarItems.addAll(nextCalendarItems)
+        notifyItemRangeInserted(calendarItems.size - nextCalendarItems.size, nextCalendarItems.size)
     }
 
     fun addPrevCalendarItems(prevCalendarItems: List<CalendarItem>) {
-        items.addAll(0, prevCalendarItems)
+        calendarItems.addAll(0, prevCalendarItems)
         notifyItemRangeInserted(0, prevCalendarItems.size)
     }
 
 
-    class DayItemViewHolder(
-        val dayView: CalendarDayView,
-        var dateItem: SimpleLocalDate? = null
-    ) : RecyclerView.ViewHolder(dayView)
+    class DateItemViewHolder(val dayView: CalendarDayView) : RecyclerView.ViewHolder(dayView)
 
     class MonthItemViewHolder(val textView: TextView) : RecyclerView.ViewHolder(textView)
 

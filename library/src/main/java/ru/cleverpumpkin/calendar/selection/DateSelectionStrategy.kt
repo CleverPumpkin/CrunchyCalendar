@@ -1,0 +1,15 @@
+package ru.cleverpumpkin.calendar.selection
+
+import android.os.Bundle
+import ru.cleverpumpkin.calendar.SimpleLocalDate
+
+interface DateSelectionStrategy {
+
+    fun onDateSelected(date: SimpleLocalDate, position: Int)
+
+    fun isDateSelected(date: SimpleLocalDate): Boolean
+
+    fun saveSelectionState(bundle: Bundle)
+
+    fun restoreSelectionState(bundle: Bundle)
+}
