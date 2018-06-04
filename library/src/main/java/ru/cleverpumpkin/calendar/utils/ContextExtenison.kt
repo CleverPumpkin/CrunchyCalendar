@@ -1,4 +1,4 @@
-package ru.cleverpumpkin.calendar
+package ru.cleverpumpkin.calendar.utils
 
 import android.content.Context
 import android.util.TypedValue

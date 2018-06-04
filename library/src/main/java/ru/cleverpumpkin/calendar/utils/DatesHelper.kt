@@ -1,4 +1,4 @@
-package ru.cleverpumpkin.calendar
+package ru.cleverpumpkin.calendar.utils
 
 import org.joda.time.LocalDate
 import java.util.*

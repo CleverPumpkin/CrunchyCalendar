@@ -7,6 +7,7 @@ import android.support.annotation.AttrRes
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
+import ru.cleverpumpkin.calendar.utils.spToPix
 
 class CalendarDayView @JvmOverloads constructor(
     context: Context,
