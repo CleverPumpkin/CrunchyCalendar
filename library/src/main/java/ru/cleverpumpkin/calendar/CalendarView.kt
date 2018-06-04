@@ -7,13 +7,12 @@ import android.support.annotation.AttrRes
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
 import ru.cleverpumpkin.calendar.decorations.GridDividerItemDecoration
-import ru.cleverpumpkin.calendar.decorations.ItemSelectionDecoration
+import ru.cleverpumpkin.calendar.selection.*
 import java.lang.IllegalStateException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -23,7 +22,14 @@ class CalendarView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     @AttrRes defStyleAttr: Int = 0
 
-) : FrameLayout(context, attrs, defStyleAttr) {
+) : FrameLayout(context, attrs, defStyleAttr), DateInfoProvider {
+
+    enum class SelectionMode {
+        NON,
+        SINGLE,
+        MULTIPLE,
+        RANGE
+    }
 
     companion object {
         private const val DAY_OF_WEEK_FORMAT = "EE"
@@ -34,7 +40,7 @@ class CalendarView @JvmOverloads constructor(
         private const val BUNDLE_SUPER_STATE = "ru.cleverpumpkin.calendar.super_state"
         private const val BUNDLE_DISPLAY_DATE_RANGE = "ru.cleverpumpkin.calendar.display_date_range"
         private const val BUNDLE_LIMIT_DATE_RANGE = "ru.cleverpumpkin.calendar.limit_date_range"
-        private const val BUNDLE_SELECTED_DATES = "ru.cleverpumpkin.calendar.selected_items"
+        private const val BUNDLE_SELECTION_MODE = "ru.cleverpumpkin.calendar.selection_mode"
     }
 
     private val daysContainer: ViewGroup
@@ -45,22 +51,35 @@ class CalendarView @JvmOverloads constructor(
 
     private lateinit var displayDatesRange: DisplayDatesRange
     private lateinit var minMaxDatesRange: MinMaxDatesRange
-    private var selectedDatesHolder = SelectedDatesHolder()
 
     private val calendarItemsGenerator = CalendarItemsGenerator()
 
+    private var dateSelectionStrategy: DateSelectionStrategy = NoDateSelectionStrategy()
+
+    private var selectionMode: SelectionMode = SelectionMode.NON
+        set(value) {
+            field = value
+
+            dateSelectionStrategy = when (field) {
+                SelectionMode.NON -> NoDateSelectionStrategy()
+                SelectionMode.SINGLE -> SingleDateSelectionStrategy(calendarAdapter)
+                SelectionMode.MULTIPLE -> MultipleDateSelectionStrategy(calendarAdapter)
+                SelectionMode.RANGE -> RangeDateSelectionStrategy()
+            }
+        }
+
     init {
-        Log.d("CalendarView", "setUp")
         LayoutInflater.from(context).inflate(R.layout.view_calendar, this, true)
 
         daysContainer = findViewById(R.id.days_container)
         recyclerView = findViewById(R.id.recycler_view)
 
-        calendarAdapter = CalendarAdapter { date, adapterPosition ->
-            Log.d("Debug: ", "Date clicked: $date")
-            selectedDatesHolder.selectedDates.add(date)
-            recyclerView.adapter.notifyItemChanged(adapterPosition)
-        }
+        calendarAdapter = CalendarAdapter(
+            dateInfoProvider = this,
+            onDateClickHandler = { localDate, position ->
+                dateSelectionStrategy.onDateSelected(localDate, position)
+            }
+        )
 
         setupRecyclerView(recyclerView)
         setupDaysContainer(daysContainer)
@@ -88,7 +107,6 @@ class CalendarView @JvmOverloads constructor(
             )
 
             this.addItemDecoration(GridDividerItemDecoration())
-            this.addItemDecoration(ItemSelectionDecoration(selectedDatesHolder.selectedDates))
 
             val calendarScrollListener = CalendarScrollListener(
                 generatePrevItems = Runnable { generatePrevMonthsItems() },
@@ -117,7 +135,12 @@ class CalendarView @JvmOverloads constructor(
         }
     }
 
-    fun setUp(initialDate: Date = Date(), minDate: Date? = null, maxDate: Date? = null) {
+    fun setUp(
+        initialDate: Date = Date(),
+        minDate: Date? = null,
+        maxDate: Date? = null,
+        selectionMode: SelectionMode = SelectionMode.NON
+    ) {
         when {
             minDate == null && maxDate == null -> {
                 val dateFrom = SimpleLocalDate(initialDate).minusMonths(MONTHS_PER_PAGE)
@@ -190,6 +213,9 @@ class CalendarView @JvmOverloads constructor(
             recyclerView.scrollToPosition(initialMonthPosition)
         }
 
+        // set up selection mode
+        this.selectionMode = selectionMode
+
         calendarInitialized = true
     }
 
@@ -227,24 +253,42 @@ class CalendarView @JvmOverloads constructor(
         displayDatesRange = displayDatesRange.copy(dateTo = toDate)
     }
 
+    override fun isDateSelected(localDate: SimpleLocalDate): Boolean {
+        return dateSelectionStrategy.isDateSelected(localDate)
+    }
+
+    override fun isDateEnabled(localDate: SimpleLocalDate): Boolean {
+        val minDate = minMaxDatesRange.minDate
+        val maxDate = minMaxDatesRange.maxDate
+
+        return when {
+            minDate == null && maxDate == null -> true
+            minDate == null && maxDate != null -> localDate <= maxDate
+            minDate != null && maxDate == null -> localDate >= minDate
+            minDate != null && maxDate != null -> localDate >= minDate && localDate <= maxDate
+            else -> false
+        }
+    }
+
     override fun onSaveInstanceState(): Parcelable {
         val superState = super.onSaveInstanceState()
 
         return Bundle().apply {
+            putString(BUNDLE_SELECTION_MODE, selectionMode.name)
             putParcelable(BUNDLE_SUPER_STATE, superState)
             putParcelable(BUNDLE_DISPLAY_DATE_RANGE, displayDatesRange)
             putParcelable(BUNDLE_LIMIT_DATE_RANGE, minMaxDatesRange)
-            putLongArray(BUNDLE_SELECTED_DATES, selectedDatesHolder.mapSelectedDatesToLongArray())
+            dateSelectionStrategy.saveSelectionState(this)
         }
     }
 
     override fun onRestoreInstanceState(state: Parcelable?) {
         if (state is Bundle) {
+            val name = state.getString(BUNDLE_SELECTION_MODE, SelectionMode.NON.name)
+            selectionMode = SelectionMode.valueOf(name)
             displayDatesRange = state.getParcelable(BUNDLE_DISPLAY_DATE_RANGE)
             minMaxDatesRange = state.getParcelable(BUNDLE_LIMIT_DATE_RANGE)
-
-            val selectedDatesLongArray = state.getLongArray(BUNDLE_SELECTED_DATES)
-            selectedDatesHolder.restoreSelectedDatesFromLongArray(selectedDatesLongArray)
+            dateSelectionStrategy.restoreSelectionState(state)
 
             val superState: Parcelable? = state.getParcelable(BUNDLE_SUPER_STATE)
             super.onRestoreInstanceState(superState)
