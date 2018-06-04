@@ -1,8 +1,7 @@
 package ru.cleverpumpkin.calendar
 
-import org.joda.time.LocalDate
 import ru.cleverpumpkin.calendar.item.CalendarItem
-import ru.cleverpumpkin.calendar.item.DayItem
+import ru.cleverpumpkin.calendar.item.DateItem
 import ru.cleverpumpkin.calendar.item.EmptyItem
 import ru.cleverpumpkin.calendar.item.MonthItem
 import ru.cleverpumpkin.calendar.utils.monthsBetweenTwoDates
@@ -49,7 +48,7 @@ class CalendarItemsGenerator {
             val year = calendar.get(Calendar.YEAR)
             val month = calendar.get(Calendar.MONTH)
 
-            val monthItem = MonthItem(LocalDate.fromDateFields(calendar.time))
+            val monthItem = MonthItem(SimpleLocalDate(calendar.time))
             val itemsForMonth = generateCalendarItemsForMonth(year, month)
 
             calendarItems += monthItem
@@ -88,8 +87,8 @@ class CalendarItemsGenerator {
 
         // Add day items
         repeat(daysInMonth) {
-            val date = LocalDate.fromDateFields(calendar.time)
-            itemsForMonth += DayItem(date)
+            val date = SimpleLocalDate(calendar.time)
+            itemsForMonth += DateItem(date)
             calendar.add(Calendar.DAY_OF_MONTH, 1)
         }
 
