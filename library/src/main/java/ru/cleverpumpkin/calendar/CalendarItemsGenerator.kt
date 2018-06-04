@@ -5,6 +5,7 @@ import ru.cleverpumpkin.calendar.item.CalendarItem
 import ru.cleverpumpkin.calendar.item.DayItem
 import ru.cleverpumpkin.calendar.item.EmptyItem
 import ru.cleverpumpkin.calendar.item.MonthItem
+import ru.cleverpumpkin.calendar.utils.monthsBetweenTwoDates
 import java.util.*
 
 class CalendarItemsGenerator {
@@ -37,12 +38,12 @@ class CalendarItemsGenerator {
         }
     }
 
-    fun generateCalendarItems(fromDate: Date, toDate: Date): List<CalendarItem> {
+    fun generateCalendarItems(dateFrom: Date, dateTo: Date): List<CalendarItem> {
         val calendar = Calendar.getInstance()
-        calendar.time = fromDate
+        calendar.time = dateFrom
 
         val calendarItems = mutableListOf<CalendarItem>()
-        val monthsBetween = monthsBetweenTwoDates(startDate = fromDate, endDate = toDate)
+        val monthsBetween = monthsBetweenTwoDates(startDate = dateFrom, endDate = dateTo)
 
         repeat(monthsBetween.inc()) {
             val year = calendar.get(Calendar.YEAR)

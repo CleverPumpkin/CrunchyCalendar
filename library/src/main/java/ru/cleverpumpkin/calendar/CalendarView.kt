@@ -1,7 +1,7 @@
 package ru.cleverpumpkin.calendar
 
 import android.content.Context
-import android.os.Parcel
+import android.os.Bundle
 import android.os.Parcelable
 import android.support.annotation.AttrRes
 import android.support.v7.widget.GridLayoutManager
@@ -14,6 +14,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import org.joda.time.LocalDate
 import ru.cleverpumpkin.calendar.decorations.GridDividerItemDecoration
+import ru.cleverpumpkin.calendar.decorations.ItemSelectionDecoration
 import java.lang.IllegalStateException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -26,25 +27,26 @@ class CalendarView @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
     companion object {
-        private const val UNDEFINED_VALUE = -1L
-
         private const val DAY_OF_WEEK_FORMAT = "EE"
         private const val DAYS_IN_WEEK = 7
         private const val MAX_RECYCLED_DAY_VIEWS = 90
         private const val MONTHS_PER_PAGE = 6
+
+        private const val BUNDLE_SUPER_STATE = "ru.cleverpumpkin.calendar.super_state"
+        private const val BUNDLE_DISPLAY_DATE_RANGE = "ru.cleverpumpkin.calendar.display_date_range"
+        private const val BUNDLE_LIMIT_DATE_RANGE = "ru.cleverpumpkin.calendar.limit_date_range"
+        private const val BUNDLE_SELECTED_DATES = "ru.cleverpumpkin.calendar.selected_items"
     }
 
     private val daysContainer: ViewGroup
     private val recyclerView: RecyclerView
 
-    private val calendarAdapter = CalendarAdapter()
+    private val calendarAdapter: CalendarAdapter
     private var calendarInitialized = false
 
-    private lateinit var loadedFrom: LocalDate
-    private lateinit var loadedTo: LocalDate
-
-    private var minDate: LocalDate? = null
-    private var maxDate: LocalDate? = null
+    private lateinit var displayDateRange: DisplayDateRange
+    private lateinit var limitDateRange: LimitDateRange
+    private var selectedDates = SelectedDates()
 
     private val calendarItemsGenerator = CalendarItemsGenerator()
 
@@ -54,6 +56,12 @@ class CalendarView @JvmOverloads constructor(
 
         daysContainer = findViewById(R.id.days_container)
         recyclerView = findViewById(R.id.recycler_view)
+
+        calendarAdapter = CalendarAdapter { date, adapterPosition ->
+            Log.d("Debug: ", "Date clicked: $date")
+            selectedDates.dates.add(date)
+            recyclerView.adapter.notifyItemChanged(adapterPosition)
+        }
 
         setupRecyclerView(recyclerView)
         setupDaysContainer(daysContainer)
@@ -81,6 +89,7 @@ class CalendarView @JvmOverloads constructor(
             )
 
             this.addItemDecoration(GridDividerItemDecoration())
+            this.addItemDecoration(ItemSelectionDecoration(selectedDates.dates))
 
             val calendarScrollListener = CalendarScrollListener(
                 onTheTop = Runnable { generatePrevMonthsItems() },
@@ -113,77 +122,70 @@ class CalendarView @JvmOverloads constructor(
 
         when {
             minDate == null && maxDate == null -> {
-                val loadedFrom = LocalDate.fromDateFields(initialDate)
+                val dateFrom = LocalDate.fromDateFields(initialDate)
                     .minusMonths(MONTHS_PER_PAGE)
 
-                val loadedTo = LocalDate.fromDateFields(initialDate)
+                val dateTo = LocalDate.fromDateFields(initialDate)
                     .plusMonths(MONTHS_PER_PAGE)
 
                 val calendarItems = calendarItemsGenerator.generateCalendarItems(
-                    fromDate = loadedFrom.toDate(),
-                    toDate = loadedTo.toDate()
+                    dateFrom = dateFrom.toDate(),
+                    dateTo = dateTo.toDate()
                 )
 
                 calendarAdapter.setItems(calendarItems)
 
-                this.loadedFrom = loadedFrom
-                this.loadedTo = loadedTo
+                displayDateRange = DisplayDateRange(dateFrom = dateFrom, dateTo = dateTo)
+                limitDateRange = LimitDateRange(minDate = null, maxDate = null)
             }
 
             minDate != null && maxDate != null -> {
-                val loadedFrom = LocalDate.fromDateFields(minDate)
-                val loadedTo = LocalDate.fromDateFields(maxDate)
+                val dateFrom = LocalDate.fromDateFields(minDate)
+                val dateTo = LocalDate.fromDateFields(maxDate)
 
                 val calendarItems = calendarItemsGenerator.generateCalendarItems(
-                    fromDate = loadedFrom.toDate(),
-                    toDate = loadedTo.toDate()
+                    dateFrom = dateFrom.toDate(),
+                    dateTo = dateTo.toDate()
                 )
 
                 calendarAdapter.setItems(calendarItems)
 
-                this.minDate = loadedFrom
-                this.maxDate = loadedTo
-
-                this.loadedFrom = loadedFrom
-                this.loadedTo = loadedTo
+                displayDateRange = DisplayDateRange(dateFrom = dateFrom, dateTo = dateTo)
+                limitDateRange = LimitDateRange(minDate = dateFrom, maxDate = dateTo)
             }
 
             minDate != null && maxDate == null -> {
-                val loadedFrom = LocalDate.fromDateFields(minDate)
+                val dateFrom = LocalDate.fromDateFields(minDate)
 
-                val loadedTo = LocalDate.fromDateFields(minDate)
+                val dateTo = LocalDate.fromDateFields(minDate)
                     .plusMonths(MONTHS_PER_PAGE)
 
                 val calendarItems = calendarItemsGenerator.generateCalendarItems(
-                    fromDate = loadedFrom.toDate(),
-                    toDate = loadedTo.toDate()
+                    dateFrom = dateFrom.toDate(),
+                    dateTo = dateTo.toDate()
                 )
 
                 calendarAdapter.setItems(calendarItems)
 
-                this.minDate = loadedFrom
-
-                this.loadedFrom = loadedFrom
-                this.loadedTo = loadedTo
+                displayDateRange = DisplayDateRange(dateFrom = dateFrom, dateTo = dateTo)
+                limitDateRange = LimitDateRange(minDate = dateFrom, maxDate = null)
             }
 
             minDate == null && maxDate != null -> {
-                val loadedFrom = LocalDate.fromDateFields(maxDate)
+                val dateFrom = LocalDate.fromDateFields(maxDate)
                     .minusMonths(MONTHS_PER_PAGE)
 
-                val loadedTo = LocalDate.fromDateFields(maxDate)
+                val dateTo = LocalDate.fromDateFields(maxDate)
 
                 val calendarItems = calendarItemsGenerator.generateCalendarItems(
-                    fromDate = loadedFrom.toDate(),
-                    toDate = loadedTo.toDate()
+                    dateFrom = dateFrom.toDate(),
+                    dateTo = dateTo.toDate()
                 )
 
                 calendarAdapter.setItems(calendarItems)
 
-                this.maxDate = loadedTo
-
-                this.loadedFrom = loadedFrom
-                this.loadedTo = loadedTo
+                displayDateRange = DisplayDateRange(dateFrom = dateFrom, dateTo = dateTo)
+                limitDateRange = LimitDateRange(minDate = null, maxDate = dateTo)
             }
         }
 
@@ -201,115 +203,73 @@ class CalendarView @JvmOverloads constructor(
     }
 
     private fun generatePrevMonthsItems() {
-        if (this.minDate != null) {
+        if (this.limitDateRange.minDate != null) {
             return
         }
 
-        val loadedTo = this.loadedFrom.minusMonths(1)
+        val toDate = displayDateRange.dateFrom.minusMonths(1)
 
-        val loadedFrom = LocalDate.fromDateFields(loadedTo.toDate())
+        val fromDate = LocalDate.fromDateFields(toDate.toDate())
             .minusMonths(MONTHS_PER_PAGE)
 
         val calendarItems = calendarItemsGenerator.generateCalendarItems(
-            fromDate = loadedFrom.toDate(),
-            toDate = loadedTo.toDate()
+            dateFrom = fromDate.toDate(),
+            dateTo = toDate.toDate()
         )
 
         calendarAdapter.addPrevCalendarItems(calendarItems)
-        this.loadedFrom = loadedFrom
+        displayDateRange = displayDateRange.copy(dateFrom = fromDate)
     }
 
     private fun generateNextMonthsItems() {
-        if (this.maxDate != null) {
+        if (this.limitDateRange.maxDate != null) {
             return
         }
 
-        val loadedFrom = this.loadedTo.plusMonths(1)
+        val fromDate = displayDateRange.dateTo.plusMonths(1)
 
-        val loadedTo = LocalDate.fromDateFields(loadedFrom.toDate())
+        val toDate = LocalDate.fromDateFields(fromDate.toDate())
             .plusMonths(MONTHS_PER_PAGE)
 
         val calendarItems = calendarItemsGenerator.generateCalendarItems(
-            fromDate = loadedFrom.toDate(),
-            toDate = loadedTo.toDate()
+            dateFrom = fromDate.toDate(),
+            dateTo = toDate.toDate()
         )
 
         calendarAdapter.addNextCalendarItems(calendarItems)
-        this.loadedTo = loadedTo
+        displayDateRange = displayDateRange.copy(dateTo = toDate)
     }
 
     override fun onSaveInstanceState(): Parcelable {
         val superState = super.onSaveInstanceState()
 
-        val savedState = SavedState(superState)
-        savedState.loadedFrom = loadedFrom.toDate().time
-        savedState.loadedTo = loadedTo.toDate().time
-        savedState.minDate = minDate?.toDate()?.time ?: UNDEFINED_VALUE
-        savedState.maxDate = maxDate?.toDate()?.time ?: UNDEFINED_VALUE
-
-        return savedState
+        return Bundle().apply {
+            putParcelable(BUNDLE_SUPER_STATE, superState)
+            putParcelable(BUNDLE_DISPLAY_DATE_RANGE, displayDateRange)
+            putParcelable(BUNDLE_LIMIT_DATE_RANGE, limitDateRange)
+            putLongArray(BUNDLE_SELECTED_DATES, selectedDates.mapSelectedDatesToLongArray())
+        }
     }
 
     override fun onRestoreInstanceState(state: Parcelable?) {
-        val savedState = state as SavedState
-        super.onRestoreInstanceState(savedState.superState)
+        if (state is Bundle) {
+            displayDateRange = state.getParcelable(BUNDLE_DISPLAY_DATE_RANGE)
+            limitDateRange = state.getParcelable(BUNDLE_LIMIT_DATE_RANGE)
 
-        if (calendarInitialized) {
-            return
-        }
+            val selectedDatesLongArray = state.getLongArray(BUNDLE_SELECTED_DATES)
+            selectedDates.restoreSelectedDatesFromLongArray(selectedDatesLongArray)
 
-        loadedFrom = LocalDate(savedState.loadedFrom)
-        loadedTo = LocalDate(savedState.loadedTo)
-
-        minDate = if (savedState.minDate == UNDEFINED_VALUE) {
-            null
+            val superState: Parcelable? = state.getParcelable(BUNDLE_SUPER_STATE)
+            super.onRestoreInstanceState(superState)
         } else {
-            LocalDate(savedState.minDate)
-        }
-
-        maxDate = if (savedState.maxDate == UNDEFINED_VALUE) {
-            null
-        } else {
-            LocalDate(savedState.maxDate)
+            super.onRestoreInstanceState(state)
         }
 
         val calendarItems = calendarItemsGenerator.generateCalendarItems(
-            fromDate = loadedFrom.toDate(),
-            toDate = loadedTo.toDate()
+            dateFrom = displayDateRange.dateFrom.toDate(),
+            dateTo = displayDateRange.dateTo.toDate()
         )
 
         calendarAdapter.setItems(calendarItems)
-    }
-
-    class SavedState : BaseSavedState {
-        var loadedFrom: Long = 0
-        var loadedTo: Long = 0
-        var minDate: Long = 0
-        var maxDate: Long = 0
-
-        constructor(superState: Parcelable) : super(superState)
-
-        private constructor(inParcel: Parcel) : super(inParcel) {
-            loadedFrom = inParcel.readLong()
-            loadedTo = inParcel.readLong()
-            minDate = inParcel.readLong()
-            maxDate = inParcel.readLong()
-        }
-
-        override fun writeToParcel(out: Parcel, flags: Int) {
-            super.writeToParcel(out, flags)
-            out.writeLong(loadedFrom)
-            out.writeLong(loadedTo)
-            out.writeLong(minDate)
-            out.writeLong(maxDate)
-        }
-
-        @Suppress("PropertyName")
-        val CREATOR: Parcelable.Creator<SavedState> = object : Parcelable.Creator<SavedState> {
-
-            override fun createFromParcel(`in`: Parcel) = SavedState(`in`)
-
-            override fun newArray(size: Int) = arrayOfNulls<SavedState>(size)
-        }
     }
 }

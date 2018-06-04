@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
             val calendarView = findViewById<CalendarView>(R.id.calendar_view)
 
             val calendar = Calendar.getInstance()
-            calendar.set(2018, 5, 1)
+            calendar.set(2018, 7, 1)
             val minDate = calendar.time
 
             calendar.set(2018, 7, 1)
