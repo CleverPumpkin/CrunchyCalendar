@@ -1,8 +1,8 @@
 package ru.cleverpumpkin.calendar.selection
 
 import android.os.Bundle
-import ru.cleverpumpkin.calendar.adapter.CalendarAdapter
 import ru.cleverpumpkin.calendar.SimpleLocalDate
+import ru.cleverpumpkin.calendar.adapter.CalendarAdapter
 
 class MultipleDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSelectionStrategy {
 
@@ -20,11 +20,15 @@ class MultipleDateSelectionStrategy(private val adapter: CalendarAdapter) : Date
         adapter.notifyItemChanged(datePosition)
     }
 
+    override fun getSelectedDates(): List<SimpleLocalDate> {
+        return selectedDates.toList()
+    }
+
     override fun isDateSelected(date: SimpleLocalDate): Boolean {
         return selectedDates.contains(date)
     }
 
-    override fun saveSelectionState(bundle: Bundle) {
+    override fun saveSelectedDates(bundle: Bundle) {
         val longArray = LongArray(selectedDates.size)
 
         selectedDates.forEachIndexed { i, selectedDate ->
@@ -34,7 +38,7 @@ class MultipleDateSelectionStrategy(private val adapter: CalendarAdapter) : Date
         bundle.putLongArray(BUNDLE_SELECTED_DATES, longArray)
     }
 
-    override fun restoreSelectionState(bundle: Bundle) {
+    override fun restoreSelectedDates(bundle: Bundle) {
         val selectedDatesAsLongArray = bundle.getLongArray(BUNDLE_SELECTED_DATES)
         selectedDatesAsLongArray.mapTo(selectedDates) { SimpleLocalDate(it) }
     }

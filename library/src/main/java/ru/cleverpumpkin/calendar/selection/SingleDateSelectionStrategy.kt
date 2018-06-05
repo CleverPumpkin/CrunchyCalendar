@@ -1,8 +1,8 @@
 package ru.cleverpumpkin.calendar.selection
 
 import android.os.Bundle
-import ru.cleverpumpkin.calendar.adapter.CalendarAdapter
 import ru.cleverpumpkin.calendar.SimpleLocalDate
+import ru.cleverpumpkin.calendar.adapter.CalendarAdapter
 
 class SingleDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSelectionStrategy {
 
@@ -27,15 +27,25 @@ class SingleDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSe
         adapter.notifyItemChanged(datePosition)
     }
 
+    override fun getSelectedDates(): List<SimpleLocalDate> {
+        val selectedDate = selectedDate
+
+        return if (selectedDate != null) {
+            listOf(selectedDate)
+        } else {
+            emptyList()
+        }
+    }
+
     override fun isDateSelected(date: SimpleLocalDate): Boolean {
         return selectedDate == date
     }
 
-    override fun saveSelectionState(bundle: Bundle) {
+    override fun saveSelectedDates(bundle: Bundle) {
         bundle.putLong(BUNDLE_SELECTED_DATE, selectedDate?.toMillis() ?: UNDEFINED_DATE)
     }
 
-    override fun restoreSelectionState(bundle: Bundle) {
+    override fun restoreSelectedDates(bundle: Bundle) {
         val dateInMillis = bundle.getLong(BUNDLE_SELECTED_DATE, UNDEFINED_DATE)
         if (dateInMillis != UNDEFINED_DATE) {
             selectedDate = SimpleLocalDate(dateInMillis)

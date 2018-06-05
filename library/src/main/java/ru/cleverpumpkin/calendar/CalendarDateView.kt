@@ -9,7 +9,7 @@ import android.util.AttributeSet
 import android.view.View
 import ru.cleverpumpkin.calendar.utils.spToPix
 
-class CalendarDayView @JvmOverloads constructor(
+class CalendarDateView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     @AttrRes defStyleAttr: Int = 0

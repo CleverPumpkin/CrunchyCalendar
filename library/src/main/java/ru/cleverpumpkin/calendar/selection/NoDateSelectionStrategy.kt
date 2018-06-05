@@ -9,15 +9,19 @@ class NoDateSelectionStrategy : DateSelectionStrategy {
         // do nothing
     }
 
+    override fun getSelectedDates(): List<SimpleLocalDate> {
+        return emptyList()
+    }
+
     override fun isDateSelected(date: SimpleLocalDate): Boolean {
         return false
     }
 
-    override fun saveSelectionState(bundle: Bundle) {
+    override fun saveSelectedDates(bundle: Bundle) {
         // do nothing
     }
 
-    override fun restoreSelectionState(bundle: Bundle) {
+    override fun restoreSelectedDates(bundle: Bundle) {
         // do nothing
     }
 }
