@@ -33,8 +33,8 @@ data class NullableDatesRange(
     )
 
     override fun writeToParcel(dest: Parcel, flags: Int) {
-        dest.writeLong(dateFrom?.toDate()?.time ?: UNDEFINED_DATE)
-        dest.writeLong(dateTo?.toDate()?.time ?: UNDEFINED_DATE)
+        dest.writeLong(dateFrom?.toMillis() ?: UNDEFINED_DATE)
+        dest.writeLong(dateTo?.toMillis() ?: UNDEFINED_DATE)
     }
 
     override fun describeContents() = 0

@@ -32,7 +32,7 @@ class SingleDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSe
     }
 
     override fun saveSelectionState(bundle: Bundle) {
-        bundle.putLong(BUNDLE_SELECTED_DATE, selectedDate?.toDate()?.time ?: UNDEFINED_DATE)
+        bundle.putLong(BUNDLE_SELECTED_DATE, selectedDate?.toMillis() ?: UNDEFINED_DATE)
     }
 
     override fun restoreSelectionState(bundle: Bundle) {

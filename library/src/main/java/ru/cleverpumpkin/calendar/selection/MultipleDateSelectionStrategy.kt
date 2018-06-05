@@ -28,7 +28,7 @@ class MultipleDateSelectionStrategy(private val adapter: CalendarAdapter) : Date
         val longArray = LongArray(selectedDates.size)
 
         selectedDates.forEachIndexed { i, selectedDate ->
-            longArray[i] = selectedDate.toDate().time
+            longArray[i] = selectedDate.toMillis()
         }
 
         bundle.putLongArray(BUNDLE_SELECTED_DATES, longArray)

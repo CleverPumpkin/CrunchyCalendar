@@ -49,15 +49,25 @@ class SimpleLocalDate(date: Date) : Comparable<SimpleLocalDate> {
         return result
     }
 
-    fun toDate(): Date = calendar.time
-
     fun minusMonths(monthsCount: Int): SimpleLocalDate {
-        calendar.add(Calendar.MONTH, monthsCount.unaryMinus())
-        return SimpleLocalDate(calendar.time)
+        val tmpCalendar = Calendar.getInstance().apply {
+            time = calendar.time
+            add(Calendar.MONTH, monthsCount.unaryMinus())
+        }
+
+        return SimpleLocalDate(tmpCalendar.time)
     }
 
     fun plusMonths(monthsCount: Int): SimpleLocalDate {
-        calendar.add(Calendar.MONTH, monthsCount)
-        return SimpleLocalDate(calendar.time)
+        val tmpCalendar = Calendar.getInstance().apply {
+            time = calendar.time
+            add(Calendar.MONTH, monthsCount)
+        }
+
+        return SimpleLocalDate(tmpCalendar.time)
     }
+
+    fun toDate(): Date = calendar.time
+
+    fun toMillis(): Long = calendar.timeInMillis
 }
