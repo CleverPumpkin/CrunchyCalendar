@@ -1,4 +1,4 @@
-package ru.cleverpumpkin.calendar.item
+package ru.cleverpumpkin.calendar.adapter.item
 
 import ru.cleverpumpkin.calendar.SimpleLocalDate
 

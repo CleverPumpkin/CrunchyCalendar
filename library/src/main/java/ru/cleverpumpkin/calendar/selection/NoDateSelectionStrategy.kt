@@ -5,7 +5,7 @@ import ru.cleverpumpkin.calendar.SimpleLocalDate
 
 class NoDateSelectionStrategy : DateSelectionStrategy {
 
-    override fun onDateSelected(date: SimpleLocalDate, position: Int) {
+    override fun onDateSelected(date: SimpleLocalDate, datePosition: Int) {
         // do nothing
     }
 

@@ -1,15 +1,20 @@
-package ru.cleverpumpkin.calendar
+package ru.cleverpumpkin.calendar.adapter
 
 import android.graphics.Color
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import ru.cleverpumpkin.calendar.item.CalendarItem
-import ru.cleverpumpkin.calendar.item.DateItem
-import ru.cleverpumpkin.calendar.item.EmptyItem
-import ru.cleverpumpkin.calendar.item.MonthItem
+import ru.cleverpumpkin.calendar.CalendarDayView
+import ru.cleverpumpkin.calendar.DateInfoProvider
+import ru.cleverpumpkin.calendar.R
+import ru.cleverpumpkin.calendar.SimpleLocalDate
+import ru.cleverpumpkin.calendar.adapter.item.CalendarItem
+import ru.cleverpumpkin.calendar.adapter.item.DateItem
+import ru.cleverpumpkin.calendar.adapter.item.EmptyItem
+import ru.cleverpumpkin.calendar.adapter.item.MonthItem
 import java.lang.IllegalStateException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -42,8 +47,10 @@ class CalendarAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
         DAY_VIEW_TYPE -> {
+            Log.d("Holder", "onCreateViewHolder")
             val dayView = CalendarDayView(parent.context)
-            val dayItemViewHolder = DateItemViewHolder(dayView)
+            val dayItemViewHolder =
+                DateItemViewHolder(dayView)
 
             dayItemViewHolder.dayView.setOnClickListener {
                 val adapterPosition = dayItemViewHolder.adapterPosition
@@ -76,7 +83,6 @@ class CalendarAdapter(
             DAY_VIEW_TYPE -> {
                 val dateItem = calendarItems[position] as DateItem
                 val dateItemViewHolder = holder as DateItemViewHolder
-
                 dateItemViewHolder.dayView.text = dayFormatter.format(dateItem.localDate.toDate())
 
                 if (dateInfoProvider.isDateEnabled(dateItem.localDate)) {

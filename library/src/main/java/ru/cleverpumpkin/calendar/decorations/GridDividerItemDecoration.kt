@@ -7,7 +7,7 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.support.annotation.ColorInt
 import android.support.v7.widget.RecyclerView
-import ru.cleverpumpkin.calendar.CalendarAdapter
+import ru.cleverpumpkin.calendar.adapter.CalendarAdapter
 
 class GridDividerItemDecoration(
     @ColorInt dividerColor: Int = Color.GRAY
