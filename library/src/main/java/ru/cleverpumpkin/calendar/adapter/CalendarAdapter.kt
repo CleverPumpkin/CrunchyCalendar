@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import ru.cleverpumpkin.calendar.CalendarDayView
+import ru.cleverpumpkin.calendar.CalendarDateView
 import ru.cleverpumpkin.calendar.DateInfoProvider
 import ru.cleverpumpkin.calendar.R
 import ru.cleverpumpkin.calendar.SimpleLocalDate
@@ -47,10 +47,8 @@ class CalendarAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
         DAY_VIEW_TYPE -> {
-            Log.d("Holder", "onCreateViewHolder")
-            val dayView = CalendarDayView(parent.context)
-            val dayItemViewHolder =
-                DateItemViewHolder(dayView)
+            val dayView = CalendarDateView(parent.context)
+            val dayItemViewHolder = DateItemViewHolder(dayView)
 
             dayItemViewHolder.dayView.setOnClickListener {
                 val adapterPosition = dayItemViewHolder.adapterPosition
@@ -108,7 +106,10 @@ class CalendarAdapter(
 
     override fun getItemCount() = calendarItems.size
 
-    fun findMonthItemPosition(year: Int, month: Int): Int {
+    fun findMonthItemPosition(localDate: SimpleLocalDate): Int {
+        val year = localDate.year
+        val month = localDate.month
+
         return calendarItems.indexOfFirst { item ->
             if (item is MonthItem) {
                 if (item.localDate.year == year && item.localDate.month == month) {
@@ -132,6 +133,22 @@ class CalendarAdapter(
         }
     }
 
+    fun getDateItemsRange(dateFrom: SimpleLocalDate,
+        dateTo: SimpleLocalDate
+    ): List<SimpleLocalDate> {
+
+        return calendarItems
+            .filterIsInstance<DateItem>()
+            .filter { dateItem ->
+                if (dateItem.localDate in dateFrom..dateTo) {
+                    return@filter true
+                } else {
+                    false
+                }
+            }
+            .map { it.localDate }
+    }
+
     fun setItems(calendarItems: List<CalendarItem>) {
         this.calendarItems.clear()
         this.calendarItems.addAll(calendarItems)
@@ -149,7 +166,7 @@ class CalendarAdapter(
     }
 
 
-    class DateItemViewHolder(val dayView: CalendarDayView) : RecyclerView.ViewHolder(dayView)
+    class DateItemViewHolder(val dayView: CalendarDateView) : RecyclerView.ViewHolder(dayView)
 
     class MonthItemViewHolder(val textView: TextView) : RecyclerView.ViewHolder(textView)
 

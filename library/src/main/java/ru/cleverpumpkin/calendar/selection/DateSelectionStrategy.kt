@@ -9,7 +9,9 @@ interface DateSelectionStrategy {
 
     fun isDateSelected(date: SimpleLocalDate): Boolean
 
-    fun saveSelectionState(bundle: Bundle)
+    fun getSelectedDates(): List<SimpleLocalDate>
 
-    fun restoreSelectionState(bundle: Bundle)
+    fun saveSelectedDates(bundle: Bundle)
+
+    fun restoreSelectedDates(bundle: Bundle)
 }

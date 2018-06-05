@@ -2,7 +2,9 @@ package ru.cleverpumpkin.calendar
 
 interface DateInfoProvider {
 
-    fun isDateSelected(localDate: SimpleLocalDate): Boolean
+    fun isToday(date: SimpleLocalDate): Boolean
 
-    fun isDateEnabled(localDate: SimpleLocalDate): Boolean
+    fun isDateSelected(date: SimpleLocalDate): Boolean
+
+    fun isDateEnabled(date: SimpleLocalDate): Boolean
 }

@@ -1,9 +1,9 @@
 package ru.cleverpumpkin.calendar.selection
 
 import android.os.Bundle
-import ru.cleverpumpkin.calendar.adapter.CalendarAdapter
 import ru.cleverpumpkin.calendar.NullableDatesRange
 import ru.cleverpumpkin.calendar.SimpleLocalDate
+import ru.cleverpumpkin.calendar.adapter.CalendarAdapter
 
 class RangeDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSelectionStrategy {
 
@@ -46,6 +46,17 @@ class RangeDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSel
         }
     }
 
+    override fun getSelectedDates(): List<SimpleLocalDate> {
+        val dateFrom = datesRange.dateFrom
+        val dateTo = datesRange.dateTo
+
+        return if (dateFrom != null && dateTo != null) {
+            adapter.getDateItemsRange(dateFrom = dateFrom, dateTo = dateTo)
+        } else {
+            emptyList()
+        }
+    }
+
     override fun isDateSelected(date: SimpleLocalDate): Boolean {
         val dateFrom = datesRange.dateFrom
         val dateTo = datesRange.dateTo
@@ -57,11 +68,11 @@ class RangeDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSel
         }
     }
 
-    override fun saveSelectionState(bundle: Bundle) {
+    override fun saveSelectedDates(bundle: Bundle) {
         bundle.putParcelable(BUNDLE_DATES_RANGE, datesRange)
     }
 
-    override fun restoreSelectionState(bundle: Bundle) {
+    override fun restoreSelectedDates(bundle: Bundle) {
         datesRange = bundle.getParcelable(BUNDLE_DATES_RANGE)
     }
 }
