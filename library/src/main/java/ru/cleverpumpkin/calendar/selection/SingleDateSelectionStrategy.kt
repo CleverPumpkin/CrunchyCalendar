@@ -1,7 +1,7 @@
 package ru.cleverpumpkin.calendar.selection
 
 import android.os.Bundle
-import ru.cleverpumpkin.calendar.CalendarAdapter
+import ru.cleverpumpkin.calendar.adapter.CalendarAdapter
 import ru.cleverpumpkin.calendar.SimpleLocalDate
 
 class SingleDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSelectionStrategy {
@@ -13,7 +13,7 @@ class SingleDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSe
 
     private var selectedDate: SimpleLocalDate? = null
 
-    override fun onDateSelected(date: SimpleLocalDate, position: Int) {
+    override fun onDateSelected(date: SimpleLocalDate, datePosition: Int) {
         val previousSelectedDate = selectedDate
 
         if (previousSelectedDate != null) {
@@ -24,7 +24,7 @@ class SingleDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSe
         }
 
         selectedDate = date
-        adapter.notifyItemChanged(position)
+        adapter.notifyItemChanged(datePosition)
     }
 
     override fun isDateSelected(date: SimpleLocalDate): Boolean {

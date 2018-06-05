@@ -5,7 +5,7 @@ import ru.cleverpumpkin.calendar.SimpleLocalDate
 
 interface DateSelectionStrategy {
 
-    fun onDateSelected(date: SimpleLocalDate, position: Int)
+    fun onDateSelected(date: SimpleLocalDate, datePosition: Int)
 
     fun isDateSelected(date: SimpleLocalDate): Boolean
 

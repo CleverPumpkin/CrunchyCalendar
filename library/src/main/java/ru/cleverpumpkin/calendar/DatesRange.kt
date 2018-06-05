@@ -3,7 +3,7 @@ package ru.cleverpumpkin.calendar
 import android.os.Parcel
 import android.os.Parcelable
 
-data class DisplayDatesRange(
+data class DatesRange(
     val dateFrom: SimpleLocalDate,
     val dateTo: SimpleLocalDate
 ) : Parcelable {
@@ -11,10 +11,10 @@ data class DisplayDatesRange(
     companion object {
 
         @JvmField
-        val CREATOR = object : Parcelable.Creator<DisplayDatesRange> {
-            override fun createFromParcel(parcel: Parcel) = DisplayDatesRange(parcel)
+        val CREATOR = object : Parcelable.Creator<DatesRange> {
+            override fun createFromParcel(parcel: Parcel) = DatesRange(parcel)
 
-            override fun newArray(size: Int) = arrayOfNulls<DisplayDatesRange>(size)
+            override fun newArray(size: Int) = arrayOfNulls<DatesRange>(size)
         }
     }
 
