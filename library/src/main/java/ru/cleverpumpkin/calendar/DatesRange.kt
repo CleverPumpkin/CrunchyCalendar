@@ -24,8 +24,8 @@ data class DatesRange(
     )
 
     override fun writeToParcel(dest: Parcel, flags: Int) {
-        dest.writeLong(dateFrom.toDate().time)
-        dest.writeLong(dateTo.toDate().time)
+        dest.writeLong(dateFrom.toMillis())
+        dest.writeLong(dateTo.toMillis())
     }
 
     override fun describeContents() = 0
