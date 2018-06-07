@@ -8,7 +8,7 @@ import ru.cleverpumpkin.calendar.adapter.CalendarAdapter
 import ru.cleverpumpkin.calendar.adapter.item.DateItem
 
 /**
- * Describe class
+ * TODO Describe class
  */
 abstract class DateItemDecoration : RecyclerView.ItemDecoration() {
 

@@ -20,7 +20,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * Describe class
+ * TODO Describe class
  */
 class CalendarView @JvmOverloads constructor(
     context: Context,
@@ -30,7 +30,7 @@ class CalendarView @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
     /**
-     * Describe interface
+     * TODO Describe interface
      */
     interface OnDateSelectedListener {
 
@@ -40,7 +40,7 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Describe interface
+     * TODO Describe interface
      */
     interface DateInfoProvider {
 
@@ -55,6 +55,7 @@ class CalendarView @JvmOverloads constructor(
         private const val DAY_OF_WEEK_FORMAT = "EE"
         private const val DAYS_IN_WEEK = 7
         private const val MAX_RECYCLED_DAY_VIEWS = 90
+        private const val MAX_RECYCLED_EMPTY_VIEWS = 20
         private const val MONTHS_PER_PAGE = 6
 
         private const val BUNDLE_SUPER_STATE = "ru.cleverpumpkin.calendar.super_state"
@@ -64,7 +65,7 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Describe selection mode
+     * TODO Describe selection mode
      */
     enum class SelectionMode {
         NON,
@@ -76,7 +77,6 @@ class CalendarView @JvmOverloads constructor(
     private val daysContainer: ViewGroup
     private val recyclerView: RecyclerView
     private val calendarAdapter: CalendarAdapter
-    private var calendarInitialized = false
 
     private lateinit var displayDatesRange: DatesRange
     private lateinit var minMaxDatesRange: NullableDatesRange
@@ -115,7 +115,7 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Describe init section
+     * TODO Describe init section
      */
     init {
         LayoutInflater.from(context).inflate(R.layout.view_calendar, this, true)
@@ -164,6 +164,11 @@ class CalendarView @JvmOverloads constructor(
                 CalendarAdapter.DATE_VIEW_TYPE,
                 MAX_RECYCLED_DAY_VIEWS
             )
+
+            recycledViewPool.setMaxRecycledViews(
+                CalendarAdapter.EMPTY_VIEW_TYPE,
+                MAX_RECYCLED_EMPTY_VIEWS
+            )
         }
     }
 
@@ -185,7 +190,7 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Describe setup method
+     * TODO Describe setup method
      */
     fun setup(
         initialDate: CalendarDate = CalendarDate(Date()),
@@ -241,8 +246,8 @@ class CalendarView @JvmOverloads constructor(
         }
 
         this.selectionMode = selectionMode
-        calendarInitialized = true
     }
+
 
     private fun generateCalendarItems(dateFrom: CalendarDate, dateTo: CalendarDate) {
         val calendarItems = calendarItemsGenerator.generateCalendarItems(
@@ -289,7 +294,7 @@ class CalendarView @JvmOverloads constructor(
 
 
     /**
-     * Describe save/restore logic
+     * TODO Describe save/restore logic
      */
     override fun onSaveInstanceState(): Parcelable {
         val superState = super.onSaveInstanceState()
@@ -324,7 +329,7 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Describe class
+     * TODO Describe class
      */
     private inner class DateInfoProviderImpl : DateInfoProvider {
 
@@ -353,7 +358,7 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Describe class
+     * TODO Describe class
      */
     private inner class CalendarScrollListener : RecyclerView.OnScrollListener() {
 
