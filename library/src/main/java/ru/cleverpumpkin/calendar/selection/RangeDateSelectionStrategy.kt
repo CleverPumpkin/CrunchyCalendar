@@ -2,7 +2,7 @@ package ru.cleverpumpkin.calendar.selection
 
 import android.os.Bundle
 import ru.cleverpumpkin.calendar.NullableDatesRange
-import ru.cleverpumpkin.calendar.SimpleLocalDate
+import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.adapter.CalendarAdapter
 
 class RangeDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSelectionStrategy {
@@ -13,7 +13,7 @@ class RangeDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSel
 
     private var datesRange = NullableDatesRange()
 
-    override fun onDateSelected(date: SimpleLocalDate, datePosition: Int) {
+    override fun onDateSelected(date: CalendarDate) {
         val dateFrom = datesRange.dateFrom
         val dateTo = datesRange.dateTo
 
@@ -46,7 +46,7 @@ class RangeDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSel
         }
     }
 
-    override fun getSelectedDates(): List<SimpleLocalDate> {
+    override fun getSelectedDates(): List<CalendarDate> {
         val dateFrom = datesRange.dateFrom
         val dateTo = datesRange.dateTo
 
@@ -57,7 +57,7 @@ class RangeDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSel
         }
     }
 
-    override fun isDateSelected(date: SimpleLocalDate): Boolean {
+    override fun isDateSelected(date: CalendarDate): Boolean {
         val dateFrom = datesRange.dateFrom
         val dateTo = datesRange.dateTo
 

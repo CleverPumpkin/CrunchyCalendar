@@ -17,7 +17,6 @@ class CalendarDateView @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
 
     private companion object {
-
         private const val DEFAULT_TEXT_SIZE = 12.0f
     }
 

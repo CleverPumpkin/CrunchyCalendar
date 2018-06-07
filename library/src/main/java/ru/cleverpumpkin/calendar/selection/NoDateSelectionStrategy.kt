@@ -1,19 +1,19 @@
 package ru.cleverpumpkin.calendar.selection
 
 import android.os.Bundle
-import ru.cleverpumpkin.calendar.SimpleLocalDate
+import ru.cleverpumpkin.calendar.CalendarDate
 
 class NoDateSelectionStrategy : DateSelectionStrategy {
 
-    override fun onDateSelected(date: SimpleLocalDate, datePosition: Int) {
+    override fun onDateSelected(date: CalendarDate) {
         // do nothing
     }
 
-    override fun getSelectedDates(): List<SimpleLocalDate> {
+    override fun getSelectedDates(): List<CalendarDate> {
         return emptyList()
     }
 
-    override fun isDateSelected(date: SimpleLocalDate): Boolean {
+    override fun isDateSelected(date: CalendarDate): Boolean {
         return false
     }
 

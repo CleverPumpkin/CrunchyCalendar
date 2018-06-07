@@ -4,9 +4,15 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class DatesRange(
-    val dateFrom: SimpleLocalDate,
-    val dateTo: SimpleLocalDate
+    val dateFrom: CalendarDate,
+    val dateTo: CalendarDate
+
 ) : Parcelable {
+
+    constructor(parcel: Parcel) : this(
+        dateFrom = parcel.readParcelable(CalendarDate::class.java.classLoader),
+        dateTo = parcel.readParcelable(CalendarDate::class.java.classLoader)
+    )
 
     companion object {
 
@@ -18,14 +24,9 @@ data class DatesRange(
         }
     }
 
-    constructor(parcel: Parcel) : this(
-        dateFrom = SimpleLocalDate(parcel.readLong()),
-        dateTo = SimpleLocalDate(parcel.readLong())
-    )
-
     override fun writeToParcel(dest: Parcel, flags: Int) {
-        dest.writeLong(dateFrom.toMillis())
-        dest.writeLong(dateTo.toMillis())
+        dest.writeParcelable(dateFrom, flags)
+        dest.writeParcelable(dateTo, flags)
     }
 
     override fun describeContents() = 0

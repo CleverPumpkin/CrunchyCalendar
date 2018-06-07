@@ -1,5 +1,5 @@
 package ru.cleverpumpkin.calendar.adapter.item
 
-import ru.cleverpumpkin.calendar.SimpleLocalDate
+import ru.cleverpumpkin.calendar.CalendarDate
 
-class DateItem(val localDate: SimpleLocalDate) : CalendarItem
+class DateItem(val date: CalendarDate) : CalendarItem

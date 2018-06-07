@@ -4,13 +4,17 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class NullableDatesRange(
-    val dateFrom: SimpleLocalDate? = null,
-    val dateTo: SimpleLocalDate? = null
+    val dateFrom: CalendarDate? = null,
+    val dateTo: CalendarDate? = null
+
 ) : Parcelable {
 
-    companion object {
-        private const val UNDEFINED_DATE = -1L
+    constructor(parcel: Parcel) : this(
+        dateFrom = parcel.readParcelable(CalendarDate::class.java.classLoader),
+        dateTo = parcel.readParcelable(CalendarDate::class.java.classLoader)
+    )
 
+    companion object {
         @JvmField
         val CREATOR = object : Parcelable.Creator<NullableDatesRange> {
             override fun createFromParcel(parcel: Parcel) = NullableDatesRange(parcel)
@@ -18,23 +22,11 @@ data class NullableDatesRange(
             override fun newArray(size: Int) = arrayOfNulls<NullableDatesRange>(size)
         }
 
-        private fun Long.toDateItem(): SimpleLocalDate? {
-            return if (this != UNDEFINED_DATE) {
-                SimpleLocalDate(this)
-            } else {
-                null
-            }
-        }
     }
 
-    constructor(parcel: Parcel) : this(
-        dateFrom = parcel.readLong().toDateItem(),
-        dateTo = parcel.readLong().toDateItem()
-    )
-
     override fun writeToParcel(dest: Parcel, flags: Int) {
-        dest.writeLong(dateFrom?.toMillis() ?: UNDEFINED_DATE)
-        dest.writeLong(dateTo?.toMillis() ?: UNDEFINED_DATE)
+        dest.writeParcelable(dateFrom, flags)
+        dest.writeParcelable(dateTo, flags)
     }
 
     override fun describeContents() = 0
