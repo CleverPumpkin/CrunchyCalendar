@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="default_divider_color">#E9E9E9</color>
+
+    <color name="white_FFFFFF">#FFFFFF</color>
+    <color name="grey_AD000000">#ad000000</color>
+</resources>

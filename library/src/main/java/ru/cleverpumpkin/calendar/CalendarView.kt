@@ -15,6 +15,7 @@ import ru.cleverpumpkin.calendar.adapter.CalendarAdapter
 import ru.cleverpumpkin.calendar.adapter.CalendarItemsGenerator
 import ru.cleverpumpkin.calendar.decorations.GridDividerItemDecoration
 import ru.cleverpumpkin.calendar.selection.*
+import ru.cleverpumpkin.calendar.utils.getColorInt
 import java.lang.IllegalStateException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -74,6 +75,10 @@ class CalendarView @JvmOverloads constructor(
         RANGE
     }
 
+    private var dividerColor = context.getColorInt(R.color.default_divider_color)
+    private var dayBarBackground = context.getColorInt(R.color.white_FFFFFF)
+    private var dayBarTextColor = context.getColorInt(R.color.grey_AD000000)
+
     private val daysContainer: ViewGroup
     private val recyclerView: RecyclerView
     private val calendarAdapter: CalendarAdapter
@@ -120,10 +125,43 @@ class CalendarView @JvmOverloads constructor(
     init {
         LayoutInflater.from(context).inflate(R.layout.view_calendar, this, true)
 
+        var monthTextColor: Int = context.getColorInt(R.color.grey_AD000000)
+
+        if (attrs != null) {
+            val typedArray = context.obtainStyledAttributes(attrs, R.styleable.CalendarView)
+
+            dividerColor = typedArray.getColor(
+                R.styleable.CalendarView_cpcalendar_divider_color,
+                context.getColorInt(R.color.default_divider_color)
+            )
+
+            dayBarBackground = typedArray.getColor(
+                R.styleable.CalendarView_cpcalendar_day_bar_background,
+                context.getColorInt(R.color.white_FFFFFF)
+            )
+
+            dayBarTextColor = typedArray.getColor(
+                R.styleable.CalendarView_cpcalendar_day_bar_text_color,
+                context.getColorInt(R.color.grey_AD000000)
+            )
+
+            monthTextColor = typedArray.getColor(
+                R.styleable.CalendarView_cpcalendar_month_text_color,
+                context.getColorInt(R.color.grey_AD000000)
+            )
+
+            typedArray.recycle()
+        }
+
         daysContainer = findViewById(R.id.days_container)
         recyclerView = findViewById(R.id.recycler_view)
 
+        val adapterViewAttributes = CalendarAdapter.AdapterViewAttributes(
+            monthTextColor = monthTextColor
+        )
+
         calendarAdapter = CalendarAdapter(
+            adapterViewAttributes = adapterViewAttributes,
             dateInfoProvider = DateInfoProviderImpl(),
             onDateClickHandler = { calendarDate ->
                 dateSelectionStrategy.onDateSelected(calendarDate)
@@ -137,7 +175,7 @@ class CalendarView @JvmOverloads constructor(
         )
 
         setupRecyclerView(recyclerView)
-        setupDaysContainer(daysContainer)
+        setupDayBar(daysContainer)
     }
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
@@ -156,8 +194,7 @@ class CalendarView @JvmOverloads constructor(
             adapter = calendarAdapter
             layoutManager = gridLayoutManager
             setHasFixedSize(true)
-
-            addItemDecoration(GridDividerItemDecoration())
+            addItemDecoration(GridDividerItemDecoration(context, dividerColor))
             addOnScrollListener(CalendarScrollListener())
 
             recycledViewPool.setMaxRecycledViews(
@@ -172,10 +209,12 @@ class CalendarView @JvmOverloads constructor(
         }
     }
 
-    private fun setupDaysContainer(weekDaysContainer: ViewGroup) {
+    private fun setupDayBar(weekDaysContainer: ViewGroup) {
         if (weekDaysContainer.childCount != DAYS_IN_WEEK) {
             throw IllegalStateException("Days container has incorrect number of child views")
         }
+
+        weekDaysContainer.setBackgroundColor(dayBarBackground)
 
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.DAY_OF_WEEK, calendar.firstDayOfWeek)
@@ -184,6 +223,7 @@ class CalendarView @JvmOverloads constructor(
 
         for (dayPosition in 0 until DAYS_IN_WEEK) {
             val dayView = weekDaysContainer.getChildAt(dayPosition) as TextView
+            dayView.setTextColor(dayBarTextColor)
             dayView.text = dayOfWeekFormatter.format(calendar.time)
             calendar.add(Calendar.DAY_OF_WEEK, 1)
         }

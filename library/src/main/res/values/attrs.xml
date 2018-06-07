@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="CalendarView">
+        <attr name="cpcalendar_divider_color" format="color" />
+        <attr name="cpcalendar_day_bar_background" format="color" />
+        <attr name="cpcalendar_day_bar_text_color" format="color" />
+        <attr name="cpcalendar_month_text_color" format="color" />
+    </declare-styleable>
+
+</resources>
