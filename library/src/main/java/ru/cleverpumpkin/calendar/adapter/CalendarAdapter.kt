@@ -1,6 +1,7 @@
 package ru.cleverpumpkin.calendar.adapter
 
 import android.graphics.Color
+import android.support.annotation.ColorInt
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +20,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class CalendarAdapter(
+    var adapterViewAttributes: AdapterViewAttributes,
     private val dateInfoProvider: CalendarView.DateInfoProvider,
     private val onDateClickHandler: (CalendarDate) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -102,7 +104,9 @@ class CalendarAdapter(
                 val monthItem = calendarItems[position] as MonthItem
                 val monthItemViewHolder = holder as MonthItemViewHolder
                 val monthName = monthFormatter.format(monthItem.calendarDate.date)
-                monthItemViewHolder.textView.text = monthName
+
+                monthItemViewHolder.textView.text = monthName.capitalize()
+                monthItemViewHolder.textView.setTextColor(adapterViewAttributes.monthTextColor)
             }
         }
     }
@@ -179,4 +183,8 @@ class CalendarAdapter(
     class MonthItemViewHolder(val textView: TextView) : RecyclerView.ViewHolder(textView)
 
     class EmptyItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+
+    data class AdapterViewAttributes(
+        @ColorInt val monthTextColor: Int
+    )
 }
