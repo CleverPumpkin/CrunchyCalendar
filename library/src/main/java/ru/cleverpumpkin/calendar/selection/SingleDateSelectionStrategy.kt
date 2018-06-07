@@ -1,19 +1,18 @@
 package ru.cleverpumpkin.calendar.selection
 
 import android.os.Bundle
-import ru.cleverpumpkin.calendar.SimpleLocalDate
+import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.adapter.CalendarAdapter
 
 class SingleDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSelectionStrategy {
 
     companion object {
         private const val BUNDLE_SELECTED_DATE = "ru.cleverpumpkin.calendar.selected_date"
-        private const val UNDEFINED_DATE = -1L
     }
 
-    private var selectedDate: SimpleLocalDate? = null
+    private var selectedDate: CalendarDate? = null
 
-    override fun onDateSelected(date: SimpleLocalDate, datePosition: Int) {
+    override fun onDateSelected(date: CalendarDate) {
         val previousSelectedDate = selectedDate
 
         if (previousSelectedDate != null) {
@@ -24,10 +23,11 @@ class SingleDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSe
         }
 
         selectedDate = date
+        val datePosition = adapter.findDateItemPosition(date)
         adapter.notifyItemChanged(datePosition)
     }
 
-    override fun getSelectedDates(): List<SimpleLocalDate> {
+    override fun getSelectedDates(): List<CalendarDate> {
         val selectedDate = selectedDate
 
         return if (selectedDate != null) {
@@ -37,18 +37,15 @@ class SingleDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSe
         }
     }
 
-    override fun isDateSelected(date: SimpleLocalDate): Boolean {
+    override fun isDateSelected(date: CalendarDate): Boolean {
         return selectedDate == date
     }
 
     override fun saveSelectedDates(bundle: Bundle) {
-        bundle.putLong(BUNDLE_SELECTED_DATE, selectedDate?.toMillis() ?: UNDEFINED_DATE)
+        bundle.putParcelable(BUNDLE_SELECTED_DATE, selectedDate)
     }
 
     override fun restoreSelectedDates(bundle: Bundle) {
-        val dateInMillis = bundle.getLong(BUNDLE_SELECTED_DATE, UNDEFINED_DATE)
-        if (dateInMillis != UNDEFINED_DATE) {
-            selectedDate = SimpleLocalDate(dateInMillis)
-        }
+        selectedDate = bundle.getParcelable(BUNDLE_SELECTED_DATE)
     }
 }
