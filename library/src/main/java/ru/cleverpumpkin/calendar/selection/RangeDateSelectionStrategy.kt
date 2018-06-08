@@ -21,7 +21,7 @@ class RangeDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSel
             dateFrom == null && dateTo == null -> {
                 datesRange = datesRange.copy(dateFrom = date)
 
-                val position = adapter.findDateItemPosition(date)
+                val position = adapter.findDatePosition(date)
                 adapter.notifyItemChanged(position)
             }
 
@@ -51,7 +51,7 @@ class RangeDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSel
         val dateTo = datesRange.dateTo
 
         return if (dateFrom != null && dateTo != null) {
-            adapter.getDateItemsRange(dateFrom = dateFrom, dateTo = dateTo)
+            adapter.getDateRange(dateFrom = dateFrom, dateTo = dateTo)
         } else {
             emptyList()
         }

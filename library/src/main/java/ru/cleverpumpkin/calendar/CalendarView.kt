@@ -75,11 +75,14 @@ class CalendarView @JvmOverloads constructor(
         RANGE
     }
 
-    private var dividerColor = context.getColorInt(R.color.default_divider_color)
-    private var dayBarBackground = context.getColorInt(R.color.white_FFFFFF)
-    private var dayBarTextColor = context.getColorInt(R.color.grey_AD000000)
+    private var gridColor = context.getColorInt(R.color.calendar_grid_color)
+    private var daysBarBackground = context.getColorInt(R.color.calendar_days_bar_background)
+    private var daysBarTextColor = context.getColorInt(R.color.calendar_days_bar_text_color)
+    private var monthTextColor = context.getColorInt(R.color.calendar_month_text_color)
+    private var calendarDateBackgroundResId = R.drawable.calendar_date_bg_selector
+    private var calendarDateTextColorResId = R.color.calendar_date_text_selector
 
-    private val daysContainer: ViewGroup
+    private val daysBarView: ViewGroup
     private val recyclerView: RecyclerView
     private val calendarAdapter: CalendarAdapter
 
@@ -125,43 +128,53 @@ class CalendarView @JvmOverloads constructor(
     init {
         LayoutInflater.from(context).inflate(R.layout.view_calendar, this, true)
 
-        var monthTextColor: Int = context.getColorInt(R.color.grey_AD000000)
-
         if (attrs != null) {
             val typedArray = context.obtainStyledAttributes(attrs, R.styleable.CalendarView)
 
-            dividerColor = typedArray.getColor(
+            gridColor = typedArray.getColor(
                 R.styleable.CalendarView_cpcalendar_divider_color,
-                context.getColorInt(R.color.default_divider_color)
+                gridColor
             )
 
-            dayBarBackground = typedArray.getColor(
+            daysBarBackground = typedArray.getColor(
                 R.styleable.CalendarView_cpcalendar_day_bar_background,
-                context.getColorInt(R.color.white_FFFFFF)
+                daysBarBackground
             )
 
-            dayBarTextColor = typedArray.getColor(
+            daysBarTextColor = typedArray.getColor(
                 R.styleable.CalendarView_cpcalendar_day_bar_text_color,
-                context.getColorInt(R.color.grey_AD000000)
+                daysBarTextColor
             )
 
             monthTextColor = typedArray.getColor(
                 R.styleable.CalendarView_cpcalendar_month_text_color,
-                context.getColorInt(R.color.grey_AD000000)
+                monthTextColor
+            )
+
+            calendarDateBackgroundResId = typedArray.getResourceId(
+                R.styleable.CalendarView_cpcalendar_date_background,
+                calendarDateBackgroundResId
+            )
+
+            calendarDateTextColorResId = typedArray.getResourceId(
+                R.styleable.CalendarView_cpcalendar_date_text_color,
+                calendarDateTextColorResId
             )
 
             typedArray.recycle()
         }
 
-        daysContainer = findViewById(R.id.days_container)
+        daysBarView = findViewById(R.id.days_container)
         recyclerView = findViewById(R.id.recycler_view)
 
-        val adapterViewAttributes = CalendarAdapter.AdapterViewAttributes(
-            monthTextColor = monthTextColor
+        val attributes = CalendarAdapter.ItemsAttributes(
+            monthTextColor = monthTextColor,
+            calendarDateBackgroundResId = calendarDateBackgroundResId,
+            calendarDateTextColorResId = calendarDateTextColorResId
         )
 
         calendarAdapter = CalendarAdapter(
-            adapterViewAttributes = adapterViewAttributes,
+            itemsAttributes = attributes,
             dateInfoProvider = DateInfoProviderImpl(),
             onDateClickHandler = { calendarDate ->
                 dateSelectionStrategy.onDateSelected(calendarDate)
@@ -175,7 +188,7 @@ class CalendarView @JvmOverloads constructor(
         )
 
         setupRecyclerView(recyclerView)
-        setupDayBar(daysContainer)
+        setupDaysBar(daysBarView)
     }
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
@@ -194,7 +207,7 @@ class CalendarView @JvmOverloads constructor(
             adapter = calendarAdapter
             layoutManager = gridLayoutManager
             setHasFixedSize(true)
-            addItemDecoration(GridDividerItemDecoration(context, dividerColor))
+            addItemDecoration(GridDividerItemDecoration(context, gridColor))
             addOnScrollListener(CalendarScrollListener())
 
             recycledViewPool.setMaxRecycledViews(
@@ -209,12 +222,12 @@ class CalendarView @JvmOverloads constructor(
         }
     }
 
-    private fun setupDayBar(weekDaysContainer: ViewGroup) {
+    private fun setupDaysBar(weekDaysContainer: ViewGroup) {
         if (weekDaysContainer.childCount != DAYS_IN_WEEK) {
             throw IllegalStateException("Days container has incorrect number of child views")
         }
 
-        weekDaysContainer.setBackgroundColor(dayBarBackground)
+        weekDaysContainer.setBackgroundColor(daysBarBackground)
 
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.DAY_OF_WEEK, calendar.firstDayOfWeek)
@@ -223,7 +236,7 @@ class CalendarView @JvmOverloads constructor(
 
         for (dayPosition in 0 until DAYS_IN_WEEK) {
             val dayView = weekDaysContainer.getChildAt(dayPosition) as TextView
-            dayView.setTextColor(dayBarTextColor)
+            dayView.setTextColor(daysBarTextColor)
             dayView.text = dayOfWeekFormatter.format(calendar.time)
             calendar.add(Calendar.DAY_OF_WEEK, 1)
         }
@@ -280,7 +293,7 @@ class CalendarView @JvmOverloads constructor(
             }
         }
 
-        val initialMonthPosition = calendarAdapter.findMonthItemPosition(initialDate)
+        val initialMonthPosition = calendarAdapter.findMonthPosition(initialDate)
         if (initialMonthPosition != -1) {
             recyclerView.scrollToPosition(initialMonthPosition)
         }
@@ -295,7 +308,7 @@ class CalendarView @JvmOverloads constructor(
             dateTo = dateTo.date
         )
 
-        calendarAdapter.setItems(calendarItems)
+        calendarAdapter.setCalendarItems(calendarItems)
     }
 
     private fun generatePrevCalendarItems() {

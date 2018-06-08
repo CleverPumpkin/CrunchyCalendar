@@ -16,14 +16,14 @@ class SingleDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSe
         val previousSelectedDate = selectedDate
 
         if (previousSelectedDate != null) {
-            val previousSelectedPosition = adapter.findDateItemPosition(previousSelectedDate)
+            val previousSelectedPosition = adapter.findDatePosition(previousSelectedDate)
             if (previousSelectedPosition != -1) {
                 adapter.notifyItemChanged(previousSelectedPosition)
             }
         }
 
         selectedDate = date
-        val datePosition = adapter.findDateItemPosition(date)
+        val datePosition = adapter.findDatePosition(date)
         adapter.notifyItemChanged(datePosition)
     }
 

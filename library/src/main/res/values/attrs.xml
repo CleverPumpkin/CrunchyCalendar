@@ -6,6 +6,12 @@
         <attr name="cpcalendar_day_bar_background" format="color" />
         <attr name="cpcalendar_day_bar_text_color" format="color" />
         <attr name="cpcalendar_month_text_color" format="color" />
+        <attr name="cpcalendar_date_background" format="reference" />
+        <attr name="cpcalendar_date_text_color" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="CalendarDateStates">
+        <attr name="cpcalendar_state_today" format="boolean" />
     </declare-styleable>
 
 </resources>

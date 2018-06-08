@@ -17,7 +17,7 @@ class MultipleDateSelectionStrategy(private val adapter: CalendarAdapter) : Date
             selectedDates.add(date)
         }
 
-        val datePosition = adapter.findDateItemPosition(date)
+        val datePosition = adapter.findDatePosition(date)
         adapter.notifyItemChanged(datePosition)
     }
 
