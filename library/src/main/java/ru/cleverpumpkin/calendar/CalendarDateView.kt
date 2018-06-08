@@ -20,9 +20,11 @@ class CalendarDateView @JvmOverloads constructor(
 
     companion object {
         private const val DEFAULT_TEXT_SIZE = 12.0f
-    }
 
-    private val stateToday = intArrayOf(R.attr.cpcalendar_state_today)
+        private val stateToday = intArrayOf(R.attr.cpcalendar_state_today)
+        private val stateDateSelected = intArrayOf(R.attr.cpcalendar_state_selected)
+        private val stateDateDisabled = intArrayOf(R.attr.cpcalendar_state_disabled)
+    }
 
     private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
         textSize = context.spToPix(DEFAULT_TEXT_SIZE)
@@ -31,15 +33,38 @@ class CalendarDateView @JvmOverloads constructor(
     private var textWidth = 0.0f
     private var textColor: Int = context.getColorInt(R.color.calendar_date_text_color)
 
-    var textColorStateList: ColorStateList? = null
-
     var isToday: Boolean = false
+        set(value) {
+            if (value != field) {
+                field = value
+                refreshDrawableState()
+            }
+        }
+
+    var isDateSelected: Boolean = false
+        set(value) {
+            if (value != field) {
+                field = value
+                refreshDrawableState()
+            }
+        }
+
+    var isDateDisabled: Boolean = false
+        set(value) {
+            if (value != field) {
+                field = value
+                refreshDrawableState()
+            }
+            isClickable = value.not()
+        }
 
     var text: String = ""
         set(value) {
             field = value
             textWidth = textPaint.measureText(value)
         }
+
+    var textColorStateList: ColorStateList? = null
 
     override fun onDraw(canvas: Canvas) {
         textPaint.color = textColor
@@ -56,10 +81,18 @@ class CalendarDateView @JvmOverloads constructor(
     }
 
     override fun onCreateDrawableState(extraSpace: Int): IntArray {
-        val drawableState = super.onCreateDrawableState(extraSpace + 1)
+        val drawableState = super.onCreateDrawableState(extraSpace + 3)
 
         if (isToday) {
             mergeDrawableStates(drawableState, stateToday)
+        }
+
+        if (isDateSelected) {
+            mergeDrawableStates(drawableState, stateDateSelected)
+        }
+
+        if (isDateDisabled) {
+            mergeDrawableStates(drawableState, stateDateDisabled)
         }
 
         return drawableState

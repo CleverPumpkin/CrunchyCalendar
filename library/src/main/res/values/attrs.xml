@@ -12,6 +12,8 @@
 
     <declare-styleable name="CalendarDateStates">
         <attr name="cpcalendar_state_today" format="boolean" />
+        <attr name="cpcalendar_state_selected" format="boolean" />
+        <attr name="cpcalendar_state_disabled" format="boolean" />
     </declare-styleable>
 
 </resources>

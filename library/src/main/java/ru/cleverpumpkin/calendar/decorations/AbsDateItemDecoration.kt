@@ -10,7 +10,7 @@ import ru.cleverpumpkin.calendar.adapter.item.DateItem
 /**
  * TODO Describe class
  */
-abstract class DateItemDecoration : RecyclerView.ItemDecoration() {
+abstract class AbsDateItemDecoration : RecyclerView.ItemDecoration() {
 
     private val dateViewRect = Rect()
 
