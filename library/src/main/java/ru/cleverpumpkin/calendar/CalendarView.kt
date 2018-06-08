@@ -49,7 +49,7 @@ class CalendarView @JvmOverloads constructor(
 
         fun isDateSelected(date: CalendarDate): Boolean
 
-        fun isDateEnabled(date: CalendarDate): Boolean
+        fun isDateDisabled(date: CalendarDate): Boolean
     }
 
     companion object {
@@ -206,9 +206,7 @@ class CalendarView @JvmOverloads constructor(
         recyclerView.run {
             adapter = calendarAdapter
             layoutManager = gridLayoutManager
-            setHasFixedSize(true)
-            addItemDecoration(GridDividerItemDecoration(context, gridColor))
-            addOnScrollListener(CalendarScrollListener())
+            itemAnimator = null
 
             recycledViewPool.setMaxRecycledViews(
                 CalendarAdapter.DATE_VIEW_TYPE,
@@ -219,6 +217,10 @@ class CalendarView @JvmOverloads constructor(
                 CalendarAdapter.EMPTY_VIEW_TYPE,
                 MAX_RECYCLED_EMPTY_VIEWS
             )
+
+            setHasFixedSize(true)
+            addItemDecoration(GridDividerItemDecoration(context, gridColor))
+            addOnScrollListener(CalendarScrollListener())
         }
     }
 
@@ -396,15 +398,15 @@ class CalendarView @JvmOverloads constructor(
             return dateSelectionStrategy.isDateSelected(date)
         }
 
-        override fun isDateEnabled(date: CalendarDate): Boolean {
+        override fun isDateDisabled(date: CalendarDate): Boolean {
             val minDate = minMaxDatesRange.dateFrom
             val maxDate = minMaxDatesRange.dateTo
 
             return when {
-                minDate == null && maxDate != null -> date <= maxDate
-                minDate != null && maxDate == null -> date >= minDate
-                minDate != null && maxDate != null -> date >= minDate && date <= maxDate
-                minDate == null && maxDate == null -> true
+                minDate == null && maxDate != null -> date >= maxDate
+                minDate != null && maxDate == null -> date <= minDate
+                minDate != null && maxDate != null -> date <= minDate || date >= maxDate
+                minDate == null && maxDate == null -> false
                 else -> false
             }
         }
