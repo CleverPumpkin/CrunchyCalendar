@@ -52,4 +52,10 @@
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/calendar_week_days_bar_height" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="@dimen/calendar_week_days_bar_height"
+        android:background="@drawable/shadow" />
+
 </merge>
