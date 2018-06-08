@@ -5,7 +5,12 @@ import android.os.Parcelable
 import java.util.*
 
 /**
- * TODO Describe class
+ * This is an immutable class that represents a date as year-month-day.
+ *
+ * This class overrides [equals] and [hashCode] methods so instance of this class can be used
+ * as a key in [HashMap] or [HashSet].
+ *
+ * This class implements [Parcelable] so instances of this class can be stored in [Parcel] object.
  */
 class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
 
@@ -31,7 +36,7 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
     val month: Int
         get() = calendar.get(Calendar.MONTH)
 
-    val dayOfMonth: Int
+    val day: Int
         get() = calendar.get(Calendar.DAY_OF_MONTH)
 
     val date: Date
@@ -43,7 +48,7 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
         if (result == 0) {
             result = month - other.month
             if (result == 0) {
-                result = dayOfMonth - other.dayOfMonth
+                result = day - other.day
             }
         }
 
@@ -58,7 +63,7 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
 
         if (year != other.year) return false
         if (month != other.month) return false
-        if (dayOfMonth != other.dayOfMonth) return false
+        if (day != other.day) return false
 
         return true
     }
@@ -66,7 +71,7 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
     override fun hashCode(): Int {
         var result = year
         result = 31 * result + month
-        result = 31 * result + dayOfMonth
+        result = 31 * result + day
         return result
     }
 
