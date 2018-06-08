@@ -18,7 +18,7 @@
     </item>
 
     <item android:state_pressed="true">
-        <color android:color="@color/calendar_date_selected_background" />
+        <color android:color="@color/calendar_date_pressed_background" />
     </item>
 
     <item>

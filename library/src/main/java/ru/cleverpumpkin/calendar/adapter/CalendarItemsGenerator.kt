@@ -7,6 +7,9 @@ import ru.cleverpumpkin.calendar.adapter.item.EmptyItem
 import ru.cleverpumpkin.calendar.adapter.item.MonthItem
 import java.util.*
 
+/**
+ * TODO Describe class
+ */
 class CalendarItemsGenerator {
 
     companion object {

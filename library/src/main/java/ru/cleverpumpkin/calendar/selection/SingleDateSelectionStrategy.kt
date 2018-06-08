@@ -14,6 +14,7 @@ class SingleDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSe
 
     override fun onDateSelected(date: CalendarDate) {
         val previousSelectedDate = selectedDate
+        selectedDate = date
 
         if (previousSelectedDate != null) {
             val previousSelectedPosition = adapter.findDatePosition(previousSelectedDate)
@@ -22,9 +23,10 @@ class SingleDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSe
             }
         }
 
-        selectedDate = date
-        val datePosition = adapter.findDatePosition(date)
-        adapter.notifyItemChanged(datePosition)
+        val selectedDatePosition = adapter.findDatePosition(date)
+        if (selectedDatePosition != -1) {
+            adapter.notifyItemChanged(selectedDatePosition)
+        }
     }
 
     override fun getSelectedDates(): List<CalendarDate> {

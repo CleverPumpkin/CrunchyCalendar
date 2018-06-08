@@ -13,12 +13,15 @@ class MultipleDateSelectionStrategy(private val adapter: CalendarAdapter) : Date
     private val selectedDates = linkedSetOf<CalendarDate>()
 
     override fun onDateSelected(date: CalendarDate) {
-        if (selectedDates.remove(date).not()) {
+        val dateWasRemoved = selectedDates.remove(date)
+        if (dateWasRemoved.not()) {
             selectedDates.add(date)
         }
 
         val datePosition = adapter.findDatePosition(date)
-        adapter.notifyItemChanged(datePosition)
+        if (datePosition != -1) {
+            adapter.notifyItemChanged(datePosition)
+        }
     }
 
     override fun getSelectedDates(): List<CalendarDate> {

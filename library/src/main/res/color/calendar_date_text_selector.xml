@@ -7,7 +7,7 @@
 
     <item android:color="@color/calendar_date_disabled_text_color" app:cpcalendar_state_disabled="true" />
 
-    <item android:color="@color/calendar_date_selected_text_color" android:state_pressed="true" />
+    <item android:color="@color/calendar_date_pressed_text_color" android:state_pressed="true" />
 
     <item android:color="@color/calendar_date_selected_text_color" android:state_selected="true" />
 

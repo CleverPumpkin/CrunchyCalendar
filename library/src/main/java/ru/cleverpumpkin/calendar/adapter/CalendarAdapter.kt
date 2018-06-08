@@ -22,6 +22,9 @@ import java.lang.IllegalStateException
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * TODO Describe class
+ */
 class CalendarAdapter(
     var itemsAttributes: ItemsAttributes,
     private val dateInfoProvider: CalendarView.DateInfoProvider,
