@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item app:cpcalendar_state_today="true">
+        <color android:color="@color/calendar_date_today_background" />
+    </item>
+
+    <item>
+        <color android:color="@color/calendar_date_background" />
+    </item>
+
+</selector>
