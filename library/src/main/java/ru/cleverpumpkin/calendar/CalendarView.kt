@@ -66,12 +66,30 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * TODO Describe selection mode
+     * This enum class represent available selection modes to dates selecting
      */
     enum class SelectionMode {
+        /**
+         * Selection is unavailable. No dates will be selectable.
+         */
         NON,
+
+        /**
+         * Only one date will be selectable. If there is already a selected date and
+         * you select a new one, the old date will be unselected.
+         */
         SINGLE,
+
+        /**
+         * Multiple dates will be selectable. Selecting an already-selected date will un-select it.
+         */
         MULTIPLE,
+
+        /**
+         * Allows you to select a date range. Previous selections are cleared when you either:
+         * 1. Have a range selected and select another date (even if it's in the current range).
+         * 2. Have one date selected and then select an earlier date.
+         */
         RANGE
     }
 
@@ -113,14 +131,6 @@ class CalendarView @JvmOverloads constructor(
     val selectedDate: CalendarDate?
         get() = dateSelectionStrategy.getSelectedDates()
             .firstOrNull()
-
-    fun addCustomItemDecoration(itemDecoration: RecyclerView.ItemDecoration) {
-        recyclerView.addItemDecoration(itemDecoration)
-    }
-
-    fun removeCustomItemDecoration(itemDecoration: RecyclerView.ItemDecoration) {
-        recyclerView.removeItemDecoration(itemDecoration)
-    }
 
     /**
      * TODO Describe init section
@@ -167,24 +177,26 @@ class CalendarView @JvmOverloads constructor(
         daysBarView = findViewById(R.id.days_container)
         recyclerView = findViewById(R.id.recycler_view)
 
-        val attributes = CalendarAdapter.ItemsAttributes(
+        val itemsAttributes = CalendarAdapter.ItemsAttributes(
             monthTextColor = monthTextColor,
             calendarDateBackgroundResId = calendarDateBackgroundResId,
             calendarDateTextColorResId = calendarDateTextColorResId
         )
 
-        calendarAdapter = CalendarAdapter(
-            itemsAttributes = attributes,
-            dateInfoProvider = DateInfoProviderImpl(),
-            onDateClickHandler = { calendarDate ->
-                dateSelectionStrategy.onDateSelected(calendarDate)
+        val onDateClickHandler: (CalendarDate) -> Unit = { calendarDate ->
+            dateSelectionStrategy.onDateSelected(calendarDate)
 
-                if (dateSelectionStrategy.isDateSelected(calendarDate)) {
-                    onDateSelectedListener?.onDateSelected(calendarDate.date)
-                } else {
-                    onDateSelectedListener?.onDateUnselected(calendarDate.date)
-                }
+            if (dateSelectionStrategy.isDateSelected(calendarDate)) {
+                onDateSelectedListener?.onDateSelected(calendarDate.date)
+            } else {
+                onDateSelectedListener?.onDateUnselected(calendarDate.date)
             }
+        }
+
+        calendarAdapter = CalendarAdapter(
+            itemsAttributes = itemsAttributes,
+            dateInfoProvider = DateInfoProviderImpl(),
+            onDateClickHandler = onDateClickHandler
         )
 
         setupRecyclerView(recyclerView)
@@ -242,6 +254,14 @@ class CalendarView @JvmOverloads constructor(
             dayView.text = dayOfWeekFormatter.format(calendar.time)
             calendar.add(Calendar.DAY_OF_WEEK, 1)
         }
+    }
+
+    fun addCustomItemDecoration(itemDecoration: RecyclerView.ItemDecoration) {
+        recyclerView.addItemDecoration(itemDecoration)
+    }
+
+    fun removeCustomItemDecoration(itemDecoration: RecyclerView.ItemDecoration) {
+        recyclerView.removeItemDecoration(itemDecoration)
     }
 
     /**
@@ -302,7 +322,6 @@ class CalendarView @JvmOverloads constructor(
 
         this.selectionMode = selectionMode
     }
-
 
     private fun generateCalendarItems(dateFrom: CalendarDate, dateTo: CalendarDate) {
         val calendarItems = calendarItemsGenerator.generateCalendarItems(
