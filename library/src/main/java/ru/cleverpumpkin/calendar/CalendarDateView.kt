@@ -11,6 +11,9 @@ import android.view.View
 import ru.cleverpumpkin.calendar.utils.getColorInt
 import ru.cleverpumpkin.calendar.utils.spToPix
 
+/**
+ * TODO Describe class
+ */
 class CalendarDateView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -19,7 +22,7 @@ class CalendarDateView @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
 
     companion object {
-        private const val DEFAULT_TEXT_SIZE = 12.0f
+        private const val DEFAULT_TEXT_SIZE = 14.0f
 
         private val stateToday = intArrayOf(R.attr.cpcalendar_state_today)
         private val stateDateSelected = intArrayOf(R.attr.cpcalendar_state_selected)

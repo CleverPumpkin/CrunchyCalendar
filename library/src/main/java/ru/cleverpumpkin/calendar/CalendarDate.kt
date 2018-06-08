@@ -4,6 +4,9 @@ import android.os.Parcel
 import android.os.Parcelable
 import java.util.*
 
+/**
+ * TODO Describe class
+ */
 class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
 
     constructor(dateInMillis: Long) : this(Date(dateInMillis))

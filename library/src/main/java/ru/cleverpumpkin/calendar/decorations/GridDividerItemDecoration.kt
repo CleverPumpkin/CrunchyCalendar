@@ -27,6 +27,7 @@ class GridDividerItemDecoration(
             val adapterPosition = parent.getChildAdapterPosition(child)
 
             if (parent.adapter.getItemViewType(adapterPosition) == CalendarAdapter.DATE_VIEW_TYPE) {
+
                 canvas.drawRect(
                     child.left.toFloat(),
                     child.top.toFloat(),

@@ -14,6 +14,8 @@ abstract class AbsDateItemDecoration : RecyclerView.ItemDecoration() {
 
     private val dateViewRect = Rect()
 
+    abstract fun decorateDateItem(canvas: Canvas, date: CalendarDate, dateViewRect: Rect)
+
     override fun onDrawOver(canvas: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         val adapter = parent.adapter as CalendarAdapter
 
@@ -36,6 +38,4 @@ abstract class AbsDateItemDecoration : RecyclerView.ItemDecoration() {
             }
         }
     }
-
-    abstract fun decorateDateItem(canvas: Canvas, date: CalendarDate, dateViewRect: Rect)
 }
