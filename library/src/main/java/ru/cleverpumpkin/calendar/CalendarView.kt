@@ -269,12 +269,12 @@ class CalendarView @JvmOverloads constructor(
         }
     }
 
-    private fun setupDaysBar(weekDaysContainer: ViewGroup) {
-        if (weekDaysContainer.childCount != DAYS_IN_WEEK) {
+    private fun setupDaysBar(daysBarView: ViewGroup) {
+        if (daysBarView.childCount != DAYS_IN_WEEK) {
             throw IllegalStateException("Days container has incorrect number of child views")
         }
 
-        weekDaysContainer.setBackgroundColor(daysBarBackground)
+        daysBarView.setBackgroundColor(daysBarBackground)
 
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.DAY_OF_WEEK, calendar.firstDayOfWeek)
@@ -282,7 +282,7 @@ class CalendarView @JvmOverloads constructor(
         val dayOfWeekFormatter = SimpleDateFormat(DAY_OF_WEEK_FORMAT, Locale.getDefault())
 
         for (dayPosition in 0 until DAYS_IN_WEEK) {
-            val dayView = weekDaysContainer.getChildAt(dayPosition) as TextView
+            val dayView = daysBarView.getChildAt(dayPosition) as TextView
             dayView.setTextColor(daysBarTextColor)
             dayView.text = dayOfWeekFormatter.format(calendar.time)
             calendar.add(Calendar.DAY_OF_WEEK, 1)
@@ -330,7 +330,7 @@ class CalendarView @JvmOverloads constructor(
         if (minDate != null && maxDate != null) {
             if (minDate > maxDate) {
                 throw IllegalStateException(
-                    "minDate must be before maxDate! minDate: $minDate, maxDate: $maxDate"
+                    "minDate must be before maxDate: $minDate, maxDate: $maxDate"
                 )
             }
         }

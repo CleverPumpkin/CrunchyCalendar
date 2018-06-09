@@ -17,7 +17,7 @@
     <color name="calendar_date_selected_background">#90caf9</color>
 
     <color name="calendar_date_disabled_text_color">#757575</color>
-    <color name="calendar_date_disabled_background">#bdbdbd</color>
+    <color name="calendar_date_disabled_background">#eeeeee</color>
 
     <color name="calendar_date_today_text_color">#1e88e5</color>
     <color name="calendar_date_today_background">#FFFFFF</color>

@@ -49,7 +49,6 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
     val date: Date
         get() = calendar.time
 
-
     override fun compareTo(other: CalendarDate): Int {
         var result = year - other.year
         if (result == 0) {
