@@ -8,13 +8,24 @@ import ru.cleverpumpkin.calendar.adapter.CalendarAdapter
 import ru.cleverpumpkin.calendar.adapter.item.DateItem
 
 /**
- * TODO Describe class
+ * This class designed for calendar date views decorating.
+ *
+ * Clients can extend this class and implement their custom decoration logic for date views
+ * in [decorateDateView] method.
  */
 abstract class AbsDateItemDecoration : RecyclerView.ItemDecoration() {
 
     private val dateViewRect = Rect()
 
-    abstract fun decorateDateItem(canvas: Canvas, date: CalendarDate, dateViewRect: Rect)
+    /**
+     * Method for decorating date view.
+     *
+     * [canvas] canvas supplied to the RecyclerView
+     * [date] specific date from data set
+     * [dateViewRect] rect, that contains positions of date view relative to its parent.
+     * This positions can be used to draw on the [canvas].
+     */
+    abstract fun decorateDateView(canvas: Canvas, date: CalendarDate, dateViewRect: Rect)
 
     override fun onDrawOver(canvas: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         val adapter = parent.adapter as CalendarAdapter
@@ -34,7 +45,7 @@ abstract class AbsDateItemDecoration : RecyclerView.ItemDecoration() {
                     child.bottom
                 )
 
-                decorateDateItem(canvas, date, dateViewRect)
+                decorateDateView(canvas, date, dateViewRect)
             }
         }
     }
