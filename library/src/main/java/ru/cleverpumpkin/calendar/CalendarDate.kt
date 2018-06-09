@@ -7,10 +7,11 @@ import java.util.*
 /**
  * This is an immutable class that represents a date as year-month-day.
  *
- * This class overrides [equals] and [hashCode] methods so instance of this class can be used
+ * This class overrides [equals] and [hashCode] methods so instances of this class can be used
  * as a key in [HashMap] or [HashSet].
  *
- * This class implements [Parcelable] so instances of this class can be stored in [Parcel] object.
+ * This class implements [Parcelable] interface so instances of this class
+ * can be stored in [Parcel] object.
  */
 class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
 
@@ -28,7 +29,13 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
         }
     }
 
-    private val calendar = Calendar.getInstance().apply { this.time = date }
+    private val calendar = Calendar.getInstance().apply {
+        this.time = date
+        this.set(Calendar.HOUR_OF_DAY, 0)
+        this.set(Calendar.MINUTE, 0)
+        this.set(Calendar.SECOND, 0)
+        this.set(Calendar.MILLISECOND, 0)
+    }
 
     val year: Int
         get() = calendar.get(Calendar.YEAR)
@@ -73,6 +80,10 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
         result = 31 * result + month
         result = 31 * result + day
         return result
+    }
+
+    override fun toString(): String {
+        return "${calendar.time}"
     }
 
     override fun writeToParcel(dest: Parcel, flags: Int) {

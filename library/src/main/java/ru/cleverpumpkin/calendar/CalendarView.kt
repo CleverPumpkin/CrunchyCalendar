@@ -21,7 +21,14 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * TODO Describe class
+ * This class allow displaying calendar grid, selecting dates
+ * and handling date selection with custom action.
+ *
+ * Calendar must be initialize with a [setupCalendar] method where you can specify
+ * parameters for calendar.
+ *
+ * This class overrides [onSaveInstanceState] and [onRestoreInstanceState], so it is able
+ * to save and restore its state.
  */
 class CalendarView @JvmOverloads constructor(
     context: Context,
@@ -31,7 +38,7 @@ class CalendarView @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
     /**
-     * TODO Describe interface
+     * Interface to be notified when a new date is selected or unselected.
      */
     interface OnDateSelectedListener {
 
@@ -41,7 +48,7 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * TODO Describe interface
+     * Interface for internal needs that provide required information for specific calendar date.
      */
     interface DateInfoProvider {
 
@@ -66,7 +73,7 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * This enum class represent available selection modes to dates selecting
+     * This enum class represent available selection modes for dates selecting
      */
     enum class SelectionMode {
         /**
@@ -104,11 +111,15 @@ class CalendarView @JvmOverloads constructor(
     private val recyclerView: RecyclerView
     private val calendarAdapter: CalendarAdapter
 
-    private lateinit var displayDatesRange: DatesRange
-    private lateinit var minMaxDatesRange: NullableDatesRange
+    /**
+     * Flag, that indicates whether the [setupCalendar] method was called or not
+     */
+    private var initializedWithSetup = false
+
+    private var displayDatesRange = DatesRange.emptyRange()
+    private var minMaxDatesRange = NullableDatesRange()
 
     private val calendarItemsGenerator = CalendarItemsGenerator()
-
     private var dateSelectionStrategy: DateSelectionStrategy = NoDateSelectionStrategy()
 
     private var selectionMode: SelectionMode = SelectionMode.NON
@@ -123,17 +134,31 @@ class CalendarView @JvmOverloads constructor(
             }
         }
 
+    /**
+     * Listener that will be be notified when a new date is selected or unselected.
+     */
     var onDateSelectedListener: OnDateSelectedListener? = null
 
+    /**
+     * Returns selected dates according to [selectionMode]. When selection mode is:
+     * 1. [SelectionMode.NON] returns empty list
+     * 2. [SelectionMode.SINGLE] returns list with a single selected date
+     * 3. [SelectionMode.MULTIPLE] returns all selected dates in order they were added
+     * 4. [SelectionMode.RANGE] returns all dates in selected range
+     */
     val selectedDates: List<CalendarDate>
         get() = dateSelectionStrategy.getSelectedDates()
 
+    /**
+     * Returns selected date or null, when selection mode is [SelectionMode.SINGLE],
+     * otherwise returns first date or null from the list of selected dates.
+     */
     val selectedDate: CalendarDate?
         get() = dateSelectionStrategy.getSelectedDates()
             .firstOrNull()
 
     /**
-     * TODO Describe init section
+     * Init block where we read custom attributes and setting up internal views
      */
     init {
         LayoutInflater.from(context).inflate(R.layout.view_calendar, this, true)
@@ -141,37 +166,39 @@ class CalendarView @JvmOverloads constructor(
         if (attrs != null) {
             val typedArray = context.obtainStyledAttributes(attrs, R.styleable.CalendarView)
 
-            gridColor = typedArray.getColor(
-                R.styleable.CalendarView_cpcalendar_divider_color,
-                gridColor
-            )
+            try {
+                gridColor = typedArray.getColor(
+                    R.styleable.CalendarView_cpcalendar_divider_color,
+                    gridColor
+                )
 
-            daysBarBackground = typedArray.getColor(
-                R.styleable.CalendarView_cpcalendar_day_bar_background,
-                daysBarBackground
-            )
+                daysBarBackground = typedArray.getColor(
+                    R.styleable.CalendarView_cpcalendar_day_bar_background,
+                    daysBarBackground
+                )
 
-            daysBarTextColor = typedArray.getColor(
-                R.styleable.CalendarView_cpcalendar_day_bar_text_color,
-                daysBarTextColor
-            )
+                daysBarTextColor = typedArray.getColor(
+                    R.styleable.CalendarView_cpcalendar_day_bar_text_color,
+                    daysBarTextColor
+                )
 
-            monthTextColor = typedArray.getColor(
-                R.styleable.CalendarView_cpcalendar_month_text_color,
-                monthTextColor
-            )
+                monthTextColor = typedArray.getColor(
+                    R.styleable.CalendarView_cpcalendar_month_text_color,
+                    monthTextColor
+                )
 
-            calendarDateBackgroundResId = typedArray.getResourceId(
-                R.styleable.CalendarView_cpcalendar_date_background,
-                calendarDateBackgroundResId
-            )
+                calendarDateBackgroundResId = typedArray.getResourceId(
+                    R.styleable.CalendarView_cpcalendar_date_background,
+                    calendarDateBackgroundResId
+                )
 
-            calendarDateTextColorResId = typedArray.getResourceId(
-                R.styleable.CalendarView_cpcalendar_date_text_color,
-                calendarDateTextColorResId
-            )
-
-            typedArray.recycle()
+                calendarDateTextColorResId = typedArray.getResourceId(
+                    R.styleable.CalendarView_cpcalendar_date_text_color,
+                    calendarDateTextColorResId
+                )
+            } finally {
+                typedArray.recycle()
+            }
         }
 
         daysBarView = findViewById(R.id.days_container)
@@ -204,7 +231,13 @@ class CalendarView @JvmOverloads constructor(
     }
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
-        val gridLayoutManager = GridLayoutManager(context, DAYS_IN_WEEK)
+        val gridLayoutManager = object : GridLayoutManager(context, DAYS_IN_WEEK) {
+            override fun onRestoreInstanceState(state: Parcelable?) {
+                if (initializedWithSetup.not()) {
+                    super.onRestoreInstanceState(state)
+                }
+            }
+        }
 
         gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
@@ -256,64 +289,87 @@ class CalendarView @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Add custom [RecyclerView.ItemDecoration] that will be used for calendar view decoration.
+     */
     fun addCustomItemDecoration(itemDecoration: RecyclerView.ItemDecoration) {
         recyclerView.addItemDecoration(itemDecoration)
     }
 
+    /**
+     * Remove specific [RecyclerView.ItemDecoration] that previously was added.
+     */
     fun removeCustomItemDecoration(itemDecoration: RecyclerView.ItemDecoration) {
         recyclerView.removeItemDecoration(itemDecoration)
     }
 
     /**
-     * TODO Describe setup method
+     * Method for initial calendar set up. All parameters have default values.
+     *
+     * [initialDate] the date that will be displayed initially.
+     * Default value - today date
+     *
+     * [minDate] minimum date for calendar grid.
+     * If null, calendar will display all available dates before [initialDate]
+     * Default value - null
+     *
+     * [maxDate] maximum date for calendar grid.
+     * If null, calendar will display all available dates after [initialDate]
+     * Default value - null
+     *
+     * [selectionMode] mode for dates selecting.
+     * Default value - [SelectionMode.NON]
      */
-    fun setup(
+    @Suppress("UnnecessaryVariable")
+    fun setupCalendar(
         initialDate: CalendarDate = CalendarDate(Date()),
-        minDate: Date? = null,
-        maxDate: Date? = null,
+        minDate: CalendarDate? = null,
+        maxDate: CalendarDate? = null,
         selectionMode: SelectionMode = SelectionMode.NON
     ) {
+        if (minDate != null && maxDate != null) {
+            if (minDate > maxDate) {
+                throw IllegalStateException(
+                    "minDate must be before maxDate! minDate: $minDate, maxDate: $maxDate"
+                )
+            }
+        }
+
         when {
             minDate == null && maxDate == null -> {
                 val dateFrom = initialDate.minusMonths(MONTHS_PER_PAGE)
                 val dateTo = initialDate.plusMonths(MONTHS_PER_PAGE)
-
-                generateCalendarItems(dateFrom = dateFrom, dateTo = dateTo)
 
                 displayDatesRange = DatesRange(dateFrom = dateFrom, dateTo = dateTo)
                 minMaxDatesRange = NullableDatesRange()
             }
 
             minDate != null && maxDate != null -> {
-                val dateFrom = CalendarDate(minDate)
-                val dateTo = CalendarDate(maxDate)
+                val dateFrom = minDate
+                val dateTo = maxDate
 
-                generateCalendarItems(dateFrom = dateFrom, dateTo = dateTo)
-
-                displayDatesRange = DatesRange(dateFrom = dateFrom, dateTo = dateTo)
+                displayDatesRange = DatesRange(dateFrom = minDate, dateTo = maxDate)
                 minMaxDatesRange = NullableDatesRange(dateFrom = dateFrom, dateTo = dateTo)
             }
 
             minDate != null && maxDate == null -> {
-                val dateFrom = CalendarDate(minDate)
+                val dateFrom = minDate
                 val dateTo = dateFrom.plusMonths(MONTHS_PER_PAGE)
-
-                generateCalendarItems(dateFrom = dateFrom, dateTo = dateTo)
 
                 displayDatesRange = DatesRange(dateFrom = dateFrom, dateTo = dateTo)
                 minMaxDatesRange = NullableDatesRange(dateFrom = dateFrom)
             }
 
             minDate == null && maxDate != null -> {
-                val dateTo = CalendarDate(maxDate)
+                val dateTo = maxDate
                 val dateFrom = dateTo.minusMonths(MONTHS_PER_PAGE)
-
-                generateCalendarItems(dateFrom = dateFrom, dateTo = dateTo)
 
                 displayDatesRange = DatesRange(dateFrom = dateFrom, dateTo = dateTo)
                 minMaxDatesRange = NullableDatesRange(dateTo = dateTo)
             }
         }
+
+        generateCalendarItems(displayDatesRange)
 
         val initialMonthPosition = calendarAdapter.findMonthPosition(initialDate)
         if (initialMonthPosition != -1) {
@@ -321,19 +377,24 @@ class CalendarView @JvmOverloads constructor(
         }
 
         this.selectionMode = selectionMode
+        initializedWithSetup = true
     }
 
-    private fun generateCalendarItems(dateFrom: CalendarDate, dateTo: CalendarDate) {
+    private fun generateCalendarItems(datesRange: DatesRange) {
+        if (datesRange.isEmptyRange()) {
+            return
+        }
+
         val calendarItems = calendarItemsGenerator.generateCalendarItems(
-            dateFrom = dateFrom.date,
-            dateTo = dateTo.date
+            dateFrom = datesRange.dateFrom.date,
+            dateTo = datesRange.dateTo.date
         )
 
         calendarAdapter.setCalendarItems(calendarItems)
     }
 
     private fun generatePrevCalendarItems() {
-        if (this.minMaxDatesRange.dateFrom != null) {
+        if (minMaxDatesRange.dateFrom != null) {
             return
         }
 
@@ -350,7 +411,7 @@ class CalendarView @JvmOverloads constructor(
     }
 
     private fun generateNextCalendarItems() {
-        if (this.minMaxDatesRange.dateTo != null) {
+        if (minMaxDatesRange.dateTo != null) {
             return
         }
 
@@ -366,9 +427,9 @@ class CalendarView @JvmOverloads constructor(
         displayDatesRange = displayDatesRange.copy(dateTo = toDate)
     }
 
-
     /**
-     * TODO Describe save/restore logic
+     * Save internal calendar state: displayed dates, min-max dates,
+     * selection mode, selected dates and view super state.
      */
     override fun onSaveInstanceState(): Parcelable {
         val superState = super.onSaveInstanceState()
@@ -382,28 +443,34 @@ class CalendarView @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Restore internal calendar state.
+     *
+     * Note: If Calendar was initialized with [setupCalendar] method before [onRestoreInstanceState],
+     * restoring of internal calendar state wont'n performed, because new state already set up.
+     */
     override fun onRestoreInstanceState(state: Parcelable?) {
         if (state is Bundle) {
-            val name = state.getString(BUNDLE_SELECTION_MODE, SelectionMode.NON.name)
-            selectionMode = SelectionMode.valueOf(name)
-            displayDatesRange = state.getParcelable(BUNDLE_DISPLAY_DATE_RANGE)
-            minMaxDatesRange = state.getParcelable(BUNDLE_LIMIT_DATE_RANGE)
-            dateSelectionStrategy.restoreSelectedDates(state)
-
             val superState: Parcelable? = state.getParcelable(BUNDLE_SUPER_STATE)
             super.onRestoreInstanceState(superState)
+
+            if (initializedWithSetup.not()) {
+                val name = state.getString(BUNDLE_SELECTION_MODE, SelectionMode.NON.name)
+                selectionMode = SelectionMode.valueOf(name)
+                displayDatesRange = state.getParcelable(BUNDLE_DISPLAY_DATE_RANGE)
+                minMaxDatesRange = state.getParcelable(BUNDLE_LIMIT_DATE_RANGE)
+                dateSelectionStrategy.restoreSelectedDates(state)
+
+                generateCalendarItems(displayDatesRange)
+            }
         } else {
             super.onRestoreInstanceState(state)
         }
-
-        generateCalendarItems(
-            dateFrom = displayDatesRange.dateFrom,
-            dateTo = displayDatesRange.dateTo
-        )
     }
 
     /**
-     * TODO Describe class
+     * Inner implementation of [DateInfoProvider] interface that provide required information
+     * for specific calendar date.
      */
     private inner class DateInfoProviderImpl : DateInfoProvider {
 
@@ -432,7 +499,8 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * TODO Describe class
+     * Inner class that monitor scroll events and perform generating next/previous
+     * calendar items when needed.
      */
     private inner class CalendarScrollListener : RecyclerView.OnScrollListener() {
 
