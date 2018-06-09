@@ -106,4 +106,17 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
 
         return CalendarDate(tmpCalendar.time)
     }
+
+    fun monthsTo(other: CalendarDate): Int {
+        if (other < this) {
+            return 0
+        }
+        val diffYear = other.year - this.year
+        return diffYear * 12 + other.month - this.month
+    }
+
+    @Suppress("ConvertTwoComparisonsToRangeCheck")
+    fun isBetween(dateFrom: CalendarDate, dateTo: CalendarDate): Boolean {
+        return this >= dateFrom && this <= dateTo
+    }
 }

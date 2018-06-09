@@ -327,47 +327,61 @@ class CalendarView @JvmOverloads constructor(
         maxDate: CalendarDate? = null,
         selectionMode: SelectionMode = SelectionMode.NON
     ) {
-        if (minDate != null && maxDate != null) {
-            if (minDate > maxDate) {
-                throw IllegalStateException(
-                    "minDate must be before maxDate: $minDate, maxDate: $maxDate"
-                )
-            }
+        if (minDate != null && maxDate != null && minDate > maxDate) {
+            throw IllegalStateException("minDate must be before maxDate: $minDate, maxDate: $maxDate")
         }
+
+        val displayFromDate: CalendarDate
+        val displayToDate: CalendarDate
 
         when {
             minDate == null && maxDate == null -> {
-                val dateFrom = initialDate.minusMonths(MONTHS_PER_PAGE)
-                val dateTo = initialDate.plusMonths(MONTHS_PER_PAGE)
-
-                displayDatesRange = DatesRange(dateFrom = dateFrom, dateTo = dateTo)
-                minMaxDatesRange = NullableDatesRange()
+                displayFromDate = initialDate.minusMonths(MONTHS_PER_PAGE)
+                displayToDate = initialDate.plusMonths(MONTHS_PER_PAGE)
             }
 
             minDate != null && maxDate != null -> {
-                val dateFrom = minDate
-                val dateTo = maxDate
+                if (initialDate.isBetween(minDate, maxDate)) {
+                    var monthBetween = minDate.monthsTo(initialDate)
+                    displayFromDate = if (monthBetween > MONTHS_PER_PAGE) {
+                        initialDate.minusMonths(MONTHS_PER_PAGE)
+                    } else {
+                        minDate
+                    }
 
-                displayDatesRange = DatesRange(dateFrom = minDate, dateTo = maxDate)
-                minMaxDatesRange = NullableDatesRange(dateFrom = dateFrom, dateTo = dateTo)
+                    monthBetween = initialDate.monthsTo(maxDate)
+                    displayToDate = if (monthBetween > MONTHS_PER_PAGE) {
+                        initialDate.plusMonths(MONTHS_PER_PAGE)
+                    } else {
+                        maxDate
+                    }
+                } else {
+                    displayFromDate = minDate
+
+                    val monthCount = minDate.monthsTo(maxDate)
+                    displayToDate = if (monthCount > MONTHS_PER_PAGE) {
+                        minDate.plusMonths(MONTHS_PER_PAGE)
+                    } else {
+                        maxDate
+                    }
+                }
             }
 
             minDate != null && maxDate == null -> {
-                val dateFrom = minDate
-                val dateTo = dateFrom.plusMonths(MONTHS_PER_PAGE)
-
-                displayDatesRange = DatesRange(dateFrom = dateFrom, dateTo = dateTo)
-                minMaxDatesRange = NullableDatesRange(dateFrom = dateFrom)
+                displayFromDate = minDate
+                displayToDate = displayFromDate.plusMonths(MONTHS_PER_PAGE)
             }
 
             minDate == null && maxDate != null -> {
-                val dateTo = maxDate
-                val dateFrom = dateTo.minusMonths(MONTHS_PER_PAGE)
-
-                displayDatesRange = DatesRange(dateFrom = dateFrom, dateTo = dateTo)
-                minMaxDatesRange = NullableDatesRange(dateTo = dateTo)
+                displayFromDate = maxDate.minusMonths(MONTHS_PER_PAGE)
+                displayToDate = maxDate
             }
+
+            else -> throw IllegalStateException()
         }
+
+        displayDatesRange = DatesRange(dateFrom = displayFromDate, dateTo = displayToDate)
+        minMaxDatesRange = NullableDatesRange(dateFrom = minDate, dateTo = maxDate)
 
         generateCalendarItems(displayDatesRange)
 
@@ -394,12 +408,30 @@ class CalendarView @JvmOverloads constructor(
     }
 
     private fun generatePrevCalendarItems() {
-        if (minMaxDatesRange.dateFrom != null) {
-            return
-        }
+        val displayDateFrom = displayDatesRange.dateFrom
+        val minDate = minMaxDatesRange.dateFrom
 
-        val dateTo = displayDatesRange.dateFrom.minusMonths(1)
-        val dateFrom = dateTo.minusMonths(MONTHS_PER_PAGE)
+        val dateFrom: CalendarDate
+        val dateTo: CalendarDate
+
+        if (minDate != null) {
+            dateTo = displayDateFrom.minusMonths(1)
+
+            val monthBetween = minDate.monthsTo(dateTo)
+            if (monthBetween == 0) {
+                return
+            }
+
+            dateFrom = if (monthBetween > MONTHS_PER_PAGE) {
+                dateTo.minusMonths(MONTHS_PER_PAGE)
+            } else {
+                dateTo.minusMonths(monthBetween)
+            }
+
+        } else {
+            dateTo = displayDateFrom.minusMonths(1)
+            dateFrom = dateTo.minusMonths(MONTHS_PER_PAGE)
+        }
 
         val calendarItems = calendarItemsGenerator.generateCalendarItems(
             dateFrom = dateFrom.date,
@@ -411,20 +443,37 @@ class CalendarView @JvmOverloads constructor(
     }
 
     private fun generateNextCalendarItems() {
-        if (minMaxDatesRange.dateTo != null) {
-            return
+        val displayDateTo = displayDatesRange.dateTo
+        val maxDate = minMaxDatesRange.dateTo
+
+        val dateFrom: CalendarDate
+        val dateTo: CalendarDate
+
+        if (maxDate != null) {
+            dateFrom = displayDateTo.plusMonths(1)
+
+            val monthBetween = dateFrom.monthsTo(maxDate)
+            if (monthBetween == 0) {
+                return
+            }
+
+            dateTo = if (monthBetween > MONTHS_PER_PAGE) {
+                dateFrom.plusMonths(MONTHS_PER_PAGE)
+            } else {
+                dateFrom.plusMonths(monthBetween)
+            }
+        } else {
+            dateFrom = displayDateTo.plusMonths(1)
+            dateTo = dateFrom.plusMonths(MONTHS_PER_PAGE)
         }
 
-        val fromDate = displayDatesRange.dateTo.plusMonths(1)
-        val toDate = fromDate.plusMonths(MONTHS_PER_PAGE)
-
         val calendarItems = calendarItemsGenerator.generateCalendarItems(
-            dateFrom = fromDate.date,
-            dateTo = toDate.date
+            dateFrom = dateFrom.date,
+            dateTo = dateTo.date
         )
 
         calendarAdapter.addNextCalendarItems(calendarItems)
-        displayDatesRange = displayDatesRange.copy(dateTo = toDate)
+        displayDatesRange = displayDatesRange.copy(dateTo = dateTo)
     }
 
     /**
@@ -489,9 +538,9 @@ class CalendarView @JvmOverloads constructor(
             val maxDate = minMaxDatesRange.dateTo
 
             return when {
-                minDate == null && maxDate != null -> date >= maxDate
-                minDate != null && maxDate == null -> date <= minDate
-                minDate != null && maxDate != null -> date <= minDate || date >= maxDate
+                minDate == null && maxDate != null -> date > maxDate
+                minDate != null && maxDate == null -> date < minDate
+                minDate != null && maxDate != null -> date < minDate || date > maxDate
                 minDate == null && maxDate == null -> false
                 else -> false
             }
