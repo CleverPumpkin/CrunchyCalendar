@@ -21,7 +21,7 @@ abstract class AbsDateItemDecoration : RecyclerView.ItemDecoration() {
      * Method for decorating date view.
      *
      * [canvas] canvas supplied to the RecyclerView
-     * [date] specific date from data set
+     * [date] specific calendar date for decorating
      * [dateViewRect] rect, that contains positions of date view relative to its parent.
      * This positions can be used to draw on the [canvas].
      */
