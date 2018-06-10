@@ -15,7 +15,7 @@ class CalendarDateTest {
         calendar.set(2018, Calendar.JUNE, 10)
         val endDate = CalendarDate(calendar.time)
 
-        assertEquals(1, startDate.monthsTo(endDate))
+        assertEquals(1, startDate.monthsDiff(endDate))
     }
 
     @Test
@@ -27,7 +27,7 @@ class CalendarDateTest {
         calendar.set(2019, Calendar.MAY, 10)
         val endDate = CalendarDate(calendar.time)
 
-        assertEquals(12, startDate.monthsTo(endDate))
+        assertEquals(12, startDate.monthsDiff(endDate))
     }
 
     @Test
@@ -39,7 +39,7 @@ class CalendarDateTest {
         calendar.set(2018, Calendar.MARCH, 10)
         val endDate = CalendarDate(calendar.time)
 
-        assertEquals(0, startDate.monthsTo(endDate))
+        assertEquals(0, startDate.monthsDiff(endDate))
     }
 
     @Test
@@ -51,6 +51,6 @@ class CalendarDateTest {
         calendar.set(2019, Calendar.JANUARY, 1)
         val endDate = CalendarDate(calendar.time)
 
-        assertEquals(1, startDate.monthsTo(endDate))
+        assertEquals(1, startDate.monthsDiff(endDate))
     }
 }

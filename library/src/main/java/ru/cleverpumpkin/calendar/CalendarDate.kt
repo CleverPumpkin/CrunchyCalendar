@@ -107,7 +107,7 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
         return CalendarDate(tmpCalendar.time)
     }
 
-    fun monthsTo(other: CalendarDate): Int {
+    fun monthsDiff(other: CalendarDate): Int {
         if (other < this) {
             return 0
         }
