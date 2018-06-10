@@ -14,7 +14,6 @@ class CalendarItemsGenerator {
 
     companion object {
         private const val DAYS_IN_WEEK = 7
-        private const val MONTH_IN_YEAR = 12
     }
 
     /**
@@ -36,12 +35,12 @@ class CalendarItemsGenerator {
         }
     }
 
-    fun generateCalendarItems(dateFrom: Date, dateTo: Date): List<CalendarItem> {
+    fun generateCalendarItems(dateFrom: CalendarDate, dateTo: CalendarDate): List<CalendarItem> {
         val calendar = Calendar.getInstance()
-        calendar.time = dateFrom
+        calendar.time = dateFrom.date
 
         val calendarItems = mutableListOf<CalendarItem>()
-        val monthsBetween = getMonthsBetweenTwoDates(startDate = dateFrom, endDate = dateTo)
+        val monthsBetween = dateFrom.monthsDiff(dateTo)
 
         repeat(monthsBetween.inc()) {
             val year = calendar.get(Calendar.YEAR)
@@ -57,19 +56,6 @@ class CalendarItemsGenerator {
         }
 
         return calendarItems
-    }
-
-    private fun getMonthsBetweenTwoDates(startDate: Date, endDate: Date): Int {
-        val startCalendar = Calendar.getInstance()
-        startCalendar.time = startDate
-
-        val endCalendar = Calendar.getInstance()
-        endCalendar.time = endDate
-
-        val diffYear = endCalendar.get(Calendar.YEAR) - startCalendar.get(Calendar.YEAR)
-        val diffMonth = endCalendar.get(Calendar.MONTH) - startCalendar.get(Calendar.MONTH)
-
-        return diffYear * MONTH_IN_YEAR + diffMonth
     }
 
     private fun generateCalendarItemsForMonth(year: Int, month: Int): List<CalendarItem> {
