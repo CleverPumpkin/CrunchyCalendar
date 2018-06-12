@@ -5,13 +5,13 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import ru.cleverpumpkin.calendar.CalendarDate
-import ru.cleverpumpkin.calendar.decorations.DateItemDecoration
+import ru.cleverpumpkin.calendar.decorations.AbsDateItemDecoration
 import ru.cleverpumpkin.calendar.utils.dpToPix
 
 class EventsDateItemDecoration(
     context: Context,
     private val groupedEvents: Map<CalendarDate, List<CalendarEvent>>
-) : DateItemDecoration() {
+) : AbsDateItemDecoration() {
 
     companion object {
         private const val INDICATOR_RADIUS = 4.0f
@@ -25,7 +25,7 @@ class EventsDateItemDecoration(
         style = Paint.Style.FILL
     }
 
-    override fun decorateDateItem(canvas: Canvas, date: CalendarDate, dateViewRect: Rect) {
+    override fun decorateDateView(canvas: Canvas, date: CalendarDate, dateViewRect: Rect) {
         val eventsForDate = groupedEvents[date]
         if (eventsForDate == null || eventsForDate.isEmpty()) {
             return
