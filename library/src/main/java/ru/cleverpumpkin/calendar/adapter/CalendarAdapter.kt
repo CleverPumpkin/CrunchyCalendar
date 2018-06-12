@@ -45,11 +45,13 @@ class CalendarAdapter(
     private val monthFormatter = SimpleDateFormat(MONTH_FORMAT, Locale.getDefault())
     private val dayFormatter = SimpleDateFormat(DAY_FORMAT, Locale.getDefault())
 
-    override fun getItemViewType(position: Int) = when (calendarItems[position]) {
-        is DateItem -> DATE_VIEW_TYPE
-        is MonthItem -> MONTH_VIEW_TYPE
-        is EmptyItem -> EMPTY_VIEW_TYPE
-        else -> throw IllegalStateException("Unknown item at position $position")
+    override fun getItemViewType(position: Int): Int {
+        return when (calendarItems[position]) {
+            is DateItem -> DATE_VIEW_TYPE
+            is MonthItem -> MONTH_VIEW_TYPE
+            is EmptyItem -> EMPTY_VIEW_TYPE
+            else -> throw IllegalStateException("Unknown item at position $position")
+        }
     }
 
     override fun getItemCount(): Int {

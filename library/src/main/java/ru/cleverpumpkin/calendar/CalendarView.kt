@@ -352,15 +352,15 @@ class CalendarView @JvmOverloads constructor(
 
             minDate != null && maxDate != null -> {
                 if (initialDate.isBetween(minDate, maxDate)) {
-                    var monthBetween = minDate.monthsDiff(initialDate)
-                    displayDatesFrom = if (monthBetween > MONTHS_PER_PAGE) {
+                    var monthsBetween = minDate.monthsBetween(initialDate)
+                    displayDatesFrom = if (monthsBetween > MONTHS_PER_PAGE) {
                         initialDate.minusMonths(MONTHS_PER_PAGE)
                     } else {
                         minDate
                     }
 
-                    monthBetween = initialDate.monthsDiff(maxDate)
-                    displayDatesTo = if (monthBetween > MONTHS_PER_PAGE) {
+                    monthsBetween = initialDate.monthsBetween(maxDate)
+                    displayDatesTo = if (monthsBetween > MONTHS_PER_PAGE) {
                         initialDate.plusMonths(MONTHS_PER_PAGE)
                     } else {
                         maxDate
@@ -368,7 +368,7 @@ class CalendarView @JvmOverloads constructor(
                 } else {
                     displayDatesFrom = minDate
 
-                    val monthBetween = minDate.monthsDiff(maxDate)
+                    val monthBetween = minDate.monthsBetween(maxDate)
                     displayDatesTo = if (monthBetween > MONTHS_PER_PAGE) {
                         minDate.plusMonths(MONTHS_PER_PAGE)
                     } else {
@@ -409,7 +409,7 @@ class CalendarView @JvmOverloads constructor(
 
     private fun generatePrevCalendarItems() {
         val minDate = minMaxDatesRange.dateFrom
-        if (minDate != null && minDate.monthsDiff(displayDatesRange.dateFrom) == 0) {
+        if (minDate != null && minDate.monthsBetween(displayDatesRange.dateFrom) == 0) {
             return
         }
 
@@ -417,7 +417,7 @@ class CalendarView @JvmOverloads constructor(
         val generateDatesTo = displayDatesRange.dateFrom.minusMonths(1)
 
         generateDatesFrom = if (minDate != null) {
-            val monthBetween = minDate.monthsDiff(generateDatesTo)
+            val monthBetween = minDate.monthsBetween(generateDatesTo)
 
             if (monthBetween > MONTHS_PER_PAGE) {
                 generateDatesTo.minusMonths(MONTHS_PER_PAGE)
@@ -440,7 +440,7 @@ class CalendarView @JvmOverloads constructor(
 
     private fun generateNextCalendarItems() {
         val maxDate = minMaxDatesRange.dateTo
-        if (maxDate != null && displayDatesRange.dateTo.monthsDiff(maxDate) == 0) {
+        if (maxDate != null && displayDatesRange.dateTo.monthsBetween(maxDate) == 0) {
             return
         }
 
@@ -448,7 +448,7 @@ class CalendarView @JvmOverloads constructor(
         val generateDatesTo: CalendarDate
 
         generateDatesTo = if (maxDate != null) {
-            val monthBetween = generateDatesFrom.monthsDiff(maxDate)
+            val monthBetween = generateDatesFrom.monthsBetween(maxDate)
 
             if (monthBetween > MONTHS_PER_PAGE) {
                 generateDatesFrom.plusMonths(MONTHS_PER_PAGE)
