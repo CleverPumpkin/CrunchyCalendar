@@ -40,7 +40,7 @@ class CalendarItemsGenerator {
         calendar.time = dateFrom.date
 
         val calendarItems = mutableListOf<CalendarItem>()
-        val monthsBetween = dateFrom.monthsDiff(dateTo)
+        val monthsBetween = dateFrom.monthsBetween(dateTo)
 
         repeat(monthsBetween.inc()) {
             val year = calendar.get(Calendar.YEAR)
