@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item android:state_pressed="true">
+        <color android:color="@color/calendar_date_pressed_background" />
+    </item>
+
     <item app:cpcalendar_state_selected="true">
         <color android:color="@color/calendar_date_selected_background" />
     </item>
@@ -15,10 +19,6 @@
 
     <item android:state_selected="true">
         <color android:color="@color/calendar_date_selected_background" />
-    </item>
-
-    <item android:state_pressed="true">
-        <color android:color="@color/calendar_date_pressed_background" />
     </item>
 
     <item>

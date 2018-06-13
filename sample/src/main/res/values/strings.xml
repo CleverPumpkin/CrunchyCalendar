@@ -5,4 +5,6 @@
     <string name="demo_mode_single_selection">Single date selection</string>
     <string name="demo_mode_multiple_selection">Multiple dates selection</string>
     <string name="demo_mode_range_selection">Range dates selection</string>
+    <string name="demo_mode_limited_selection">Limited dates selection</string>
+    <string name="demo_mode_custom_events">Calendar with custom events</string>
 </resources>
