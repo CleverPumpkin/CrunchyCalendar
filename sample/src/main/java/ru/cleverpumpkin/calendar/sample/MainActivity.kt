@@ -3,10 +3,10 @@ package ru.cleverpumpkin.calendar.sample
 import android.os.Bundle
 import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.AppCompatActivity
-import ru.cleverpumpkin.calendar.sample.DemoModeListFragment.DemoMode
-import ru.cleverpumpkin.calendar.sample.DemoModeListFragment.DemoMode.*
+import ru.cleverpumpkin.calendar.sample.DemoListFragment.DemoMode
+import ru.cleverpumpkin.calendar.sample.DemoListFragment.DemoMode.*
 
-class MainActivity : AppCompatActivity(), DemoModeListFragment.OnDemoModeClickListener {
+class MainActivity : AppCompatActivity(), DemoListFragment.OnDemoModeClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity(), DemoModeListFragment.OnDemoModeClickLi
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .add(R.id.fragment_container, DemoModeListFragment())
+                .add(R.id.fragment_container, DemoListFragment())
                 .commit()
         }
     }
@@ -22,16 +22,16 @@ class MainActivity : AppCompatActivity(), DemoModeListFragment.OnDemoModeClickLi
     override fun onDemoModeClick(demoMode: DemoMode) {
         val fragment = when (demoMode) {
             DISPLAY_ONLY, SINGLE_SELECTION, MULTIPLE_SELECTION, RANGE_SELECTION -> {
-                CalendarDateSelectionFragment.newInstance(demoMode)
+                CalendarWithDateSelectionFragment.newInstance(demoMode)
             }
             LIMITED_DATES_SELECTION -> {
-                CalendarLimitedDateSelectionFragment()
+                CalendarWithLimitedDateSelectionFragment()
             }
             CUSTOM_EVENTS -> {
-                CalendarWithEventsFragment.newInstance(demoMode)
+                CalendarWithEventsFragment()
             }
             CUSTOM_STYLE -> {
-                CalendarCustomStyleFragment.newInstance(demoMode)
+                CalendarWithCustomStyleFragment()
             }
         }
 

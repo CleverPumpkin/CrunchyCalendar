@@ -11,14 +11,14 @@ import ru.cleverpumpkin.calendar.CalendarView
 import ru.cleverpumpkin.calendar.CalendarView.*
 import java.util.*
 
-class CalendarLimitedDateSelectionFragment : Fragment() {
+class CalendarWithLimitedDateSelectionFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_demo_mode, container, false)
+        return inflater.inflate(R.layout.fragment_demo, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -31,10 +31,10 @@ class CalendarLimitedDateSelectionFragment : Fragment() {
             calendar.set(2018, Calendar.JUNE, 1)
             val initialDate = CalendarDate(calendar.time)
 
-            calendar.set(2018, Calendar.MAY, 15)
+            calendar.set(2018, Calendar.MAY, 28)
             val minDate = CalendarDate(calendar.time)
 
-            calendar.set(2018, Calendar.JULY, 15)
+            calendar.set(2018, Calendar.JULY, 2)
             val maxDate = CalendarDate(calendar.time)
 
             calendarView.setupCalendar(

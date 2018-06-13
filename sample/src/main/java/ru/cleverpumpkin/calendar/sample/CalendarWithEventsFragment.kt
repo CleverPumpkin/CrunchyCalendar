@@ -17,22 +17,12 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarView
+import ru.cleverpumpkin.calendar.CalendarView.SelectionMode
 import ru.cleverpumpkin.calendar.decorations.AbsDateItemDecoration
 import ru.cleverpumpkin.calendar.utils.dpToPix
-import java.lang.IllegalStateException
 import java.util.*
 
 class CalendarWithEventsFragment : Fragment() {
-
-    companion object {
-        private const val ARG_DEMO_MODE = "ru.cleverpumpkin.calendar.sample.demo_mode"
-
-        fun newInstance(demoMode: DemoModeListFragment.DemoMode): Fragment {
-            return CalendarWithEventsFragment().apply {
-                arguments = Bundle().apply { putString(ARG_DEMO_MODE, demoMode.name) }
-            }
-        }
-    }
 
     private val groupedEvents = generateCalendarEvents()
         .groupBy { it.calendarDate }
@@ -42,27 +32,23 @@ class CalendarWithEventsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_demo_mode, container, false)
+        return inflater.inflate(R.layout.fragment_demo, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val demoModeName = arguments?.getString(ARG_DEMO_MODE)
-                ?: throw IllegalStateException()
-
-        val demoMode = DemoModeListFragment.DemoMode.valueOf(demoModeName)
 
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
         toolbar.run {
-            setTitle(demoMode.descriptionRes)
+            setTitle(R.string.demo_mode_events)
             setNavigationIcon(R.drawable.ic_arrow_back_24dp)
             setNavigationOnClickListener { activity?.onBackPressed() }
         }
 
         val calendarView = view.findViewById<CalendarView>(R.id.calendar_view)
         if (savedInstanceState == null) {
-            calendarView.setupCalendar(selectionMode = CalendarView.SelectionMode.NON)
+            calendarView.setupCalendar(selectionMode = SelectionMode.NON)
         }
 
         val eventsDateItemDecoration = EventsDateItemDecoration(
@@ -74,12 +60,12 @@ class CalendarWithEventsFragment : Fragment() {
 
         calendarView.onDateClickListener = object : CalendarView.OnDateClickListener {
             override fun onDateClick(date: CalendarDate) {
-                showEventsForDate(date)
+                showDialogWithEvents(date)
             }
         }
     }
 
-    private fun showEventsForDate(date: CalendarDate) {
+    private fun showDialogWithEvents(date: CalendarDate) {
         val eventsForDate = groupedEvents[date]?.toTypedArray() ?: return
 
         val builder = AlertDialog.Builder(context!!)

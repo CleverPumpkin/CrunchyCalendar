@@ -7,16 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import ru.cleverpumpkin.calendar.CalendarView
-import ru.cleverpumpkin.calendar.sample.DemoModeListFragment.DemoMode
+import ru.cleverpumpkin.calendar.sample.DemoListFragment.DemoMode
 import java.lang.IllegalStateException
 
-class CalendarDateSelectionFragment : Fragment() {
+class CalendarWithDateSelectionFragment : Fragment() {
 
     companion object {
         private const val ARG_DEMO_MODE = "ru.cleverpumpkin.calendar.sample.demo_mode"
 
         fun newInstance(demoMode: DemoMode): Fragment {
-            return CalendarDateSelectionFragment().apply {
+            return CalendarWithDateSelectionFragment().apply {
                 arguments = Bundle().apply { putString(ARG_DEMO_MODE, demoMode.name) }
             }
         }
@@ -27,7 +27,7 @@ class CalendarDateSelectionFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_demo_mode, container, false)
+        return inflater.inflate(R.layout.fragment_demo, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
