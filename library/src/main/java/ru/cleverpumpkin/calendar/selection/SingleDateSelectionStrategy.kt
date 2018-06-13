@@ -13,13 +13,17 @@ class SingleDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSe
     private var selectedDate: CalendarDate? = null
 
     override fun onDateSelected(date: CalendarDate) {
-        val previousSelectedDate = selectedDate
-        selectedDate = date
+        if (selectedDate == date) {
+            selectedDate = null
+        } else {
+            val previousSelectedDate = selectedDate
+            selectedDate = date
 
-        if (previousSelectedDate != null) {
-            val previousSelectedPosition = adapter.findDatePosition(previousSelectedDate)
-            if (previousSelectedPosition != -1) {
-                adapter.notifyItemChanged(previousSelectedPosition)
+            if (previousSelectedDate != null) {
+                val previousSelectedPosition = adapter.findDatePosition(previousSelectedDate)
+                if (previousSelectedPosition != -1) {
+                    adapter.notifyItemChanged(previousSelectedPosition)
+                }
             }
         }
 
