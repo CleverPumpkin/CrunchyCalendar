@@ -166,7 +166,7 @@ class CalendarView @JvmOverloads constructor(
 
             try {
                 gridColor = typedArray.getColor(
-                    R.styleable.CalendarView_cpcalendar_divider_color,
+                    R.styleable.CalendarView_cpcalendar_grid_color,
                     gridColor
                 )
 

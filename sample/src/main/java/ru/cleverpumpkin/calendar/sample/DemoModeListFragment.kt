@@ -46,7 +46,11 @@ class DemoModeListFragment : Fragment() {
             selectionMode = SelectionMode.MULTIPLE
         ),
         CUSTOM_EVENTS(
-            descriptionRes = R.string.demo_mode_custom_events,
+            descriptionRes = R.string.demo_mode_events,
+            selectionMode = SelectionMode.SINGLE
+        ),
+        CUSTOM_STYLE(
+            descriptionRes = R.string.demo_mode_custom_style,
             selectionMode = SelectionMode.SINGLE
         )
     }
