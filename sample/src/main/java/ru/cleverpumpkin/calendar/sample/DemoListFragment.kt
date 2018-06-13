@@ -52,6 +52,10 @@ class DemoListFragment : Fragment() {
         CUSTOM_STYLE(
             descriptionRes = R.string.demo_mode_custom_style,
             selectionMode = SelectionMode.MULTIPLE
+        ),
+        DIALOG(
+            descriptionRes = R.string.demo_mode_dialog,
+            selectionMode = SelectionMode.MULTIPLE
         )
     }
 
