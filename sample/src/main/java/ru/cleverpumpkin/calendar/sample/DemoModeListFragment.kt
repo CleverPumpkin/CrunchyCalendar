@@ -22,24 +22,32 @@ class DemoModeListFragment : Fragment() {
     }
 
     enum class DemoMode(
-        @StringRes val desctiption: Int,
+        @StringRes val descriptionRes: Int,
         val selectionMode: CalendarView.SelectionMode
     ) {
         DISPLAY_ONLY(
-            desctiption = R.string.demo_mode_no_selection,
+            descriptionRes = R.string.demo_mode_no_selection,
             selectionMode = SelectionMode.NON
         ),
         SINGLE_SELECTION(
-            desctiption = R.string.demo_mode_single_selection,
+            descriptionRes = R.string.demo_mode_single_selection,
             selectionMode = SelectionMode.SINGLE
         ),
         MULTIPLE_SELECTION(
-            desctiption = R.string.demo_mode_multiple_selection,
+            descriptionRes = R.string.demo_mode_multiple_selection,
             selectionMode = SelectionMode.MULTIPLE
         ),
         RANGE_SELECTION(
-            desctiption = R.string.demo_mode_range_selection,
+            descriptionRes = R.string.demo_mode_range_selection,
             selectionMode = SelectionMode.RANGE
+        ),
+        LIMITED_DATES_SELECTION(
+            descriptionRes = R.string.demo_mode_limited_selection,
+            selectionMode = SelectionMode.MULTIPLE
+        ),
+        CUSTOM_EVENTS(
+            descriptionRes = R.string.demo_mode_custom_events,
+            selectionMode = SelectionMode.SINGLE
         )
     }
 
@@ -91,7 +99,7 @@ class DemoModeListFragment : Fragment() {
 
         override fun onBindViewHolder(holder: DemoModeViewHolder, position: Int) {
             val demoMode = DemoMode.values()[position]
-            holder.textView.setText(demoMode.desctiption)
+            holder.textView.setText(demoMode.descriptionRes)
         }
 
         override fun getItemCount() = DemoMode.values().size

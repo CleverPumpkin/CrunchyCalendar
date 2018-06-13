@@ -10,13 +10,13 @@ import ru.cleverpumpkin.calendar.CalendarView
 import ru.cleverpumpkin.calendar.sample.DemoModeListFragment.DemoMode
 import java.lang.IllegalStateException
 
-class DemoModeFragment : Fragment() {
+class CalendarDateSelectionFragment : Fragment() {
 
     companion object {
         private const val ARG_DEMO_MODE = "ru.cleverpumpkin.calendar.sample.demo_mode"
 
         fun newInstance(demoMode: DemoMode): Fragment {
-            return DemoModeFragment().apply {
+            return CalendarDateSelectionFragment().apply {
                 arguments = Bundle().apply { putString(ARG_DEMO_MODE, demoMode.name) }
             }
         }
@@ -40,7 +40,7 @@ class DemoModeFragment : Fragment() {
 
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
         toolbar.run {
-            setTitle(demoMode.desctiption)
+            setTitle(demoMode.descriptionRes)
             setNavigationIcon(R.drawable.ic_arrow_back_24dp)
             setNavigationOnClickListener { activity?.onBackPressed() }
         }

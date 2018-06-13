@@ -38,11 +38,11 @@ class CalendarView @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
     /**
-     * Interface to be notified when a new date is selected.
+     * Interface to be notified when a date is clicked.
      */
-    interface OnDateSelectedListener {
+    interface OnDateClickListener {
 
-        fun onDateSelected(date: Date)
+        fun onDateClick(date: CalendarDate)
     }
 
     /**
@@ -133,9 +133,9 @@ class CalendarView @JvmOverloads constructor(
         }
 
     /**
-     * Listener that will be be notified when a new date is selected or unselected.
+     * Listener that will be be notified when a date is clicked.
      */
-    var onDateSelectedListener: OnDateSelectedListener? = null
+    var onDateClickListener: OnDateClickListener? = null
 
     /**
      * Returns selected dates according to [selectionMode]. When selection mode is:
@@ -205,18 +205,13 @@ class CalendarView @JvmOverloads constructor(
             calendarDateTextColorResId = calendarDateTextColorResId
         )
 
-        val onDateClickHandler: (CalendarDate) -> Unit = { calendarDate ->
-            dateSelectionStrategy.onDateSelected(calendarDate)
-
-            if (dateSelectionStrategy.isDateSelected(calendarDate)) {
-                onDateSelectedListener?.onDateSelected(calendarDate.date)
-            }
-        }
-
         calendarAdapter = CalendarAdapter(
             itemsAttributes = itemsAttributes,
             dateInfoProvider = DateInfoProviderImpl(),
-            onDateClickHandler = onDateClickHandler
+            onDateClickHandler = { calendarDate ->
+                dateSelectionStrategy.onDateSelected(calendarDate)
+                onDateClickListener?.onDateClick(calendarDate)
+            }
         )
 
         daysBarView = findViewById(R.id.days_container)
