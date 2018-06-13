@@ -3,6 +3,9 @@ package ru.cleverpumpkin.calendar.selection
 import android.os.Bundle
 import ru.cleverpumpkin.calendar.CalendarDate
 
+/**
+ * Empty date selection strategy implementation that do nothing.
+ */
 class NoDateSelectionStrategy : DateSelectionStrategy {
 
     override fun onDateSelected(date: CalendarDate) {

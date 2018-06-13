@@ -23,7 +23,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * TODO Describe class
+ * This class provides view items for calendar.
+ *
+ * This adapter provides three types of elements: [DATE_VIEW_TYPE] - single date cell,
+ * [MONTH_VIEW_TYPE] - simple name of month, [EMPTY_VIEW_TYPE] - empty view that represents
+ * start and end offset for each month.
  */
 class CalendarAdapter(
     var itemsAttributes: ItemsAttributes,

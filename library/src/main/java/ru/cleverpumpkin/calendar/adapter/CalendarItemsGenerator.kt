@@ -8,7 +8,7 @@ import ru.cleverpumpkin.calendar.adapter.item.MonthItem
 import java.util.*
 
 /**
- * TODO Describe class
+ * This class responsible for generation items for [CalendarAdapter]
  */
 class CalendarItemsGenerator {
 
@@ -35,6 +35,9 @@ class CalendarItemsGenerator {
         }
     }
 
+    /**
+     * Generate calendar items for months between [dateFrom] and [dateTo]
+     */
     fun generateCalendarItems(dateFrom: CalendarDate, dateTo: CalendarDate): List<CalendarItem> {
         val calendar = Calendar.getInstance()
         calendar.time = dateFrom.date
