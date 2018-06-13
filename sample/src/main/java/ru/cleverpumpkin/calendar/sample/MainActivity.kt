@@ -1,6 +1,5 @@
 package ru.cleverpumpkin.calendar.sample
 
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.AppCompatActivity
@@ -30,6 +29,9 @@ class MainActivity : AppCompatActivity(), DemoModeListFragment.OnDemoModeClickLi
             }
             CUSTOM_EVENTS -> {
                 CalendarWithEventsFragment.newInstance(demoMode)
+            }
+            CUSTOM_STYLE -> {
+                CalendarCustomStyleFragment.newInstance(demoMode)
             }
         }
 

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:color="@color/custom_calendar_date_pressed_text_color" android:state_pressed="true" />
+
+    <item android:color="@color/custom_calendar_date_selected_text_color" app:cpcalendar_state_selected="true" />
+
+    <item android:color="@color/custom_calendar_date_today_text_color" app:cpcalendar_state_today="true" />
+
+    <item android:color="@color/custom_calendar_date_disabled_text_color" app:cpcalendar_state_disabled="true" />
+
+    <item android:color="@color/custom_calendar_date_selected_text_color" android:state_selected="true" />
+
+    <item android:color="@color/custom_calendar_date_text_color" />
+
+</selector>

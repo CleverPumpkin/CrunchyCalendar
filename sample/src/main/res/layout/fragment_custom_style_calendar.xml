@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:title="@string/app_name"
+        app:titleTextColor="@android:color/white" />
+
+    <ru.cleverpumpkin.calendar.CalendarView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/calendar_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:background="@android:color/white"
+        app:cpcalendar_date_background="@drawable/custom_date_bg_selector"
+        app:cpcalendar_date_text_color="@color/custom_date_text_selector"
+        app:cpcalendar_day_bar_background="@color/custom_calendar_days_bar_background"
+        app:cpcalendar_day_bar_text_color="@color/custom_calendar_days_bar_text_color"
+        app:cpcalendar_grid_color="@color/custom_calendar_grid_color"
+        app:cpcalendar_month_text_color="@color/custom_calendar_month_text_color" />
+
+</FrameLayout>
+
