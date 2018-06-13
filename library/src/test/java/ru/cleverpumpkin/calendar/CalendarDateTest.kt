@@ -7,7 +7,7 @@ import java.util.*
 class CalendarDateTest {
 
     @Test
-    fun `Test months count between two nearest months`() {
+    fun `Test months between two nearest months`() {
         val calendar = Calendar.getInstance()
         calendar.set(2018, Calendar.MAY, 10)
         val startDate = CalendarDate(calendar.time)
@@ -19,7 +19,7 @@ class CalendarDateTest {
     }
 
     @Test
-    fun `Test months count between two months with one year difference`() {
+    fun `Test months between two months with one year difference`() {
         val calendar = Calendar.getInstance()
         calendar.set(2018, Calendar.MAY, 10)
         val startDate = CalendarDate(calendar.time)
@@ -31,7 +31,7 @@ class CalendarDateTest {
     }
 
     @Test
-    fun `Test months count when end date before start date`() {
+    fun `Test months when end date before start date`() {
         val calendar = Calendar.getInstance()
         calendar.set(2018, Calendar.MAY, 10)
         val startDate = CalendarDate(calendar.time)
@@ -43,7 +43,7 @@ class CalendarDateTest {
     }
 
     @Test
-    fun `Test months count when start month - 31 December and end month - 1 January of next year`() {
+    fun `Test months when start month - 31 December and end month - 1 January of next year`() {
         val calendar = Calendar.getInstance()
         calendar.set(2018, Calendar.DECEMBER, 31)
         val startDate = CalendarDate(calendar.time)
