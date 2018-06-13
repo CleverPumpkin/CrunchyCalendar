@@ -40,7 +40,7 @@ class RangeDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSel
                 }
 
                 datesRange = if (date < dateFrom) {
-                    datesRange.copy(dateFrom = date)
+                    datesRange.copy(dateFrom = date, dateTo = dateFrom)
                 } else {
                     datesRange.copy(dateTo = date)
                 }
