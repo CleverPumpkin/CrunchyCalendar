@@ -1,6 +1,7 @@
 package ru.cleverpumpkin.calendar.sample
 
 import android.os.Bundle
+import android.support.v4.app.DialogFragment
 import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.AppCompatActivity
 import ru.cleverpumpkin.calendar.sample.DemoListFragment.DemoMode
@@ -33,12 +34,21 @@ class MainActivity : AppCompatActivity(), DemoListFragment.OnDemoModeClickListen
             CUSTOM_STYLE -> {
                 CalendarWithCustomStyleFragment()
             }
+            DIALOG -> {
+                CalendarDialogFragment()
+            }
         }
 
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment)
-            .addToBackStack(null)
-            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-            .commit()
+        if (demoMode == DIALOG) {
+            val dialogFragment = fragment as DialogFragment
+            dialogFragment.show(supportFragmentManager, null)
+        } else {
+
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .commit()
+        }
     }
 }

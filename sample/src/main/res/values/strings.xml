@@ -8,4 +8,5 @@
     <string name="demo_mode_limited_selection">Limited dates selection</string>
     <string name="demo_mode_events">Custom events and action dialog</string>
     <string name="demo_mode_custom_style">Custom styles</string>
+    <string name="demo_mode_dialog">Dialog</string>
 </resources>
