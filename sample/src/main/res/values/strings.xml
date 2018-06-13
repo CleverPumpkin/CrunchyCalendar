@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">Calendar demo</string>
 
-    <string name="demo_mode_no_selection">Display only</string>
+    <string name="demo_mode_no_selection">Display only mode</string>
     <string name="demo_mode_single_selection">Single date selection</string>
-    <string name="demo_mode_multiple_selection">Multiple dates selection</string>
+    <string name="demo_mode_multiple_selection">Multiple dates selection </string>
     <string name="demo_mode_range_selection">Range dates selection</string>
     <string name="demo_mode_limited_selection">Limited dates selection</string>
-    <string name="demo_mode_events">Calendar with events</string>
-    <string name="demo_mode_custom_style">Calendar with custom styles</string>
+    <string name="demo_mode_events">Custom events and action dialog</string>
+    <string name="demo_mode_custom_style">Custom styles</string>
 </resources>

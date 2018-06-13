@@ -14,7 +14,7 @@ import android.widget.TextView
 import ru.cleverpumpkin.calendar.CalendarView
 import ru.cleverpumpkin.calendar.CalendarView.SelectionMode
 
-class DemoModeListFragment : Fragment() {
+class DemoListFragment : Fragment() {
 
     interface OnDemoModeClickListener {
 
@@ -47,11 +47,11 @@ class DemoModeListFragment : Fragment() {
         ),
         CUSTOM_EVENTS(
             descriptionRes = R.string.demo_mode_events,
-            selectionMode = SelectionMode.SINGLE
+            selectionMode = SelectionMode.NON
         ),
         CUSTOM_STYLE(
             descriptionRes = R.string.demo_mode_custom_style,
-            selectionMode = SelectionMode.SINGLE
+            selectionMode = SelectionMode.MULTIPLE
         )
     }
 
@@ -67,7 +67,7 @@ class DemoModeListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_demo_mode_list, container, false)
+        return inflater.inflate(R.layout.fragment_demo_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

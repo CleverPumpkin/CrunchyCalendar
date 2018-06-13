@@ -4,7 +4,7 @@
     <color name="colorPrimaryDark">#4088B8</color>
     <color name="colorAccent">#55B3F3</color>
 
-    <color name="custom_calendar_grid_color">#0f6c52</color>
+    <color name="custom_calendar_grid_color">#46d1aa</color>
     <color name="custom_calendar_month_text_color">#0f6c52</color>
 
     <color name="custom_calendar_days_bar_background">#0f6c52</color>
