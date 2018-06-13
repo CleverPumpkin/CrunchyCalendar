@@ -91,9 +91,8 @@ class CalendarView @JvmOverloads constructor(
         MULTIPLE,
 
         /**
-         * Allows you to select a date range. Previous selections are cleared when you either:
-         * 1. Have a range selected and select another date (even if it's in the current range).
-         * 2. Have one date selected and then select an earlier date.
+         * Allows you to select a date range. Previous selections are cleared when you
+         * have a range selected and select another date (even if it's in the current range).
          */
         RANGE
     }
