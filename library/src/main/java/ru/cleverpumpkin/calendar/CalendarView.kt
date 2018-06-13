@@ -38,13 +38,11 @@ class CalendarView @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
     /**
-     * Interface to be notified when a new date is selected or unselected.
+     * Interface to be notified when a new date is selected.
      */
     interface OnDateSelectedListener {
 
         fun onDateSelected(date: Date)
-
-        fun onDateUnselected(date: Date)
     }
 
     /**
@@ -212,8 +210,6 @@ class CalendarView @JvmOverloads constructor(
 
             if (dateSelectionStrategy.isDateSelected(calendarDate)) {
                 onDateSelectedListener?.onDateSelected(calendarDate.date)
-            } else {
-                onDateSelectedListener?.onDateUnselected(calendarDate.date)
             }
         }
 
