@@ -12,7 +12,10 @@ import ru.cleverpumpkin.calendar.utils.getColorInt
 import ru.cleverpumpkin.calendar.utils.spToPix
 
 /**
- * TODO Describe class
+ * This view class represents a single date cell of calendar.
+ *
+ * This view class control its drawable state with [isToday], [isDateSelected] and [isDateDisabled]
+ * properties.
  */
 class CalendarDateView @JvmOverloads constructor(
     context: Context,

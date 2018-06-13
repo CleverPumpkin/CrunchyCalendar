@@ -4,6 +4,12 @@ import android.os.Parcel
 import android.os.Parcelable
 import java.util.*
 
+/**
+ * This class represents a range of dates from [dateFrom] to [dateTo].
+ *
+ * This class implements [Parcelable] interface so instances of this class
+ * can be stored in [Parcel] object.
+ */
 data class DatesRange(
     val dateFrom: CalendarDate,
     val dateTo: CalendarDate

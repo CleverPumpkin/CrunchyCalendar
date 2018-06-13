@@ -81,7 +81,7 @@ class CalendarView @JvmOverloads constructor(
 
         /**
          * Only one date will be selectable. If there is already a selected date and
-         * you select a new one, the old date will be unselected.
+         * you select a new one or the same, the old date will be unselected.
          */
         SINGLE,
 
