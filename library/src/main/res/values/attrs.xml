@@ -15,6 +15,7 @@
         <attr name="cpcalendar_state_today" format="boolean" />
         <attr name="cpcalendar_state_selected" format="boolean" />
         <attr name="cpcalendar_state_disabled" format="boolean" />
+        <attr name="cpcalendar_state_weekend" format="boolean" />
     </declare-styleable>
 
 </resources>
