@@ -1,6 +1,5 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion app.compile_sdk_version
@@ -25,10 +24,10 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // Kotlin language standard lib
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$libs.kotlin_version"
+    api "org.jetbrains.kotlin:kotlin-stdlib:$libs.kotlin_version"
 
     // Support libraries
-    implementation "com.android.support:appcompat-v7:$libs.support_lib_version"
+    api "com.android.support:appcompat-v7:$libs.support_lib_version"
     api "com.android.support:recyclerview-v7:$libs.support_lib_version"
 
     testImplementation 'junit:junit:4.12'

@@ -27,6 +27,8 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
 
             override fun newArray(size: Int) = arrayOfNulls<CalendarDate>(size)
         }
+
+        val today: CalendarDate get() = CalendarDate(Date())
     }
 
     private val calendar = Calendar.getInstance().apply {
