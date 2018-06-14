@@ -43,7 +43,6 @@ class MainActivity : AppCompatActivity(), DemoListFragment.OnDemoModeClickListen
             val dialogFragment = fragment as DialogFragment
             dialogFragment.show(supportFragmentManager, null)
         } else {
-
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment)
                 .addToBackStack(null)

@@ -24,4 +24,9 @@
 
     <color name="custom_calendar_date_today_text_color">#0f6c52</color>
     <color name="custom_calendar_date_today_background">#FFFFFF</color>
+
+    <color name="event_1_color">#a31a0b</color>
+    <color name="event_2_color">#0c41bc</color>
+    <color name="event_3_color">#0f6c52</color>
+    <color name="event_4_color">#d9ba20</color>
 </resources>
