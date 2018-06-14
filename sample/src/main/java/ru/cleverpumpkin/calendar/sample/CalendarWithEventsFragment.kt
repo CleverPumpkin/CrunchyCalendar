@@ -2,7 +2,6 @@ package ru.cleverpumpkin.calendar.sample
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.os.Bundle
@@ -20,12 +19,14 @@ import ru.cleverpumpkin.calendar.CalendarView
 import ru.cleverpumpkin.calendar.CalendarView.SelectionMode
 import ru.cleverpumpkin.calendar.decorations.AbsDateItemDecoration
 import ru.cleverpumpkin.calendar.utils.dpToPix
+import ru.cleverpumpkin.calendar.utils.getColorInt
 import java.util.*
 
 class CalendarWithEventsFragment : Fragment() {
 
-    private val groupedEvents = generateCalendarEvents()
-        .groupBy { it.calendarDate }
+    private val groupedEvents by lazy {
+        generateCalendarEvents().groupBy { it.calendarDate }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,7 +38,6 @@ class CalendarWithEventsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
         toolbar.run {
@@ -80,29 +80,31 @@ class CalendarWithEventsFragment : Fragment() {
         val calendar = Calendar.getInstance()
         calendar.set(2018, Calendar.JUNE, 15)
 
+        val context = context!!
+
         val event1 = CalendarEvent(
             eventName = "Event #1",
             calendarDate = CalendarDate(calendar.time),
-            color = Color.RED
+            color = context.getColorInt(R.color.event_1_color)
         )
 
         val event2 = CalendarEvent(
             eventName = "Event #2",
             calendarDate = CalendarDate(calendar.time),
-            color = Color.GREEN
+            color = context.getColorInt(R.color.event_2_color)
         )
 
         val event3 = CalendarEvent(
             eventName = "Event #3",
             calendarDate = CalendarDate(calendar.time),
-            color = Color.CYAN
+            color = context.getColorInt(R.color.event_3_color)
         )
 
         calendar.set(2018, Calendar.JUNE, 18)
         val event4 = CalendarEvent(
             eventName = "Event #4",
             calendarDate = CalendarDate(calendar.time),
-            color = Color.RED
+            color = context.getColorInt(R.color.event_4_color)
         )
 
         return listOf(event1, event2, event3, event4)
@@ -153,20 +155,25 @@ class CalendarWithEventsFragment : Fragment() {
         val eventName: String,
         val calendarDate: CalendarDate,
         @ColorInt val color: Int
-    ) {
-        override fun toString() = eventName
-    }
+    )
 
     class EventsAdapter(
         context: Context,
         events: Array<CalendarEvent>
-    ) : ArrayAdapter<CalendarEvent>(context, android.R.layout.simple_list_item_1, events) {
+    ) : ArrayAdapter<CalendarEvent>(context, 0, events) {
 
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-            val textView = super.getView(position, convertView, parent) as TextView
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+            val view = if (convertView == null) {
+                LayoutInflater.from(parent.context).inflate(R.layout.item_event, null)
+            } else {
+                convertView
+            }
+
             val event = getItem(position)
-            textView.setTextColor(event.color)
-            return textView
+            view.findViewById<View>(R.id.color_view).setBackgroundColor(event.color)
+            view.findViewById<TextView>(R.id.event_name_view).text = event.eventName
+
+            return view
         }
     }
 }

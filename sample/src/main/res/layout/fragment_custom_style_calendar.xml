@@ -13,7 +13,7 @@
         app:title="@string/app_name"
         app:titleTextColor="@android:color/white" />
 
-    <ru.cleverpumpkin.calendar.CalendarView xmlns:android="http://schemas.android.com/apk/res/android"
+    <ru.cleverpumpkin.calendar.CalendarView
         android:id="@+id/calendar_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

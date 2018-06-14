@@ -71,7 +71,7 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * This enum class represent available selection modes for dates selecting
+     * This enum class represents available selection modes for dates selecting
      */
     enum class SelectionMode {
         /**

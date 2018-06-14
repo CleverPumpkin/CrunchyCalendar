@@ -9,7 +9,7 @@ import ru.cleverpumpkin.calendar.CalendarDate
 interface DateSelectionStrategy {
 
     /**
-     * This method will be invoked when a new date selected
+     * This method will be invoked when date selected
      */
     fun onDateSelected(date: CalendarDate)
 
