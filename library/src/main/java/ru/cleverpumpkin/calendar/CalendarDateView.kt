@@ -14,8 +14,8 @@ import ru.cleverpumpkin.calendar.utils.spToPix
 /**
  * This view class represents a single date cell of calendar.
  *
- * This view class control its drawable state with [isToday], [isDateSelected] and [isDateDisabled]
- * properties.
+ * This view class control its drawable state with [isToday], [isDateSelected], [isDateDisabled]
+ * and [isWeekend] properties.
  */
 class CalendarDateView @JvmOverloads constructor(
     context: Context,
@@ -30,6 +30,7 @@ class CalendarDateView @JvmOverloads constructor(
         private val stateToday = intArrayOf(R.attr.cpcalendar_state_today)
         private val stateDateSelected = intArrayOf(R.attr.cpcalendar_state_selected)
         private val stateDateDisabled = intArrayOf(R.attr.cpcalendar_state_disabled)
+        private val stateWeekend = intArrayOf(R.attr.cpcalendar_state_weekend)
     }
 
     private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -64,6 +65,14 @@ class CalendarDateView @JvmOverloads constructor(
             isClickable = value.not()
         }
 
+    var isWeekend: Boolean = false
+        set(value) {
+            if (value != field) {
+                field = value
+                refreshDrawableState()
+            }
+        }
+
     var text: String = ""
         set(value) {
             field = value
@@ -87,7 +96,7 @@ class CalendarDateView @JvmOverloads constructor(
     }
 
     override fun onCreateDrawableState(extraSpace: Int): IntArray {
-        val drawableState = super.onCreateDrawableState(extraSpace + 3)
+        val drawableState = super.onCreateDrawableState(extraSpace + 4)
 
         if (isToday) {
             mergeDrawableStates(drawableState, stateToday)
@@ -99,6 +108,10 @@ class CalendarDateView @JvmOverloads constructor(
 
         if (isDateDisabled) {
             mergeDrawableStates(drawableState, stateDateDisabled)
+        }
+
+        if (isWeekend) {
+            mergeDrawableStates(drawableState, stateWeekend)
         }
 
         return drawableState

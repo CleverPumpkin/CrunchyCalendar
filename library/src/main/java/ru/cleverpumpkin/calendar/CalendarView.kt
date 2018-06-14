@@ -47,6 +47,8 @@ class CalendarView @JvmOverloads constructor(
         fun isDateSelected(date: CalendarDate): Boolean
 
         fun isDateDisabled(date: CalendarDate): Boolean
+
+        fun isWeekend(date: CalendarDate): Boolean
     }
 
     companion object {
@@ -524,6 +526,10 @@ class CalendarView @JvmOverloads constructor(
                 minDate == null && maxDate == null -> false
                 else -> false
             }
+        }
+
+        override fun isWeekend(date: CalendarDate): Boolean {
+            return date.dayOfWeek == Calendar.SUNDAY || date.dayOfWeek == Calendar.SATURDAY
         }
     }
 

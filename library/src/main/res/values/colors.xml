@@ -19,6 +19,9 @@
     <color name="calendar_date_disabled_text_color">#b3b3b3</color>
     <color name="calendar_date_disabled_background">#FFFFFF</color>
 
+    <color name="calendar_date_weekend_text_color">#AD000000</color>
+    <color name="calendar_date_weekend_background">#05000000</color>
+
     <color name="calendar_date_today_text_color">#1e88e5</color>
     <color name="calendar_date_today_background">#FFFFFF</color>
 

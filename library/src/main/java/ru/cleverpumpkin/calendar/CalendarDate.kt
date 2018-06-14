@@ -39,24 +39,22 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
         this.set(Calendar.MILLISECOND, 0)
     }
 
-    val year: Int
-        get() = calendar.get(Calendar.YEAR)
+    val year: Int get() = calendar.get(Calendar.YEAR)
 
-    val month: Int
-        get() = calendar.get(Calendar.MONTH)
+    val month: Int get() = calendar.get(Calendar.MONTH)
 
-    val day: Int
-        get() = calendar.get(Calendar.DAY_OF_MONTH)
+    val dayOfMonth: Int get() = calendar.get(Calendar.DAY_OF_MONTH)
 
-    val date: Date
-        get() = calendar.time
+    val dayOfWeek: Int get() = calendar.get(Calendar.DAY_OF_WEEK)
+
+    val date: Date get() = calendar.time
 
     override fun compareTo(other: CalendarDate): Int {
         var result = year - other.year
         if (result == 0) {
             result = month - other.month
             if (result == 0) {
-                result = day - other.day
+                result = dayOfMonth - other.dayOfMonth
             }
         }
 
@@ -71,7 +69,7 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
 
         if (year != other.year) return false
         if (month != other.month) return false
-        if (day != other.day) return false
+        if (dayOfMonth != other.dayOfMonth) return false
 
         return true
     }
@@ -79,7 +77,7 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
     override fun hashCode(): Int {
         var result = year
         result = 31 * result + month
-        result = 31 * result + day
+        result = 31 * result + dayOfMonth
         return result
     }
 
