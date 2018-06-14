@@ -12,7 +12,8 @@ import ru.cleverpumpkin.calendar.utils.getColorInt
 
 class GridDividerItemDecoration(
     context: Context,
-    @ColorInt dividerColor: Int = context.getColorInt(R.color.calendar_grid_color)
+    @ColorInt dividerColor: Int = context.getColorInt(R.color.calendar_grid_color),
+    private val drawGridOnSelectedDates: Boolean
 ) : RecyclerView.ItemDecoration() {
 
     private val linePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -26,6 +27,9 @@ class GridDividerItemDecoration(
             val child = parent.getChildAt(i)
 
             if (child is CalendarDateView) {
+                if (child.isDateSelected && drawGridOnSelectedDates.not()) {
+                    continue
+                }
 
                 canvas.drawRect(
                     child.left.toFloat(),

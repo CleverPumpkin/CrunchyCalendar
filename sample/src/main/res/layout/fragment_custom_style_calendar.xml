@@ -19,6 +19,7 @@
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize"
         android:background="@android:color/white"
+        app:cpcalendar_grid_on_selected_dates="false"
         app:cpcalendar_date_background="@drawable/custom_date_bg_selector"
         app:cpcalendar_date_text_color="@color/custom_date_text_selector"
         app:cpcalendar_day_bar_background="@color/custom_calendar_days_bar_background"

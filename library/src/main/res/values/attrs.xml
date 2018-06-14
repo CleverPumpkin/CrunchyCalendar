@@ -2,12 +2,13 @@
 <resources>
 
     <declare-styleable name="CalendarView">
+        <attr name="cpcalendar_grid_on_selected_dates" format="boolean" />
         <attr name="cpcalendar_grid_color" format="color" />
         <attr name="cpcalendar_day_bar_background" format="color" />
         <attr name="cpcalendar_day_bar_text_color" format="color" />
         <attr name="cpcalendar_month_text_color" format="color" />
         <attr name="cpcalendar_date_background" format="reference" />
-        <attr name="cpcalendar_date_text_color" format="color"/>
+        <attr name="cpcalendar_date_text_color" format="color" />
     </declare-styleable>
 
     <declare-styleable name="CalendarDateStates">
