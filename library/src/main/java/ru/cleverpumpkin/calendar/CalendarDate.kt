@@ -21,6 +21,8 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
 
     companion object {
 
+        // TODO: Is there any difficulty with applying @Parcelize annotation above
+        // TODO: the class header instead of writing Parcelable implementation boilerplate code?
         @JvmField
         val CREATOR = object : Parcelable.Creator<CalendarDate> {
             override fun createFromParcel(parcel: Parcel) = CalendarDate(parcel)
