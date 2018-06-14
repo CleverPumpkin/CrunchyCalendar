@@ -179,15 +179,16 @@ class CalendarAdapter(
 
     fun getDateRange(dateFrom: CalendarDate, dateTo: CalendarDate): List<CalendarDate> {
         return calendarItems
-            .filterIsInstance<DateItem>()
-            .filter { dateItem ->
-                if (dateItem.date in dateFrom..dateTo) {
-                    return@filter true
+            .mapNotNull { item ->
+                if (item !is DateItem) {
+                    return@mapNotNull null
+                }
+                if (item.date in dateFrom..dateTo) {
+                    return@mapNotNull item.date
                 } else {
-                    false
+                    null
                 }
             }
-            .map { it.date }
     }
 
     fun setCalendarItems(calendarItems: List<CalendarItem>) {

@@ -58,10 +58,8 @@ class CalendarWithEventsFragment : Fragment() {
 
         calendarView.addCustomItemDecoration(eventsDateItemDecoration)
 
-        calendarView.onDateClickListener = object : CalendarView.OnDateClickListener {
-            override fun onDateClick(date: CalendarDate) {
-                showDialogWithEvents(date)
-            }
+        calendarView.onDateClickListener = { date ->
+            showDialogWithEvents(date)
         }
     }
 

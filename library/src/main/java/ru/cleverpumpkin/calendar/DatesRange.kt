@@ -2,7 +2,6 @@ package ru.cleverpumpkin.calendar
 
 import android.os.Parcel
 import android.os.Parcelable
-import java.util.*
 
 /**
  * This class represents a range of dates from [dateFrom] to [dateTo].
@@ -24,8 +23,8 @@ data class DatesRange(
     companion object {
 
         fun emptyRange(): DatesRange {
-            val nowCalendarDate = CalendarDate(Date())
-            return DatesRange(nowCalendarDate, nowCalendarDate)
+            val todayCalendarDate = CalendarDate.today
+            return DatesRange(todayCalendarDate, todayCalendarDate)
         }
 
         @JvmField
@@ -36,9 +35,7 @@ data class DatesRange(
         }
     }
 
-    fun isEmptyRange(): Boolean {
-        return dateFrom == dateTo
-    }
+    val isEmptyRange: Boolean get() = dateFrom == dateTo
 
     override fun writeToParcel(dest: Parcel, flags: Int) {
         dest.writeParcelable(dateFrom, flags)

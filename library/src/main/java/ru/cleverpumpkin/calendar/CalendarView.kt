@@ -38,14 +38,6 @@ class CalendarView @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
     /**
-     * Interface to be notified when a date is clicked.
-     */
-    interface OnDateClickListener {
-
-        fun onDateClick(date: CalendarDate)
-    }
-
-    /**
      * Interface for internal needs that provide required information for specific calendar date.
      */
     interface DateInfoProvider {
@@ -134,7 +126,7 @@ class CalendarView @JvmOverloads constructor(
     /**
      * Listener that will be be notified when a date is clicked.
      */
-    var onDateClickListener: OnDateClickListener? = null
+    var onDateClickListener: ((CalendarDate) -> Unit)? = null
 
     /**
      * Returns selected dates according to [selectionMode]. When selection mode is:
@@ -209,7 +201,7 @@ class CalendarView @JvmOverloads constructor(
             dateInfoProvider = DateInfoProviderImpl(),
             onDateClickHandler = { calendarDate ->
                 dateSelectionStrategy.onDateSelected(calendarDate)
-                onDateClickListener?.onDateClick(calendarDate)
+                onDateClickListener?.invoke(calendarDate)
             }
         )
 
@@ -312,7 +304,7 @@ class CalendarView @JvmOverloads constructor(
      * Default value - [SelectionMode.NON]
      */
     fun setupCalendar(
-        initialDate: CalendarDate = CalendarDate(Date()),
+        initialDate: CalendarDate = CalendarDate.today,
         minDate: CalendarDate? = null,
         maxDate: CalendarDate? = null,
         selectionMode: SelectionMode = SelectionMode.NON
@@ -385,7 +377,7 @@ class CalendarView @JvmOverloads constructor(
     }
 
     private fun generateCalendarItems(datesRange: DatesRange) {
-        if (datesRange.isEmptyRange()) {
+        if (datesRange.isEmptyRange) {
             return
         }
 
@@ -505,7 +497,7 @@ class CalendarView @JvmOverloads constructor(
      */
     private inner class DateInfoProviderImpl : DateInfoProvider {
 
-        private val todayCalendarDate = CalendarDate(Date())
+        private val todayCalendarDate = CalendarDate.today
 
         override fun isToday(date: CalendarDate): Boolean {
             return date == todayCalendarDate
