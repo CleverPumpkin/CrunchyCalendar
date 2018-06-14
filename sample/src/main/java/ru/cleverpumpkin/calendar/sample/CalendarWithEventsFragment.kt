@@ -108,6 +108,7 @@ class CalendarWithEventsFragment : Fragment() {
         return listOf(event1, event2, event3, event4)
     }
 
+    //TODO я думаю, это очень непростое API для добавления своих евентов
     class EventsDateItemDecoration(
         context: Context,
         private val groupedEvents: Map<CalendarDate, List<CalendarEvent>>

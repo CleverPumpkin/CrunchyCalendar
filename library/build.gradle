@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+//TODO android-extensions не используется
 apply plugin: 'kotlin-android-extensions'
 
 android {

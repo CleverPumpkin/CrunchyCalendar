@@ -40,6 +40,7 @@ class CalendarView @JvmOverloads constructor(
     /**
      * Interface to be notified when a date is clicked.
      */
+    //TODO почему бы не использовать котлиновские high-order функции?
     interface OnDateClickListener {
 
         fun onDateClick(date: CalendarDate)
@@ -317,6 +318,8 @@ class CalendarView @JvmOverloads constructor(
         maxDate: CalendarDate? = null,
         selectionMode: SelectionMode = SelectionMode.NON
     ) {
+        //TODO
+        //предлагаю посмотреть на Preconditions.require для таких целей: более наглядно
         if (minDate != null && maxDate != null && minDate > maxDate) {
             throw IllegalStateException("minDate must be before maxDate: $minDate, maxDate: $maxDate")
         }
@@ -505,6 +508,8 @@ class CalendarView @JvmOverloads constructor(
      */
     private inner class DateInfoProviderImpl : DateInfoProvider {
 
+        //TODO для наглядности предлагаю сунуть в компаньон CalendarDate проперти Now
+        //вместо CalendarDate(Date()) будет CalendarDate.Now
         private val todayCalendarDate = CalendarDate(Date())
 
         override fun isToday(date: CalendarDate): Boolean {

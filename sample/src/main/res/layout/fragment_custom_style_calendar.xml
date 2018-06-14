@@ -13,6 +13,9 @@
         app:title="@string/app_name"
         app:titleTextColor="@android:color/white" />
 
+    <!--TODO мб стоило сделать namespace, показывающий, что аттрибут относится к календарю?
+    Тем самым можно избежать добавления префикса "cpcalendar" к каждому аттрибуту
+    -->
     <ru.cleverpumpkin.calendar.CalendarView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/calendar_view"
         android:layout_width="match_parent"

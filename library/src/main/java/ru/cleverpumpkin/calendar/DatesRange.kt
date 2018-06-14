@@ -36,6 +36,9 @@ data class DatesRange(
         }
     }
 
+    //TODO
+    //1) лучше было бы конвертнуть в проперти
+    //2) можно конвертнуть в expression-body
     fun isEmptyRange(): Boolean {
         return dateFrom == dateTo
     }

@@ -29,6 +29,7 @@ import java.util.*
  * [MONTH_VIEW_TYPE] - simple name of month, [EMPTY_VIEW_TYPE] - empty view that represents
  * start and end offset for each month.
  */
+//TODO адаптер специально final?
 class CalendarAdapter(
     var itemsAttributes: ItemsAttributes,
     private val dateInfoProvider: CalendarView.DateInfoProvider,
@@ -115,6 +116,7 @@ class CalendarAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val viewType = getItemViewType(position)
         when (viewType) {
+            //TODO можно сразу чекать вьюхеолдеры по типу, избежав получения вью-тайпа
             DATE_VIEW_TYPE -> {
                 val dateItemViewHolder = holder as DateItemViewHolder
                 val dateItem = calendarItems[position] as DateItem
@@ -139,6 +141,8 @@ class CalendarAdapter(
 
     private fun bindMonthItemViewHolder(holder: MonthItemViewHolder, monthItem: MonthItem) {
         val monthName = monthFormatter.format(monthItem.calendarDate.date)
+        //TODO лучше при создании объектов капитализировать имена. При байндинге делать это - не гуд,
+        // т.к много операций со строками + даже получение текущей локали
         holder.textView.text = monthName.capitalize()
         holder.textView.setTextColor(itemsAttributes.monthTextColor)
     }
@@ -178,6 +182,20 @@ class CalendarAdapter(
     }
 
     fun getDateRange(dateFrom: CalendarDate, dateTo: CalendarDate): List<CalendarDate> {
+        //TODO можно обойтись одним списком
+         //  calendarItems
+         //      .mapNotNull { item->
+         //          if (item !is DateItem) {
+         //              return@mapNotNull null
+         //          }
+         //          if (item.date in dateFrom..dateTo) {
+         //              return@mapNotNull item.date
+         //          } else {
+         //              null
+         //          }
+         //      }
+         //
+
         return calendarItems
             .filterIsInstance<DateItem>()
             .filter { dateItem ->
