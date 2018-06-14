@@ -89,6 +89,7 @@ class CalendarView @JvmOverloads constructor(
         RANGE
     }
 
+    private var drawGridOnSelectedDates = true
     private var gridColor = context.getColorInt(R.color.calendar_grid_color)
     private var daysBarBackground = context.getColorInt(R.color.calendar_days_bar_background)
     private var daysBarTextColor = context.getColorInt(R.color.calendar_days_bar_text_color)
@@ -156,6 +157,11 @@ class CalendarView @JvmOverloads constructor(
             val typedArray = context.obtainStyledAttributes(attrs, R.styleable.CalendarView)
 
             try {
+                drawGridOnSelectedDates = typedArray.getBoolean(
+                    R.styleable.CalendarView_cpcalendar_grid_on_selected_dates,
+                    drawGridOnSelectedDates
+                )
+
                 gridColor = typedArray.getColor(
                     R.styleable.CalendarView_cpcalendar_grid_color,
                     gridColor
@@ -247,7 +253,7 @@ class CalendarView @JvmOverloads constructor(
             )
 
             setHasFixedSize(true)
-            addItemDecoration(GridDividerItemDecoration(context, gridColor))
+            addItemDecoration(GridDividerItemDecoration(context, gridColor, drawGridOnSelectedDates))
             addOnScrollListener(CalendarScrollListener())
         }
     }
