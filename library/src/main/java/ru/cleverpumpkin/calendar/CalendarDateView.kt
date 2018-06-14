@@ -75,13 +75,27 @@ class CalendarDateView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         textPaint.color = textColor
 
+        // TODO: val xPos = canvas.width / 2.0f <--- don't need to explicitly write ".toFloat()"
         val xPos = (canvas.width / 2).toFloat()
+
+        // TODO: "canvas.height / 2" here makes integer division, which is not accurate enough,
+        // TODO: you're loosing the fractional part, and it possibly may lead to non pixel-perfect
+        // TODO: look of the view. Would be better use Float digit literals in every division.
         val yPos = (canvas.height / 2 - (textPaint.descent() + textPaint.ascent()) / 2)
 
         canvas.drawText(text, xPos - (textWidth / 2), yPos, textPaint)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        // TODO: No need to call super.onMeasured() and then setMeasuredDimension()
+        // TODO: again, this makes every view being measured twice.
+        // TODO:
+        // TODO: All that you need:
+        // TODO:
+        // TODO: setMeasuredDimension(
+        // TODO:     getDefaultSize(suggestedMinimumWidth, widthMeasureSpec),
+        // TODO:     getDefaultSize(suggestedMinimumWidth, widthMeasureSpec)
+        // TODO: )
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         setMeasuredDimension(measuredWidth, measuredWidth)
     }

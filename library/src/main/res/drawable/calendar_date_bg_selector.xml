@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <!--
+        Do we need this state? With this state you can see barely visible selection
+        with NoDateSelectionStrategy, which looks excessive...
+    -->
     <item android:state_pressed="true">
         <color android:color="@color/calendar_date_pressed_background" />
     </item>
