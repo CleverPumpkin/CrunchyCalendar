@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Parcelable
 import android.support.annotation.AttrRes
+import android.support.v4.util.ArrayMap
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
@@ -49,6 +50,8 @@ class CalendarView @JvmOverloads constructor(
         fun isDateDisabled(date: CalendarDate): Boolean
 
         fun isWeekend(date: CalendarDate): Boolean
+
+        fun getDateIndicators(date: CalendarDate): List<DateIndicator>
     }
 
     companion object {
@@ -124,6 +127,21 @@ class CalendarView @JvmOverloads constructor(
                 SelectionMode.MULTIPLE -> MultipleDateSelectionStrategy(calendarAdapter)
                 SelectionMode.RANGE -> RangeDateSelectionStrategy(calendarAdapter)
             }
+        }
+
+    /**
+     * Grouped by date indicators that will be displayed on the calendar date views
+     */
+    private val groupedDatesIndicators = ArrayMap<CalendarDate, MutableList<DateIndicator>>()
+
+    /**
+     * List of indicators that will be displayed on the calendar for specific dates.
+     */
+    var datesIndicators: List<DateIndicator> = emptyList()
+        set(value) {
+            field = value
+            value.groupByTo(groupedDatesIndicators) { it.date }
+            recyclerView.adapter.notifyDataSetChanged()
         }
 
     /**
@@ -261,7 +279,7 @@ class CalendarView @JvmOverloads constructor(
     }
 
     private fun setupDaysBar(daysBarView: ViewGroup) {
-        require(daysBarView.childCount != DAYS_IN_WEEK) {
+        require(daysBarView.childCount == DAYS_IN_WEEK) {
             "Days container has incorrect number of child views"
         }
 
@@ -317,8 +335,10 @@ class CalendarView @JvmOverloads constructor(
         maxDate: CalendarDate? = null,
         selectionMode: SelectionMode = SelectionMode.NON
     ) {
-        require(minDate != null && maxDate != null && minDate > maxDate) {
-            "minDate must be before maxDate: $minDate, maxDate: $maxDate"
+        if (minDate != null && maxDate != null) {
+            require(minDate < maxDate) {
+                "minDate must be before maxDate: $minDate, maxDate: $maxDate"
+            }
         }
 
         val displayDatesFrom: CalendarDate
@@ -530,6 +550,10 @@ class CalendarView @JvmOverloads constructor(
 
         override fun isWeekend(date: CalendarDate): Boolean {
             return date.dayOfWeek == Calendar.SUNDAY || date.dayOfWeek == Calendar.SATURDAY
+        }
+
+        override fun getDateIndicators(date: CalendarDate): List<DateIndicator> {
+            return groupedDatesIndicators[date] ?: emptyList()
         }
     }
 

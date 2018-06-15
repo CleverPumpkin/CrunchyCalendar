@@ -5,6 +5,8 @@
     android:ellipsize="middle"
     android:gravity="center_vertical"
     android:orientation="vertical"
+    android:paddingLeft="@dimen/margin_medium"
+    android:paddingRight="@dimen/margin_medium"
     android:paddingEnd="@dimen/margin_medium"
     android:paddingStart="@dimen/margin_medium"
     android:singleLine="true"
