@@ -40,7 +40,7 @@ class CalendarDateView @JvmOverloads constructor(
     private val radiusPx = context.dpToPix(INDICATOR_RADIUS)
     private val spacePx = context.dpToPix(SPACE_BETWEEN_INDICATORS)
 
-    private val textPaint = TextPaint().apply {
+    private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
         textSize = context.spToPix(DEFAULT_TEXT_SIZE)
     }
 

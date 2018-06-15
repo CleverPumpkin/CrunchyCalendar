@@ -9,7 +9,6 @@ import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -17,7 +16,6 @@ import ru.cleverpumpkin.calendar.adapter.CalendarAdapter
 import ru.cleverpumpkin.calendar.adapter.CalendarItemsGenerator
 import ru.cleverpumpkin.calendar.decorations.GridDividerItemDecoration
 import ru.cleverpumpkin.calendar.selection.*
-import ru.cleverpumpkin.calendar.utils.dpToPix
 import ru.cleverpumpkin.calendar.utils.getColorInt
 import java.lang.IllegalStateException
 import java.text.SimpleDateFormat
@@ -62,7 +60,6 @@ class CalendarView @JvmOverloads constructor(
         private const val MAX_RECYCLED_DAY_VIEWS = 90
         private const val MAX_RECYCLED_EMPTY_VIEWS = 20
         private const val MONTHS_PER_PAGE = 6
-        private const val WRAP_CONTENT_HEIGHT = 440.0f
 
         private const val BUNDLE_SUPER_STATE = "ru.cleverpumpkin.calendar.super_state"
         private const val BUNDLE_DISPLAY_DATE_RANGE = "ru.cleverpumpkin.calendar.display_date_range"
@@ -117,9 +114,8 @@ class CalendarView @JvmOverloads constructor(
     private var displayDatesRange = DatesRange.emptyRange()
     private var minMaxDatesRange = NullableDatesRange()
 
-    private val calendarItemsGenerator = CalendarItemsGenerator()
-
     private var dateSelectionStrategy: DateSelectionStrategy = NoDateSelectionStrategy()
+    private val calendarItemsGenerator = CalendarItemsGenerator()
     private val dateInfoProvider = DateInfoProviderImpl()
 
     private var selectionMode: SelectionMode = SelectionMode.NON
@@ -156,10 +152,10 @@ class CalendarView @JvmOverloads constructor(
 
     /**
      * Returns selected dates according to [selectionMode]. When selection mode is:
-     * 1. [SelectionMode.NON] returns empty list
-     * 2. [SelectionMode.SINGLE] returns list with a single selected date
-     * 3. [SelectionMode.MULTIPLE] returns all selected dates in order they were added
-     * 4. [SelectionMode.RANGE] returns all dates in selected range
+     * [SelectionMode.NON] returns empty list
+     * [SelectionMode.SINGLE] returns list with a single selected date
+     * [SelectionMode.MULTIPLE] returns all selected dates in order they were added
+     * [SelectionMode.RANGE] returns all dates in selected range
      */
     val selectedDates: List<CalendarDate>
         get() = dateSelectionStrategy.getSelectedDates()
@@ -278,7 +274,10 @@ class CalendarView @JvmOverloads constructor(
             )
 
             setHasFixedSize(true)
-            addItemDecoration(GridDividerItemDecoration(context, gridColor, drawGridOnSelectedDates))
+
+            val divider = GridDividerItemDecoration(context, gridColor, drawGridOnSelectedDates)
+            addItemDecoration(divider)
+
             addOnScrollListener(CalendarScrollListener())
         }
     }
@@ -336,6 +335,11 @@ class CalendarView @JvmOverloads constructor(
      *
      * [selectedDates] list of initially selected dates.
      * Default value - empty list
+     *
+     * When selection mode is:
+     * [SelectionMode.SINGLE], [selectedDates] should contains only one date.
+     * [SelectionMode.MULTIPLE], [selectedDates] can contains multiple date.
+     * [SelectionMode.RANGE], [selectedDates] should contains two dates that represent selected range.
      */
     fun setupCalendar(
         initialDate: CalendarDate = CalendarDate.today,
@@ -552,13 +556,6 @@ class CalendarView @JvmOverloads constructor(
         } else {
             super.onRestoreInstanceState(state)
         }
-    }
-
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val wrapContentHeight = context.dpToPix(WRAP_CONTENT_HEIGHT)
-        val heightSpec = View.resolveSize(wrapContentHeight.toInt(), heightMeasureSpec)
-        setMeasuredDimension(widthMeasureSpec, heightSpec)
     }
 
     /**
