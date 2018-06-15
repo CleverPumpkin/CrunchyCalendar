@@ -47,7 +47,7 @@ class CalendarView @JvmOverloads constructor(
 
         fun isDateSelected(date: CalendarDate): Boolean
 
-        fun isDateDisabled(date: CalendarDate): Boolean
+        fun isDateOutOfRange(date: CalendarDate): Boolean
 
         fun isWeekend(date: CalendarDate): Boolean
 
@@ -115,7 +115,9 @@ class CalendarView @JvmOverloads constructor(
     private var minMaxDatesRange = NullableDatesRange()
 
     private val calendarItemsGenerator = CalendarItemsGenerator()
+
     private var dateSelectionStrategy: DateSelectionStrategy = NoDateSelectionStrategy()
+    private val dateInfoProvider = DateInfoProviderImpl()
 
     private var selectionMode: SelectionMode = SelectionMode.NON
         set(value) {
@@ -224,7 +226,7 @@ class CalendarView @JvmOverloads constructor(
 
         calendarAdapter = CalendarAdapter(
             itemsAttributes = itemsAttributes,
-            dateInfoProvider = DateInfoProviderImpl(),
+            dateInfoProvider = dateInfoProvider,
             onDateClickHandler = { calendarDate ->
                 dateSelectionStrategy.onDateSelected(calendarDate)
                 onDateClickListener?.invoke(calendarDate)
@@ -279,8 +281,8 @@ class CalendarView @JvmOverloads constructor(
     }
 
     private fun setupDaysBar(daysBarView: ViewGroup) {
-        require(daysBarView.childCount == DAYS_IN_WEEK) {
-            "Days container has incorrect number of child views"
+        if (daysBarView.childCount != DAYS_IN_WEEK) {
+            throw IllegalStateException("Days container has incorrect number of child views")
         }
 
         daysBarView.setBackgroundColor(daysBarBackground)
@@ -328,17 +330,19 @@ class CalendarView @JvmOverloads constructor(
      *
      * [selectionMode] mode for dates selecting.
      * Default value - [SelectionMode.NON]
+     *
+     * [selectedDates] list of initially selected dates.
+     * Default value - empty list
      */
     fun setupCalendar(
         initialDate: CalendarDate = CalendarDate.today,
         minDate: CalendarDate? = null,
         maxDate: CalendarDate? = null,
-        selectionMode: SelectionMode = SelectionMode.NON
+        selectionMode: SelectionMode = SelectionMode.NON,
+        selectedDates: List<CalendarDate> = emptyList()
     ) {
-        if (minDate != null && maxDate != null) {
-            require(minDate < maxDate) {
-                "minDate must be before maxDate: $minDate, maxDate: $maxDate"
-            }
+        if (minDate != null && maxDate != null && minDate > maxDate) {
+            throw IllegalStateException("minDate must be before maxDate: $minDate, maxDate: $maxDate")
         }
 
         val displayDatesFrom: CalendarDate
@@ -393,6 +397,34 @@ class CalendarView @JvmOverloads constructor(
         this.selectionMode = selectionMode
         minMaxDatesRange = NullableDatesRange(dateFrom = minDate, dateTo = maxDate)
         displayDatesRange = DatesRange(dateFrom = displayDatesFrom, dateTo = displayDatesTo)
+
+        if (selectedDates.isNotEmpty()) {
+            when {
+                selectionMode == SelectionMode.NON -> {
+                    throw IllegalStateException("NON mode can't be used with selected dates")
+                }
+
+                selectionMode == SelectionMode.SINGLE && selectedDates.size > 1 -> {
+                    throw IllegalStateException("SINGLE mode can't be used with multiple selected dates")
+                }
+
+                selectionMode == SelectionMode.RANGE && selectedDates.size > 2 -> {
+                    throw IllegalStateException("RANGE mode only allows two selected dates")
+                }
+
+                else -> {
+                    selectedDates.forEach { date ->
+                        if (dateInfoProvider.isDateOutOfRange(date)) {
+                            throw IllegalStateException(
+                                "Selected date must be between minDate and maxDate. " +
+                                        "Selected date: $date, minDate: $minDate, maxDate: $maxDate"
+                            )
+                        }
+                        dateSelectionStrategy.onDateSelected(date)
+                    }
+                }
+            }
+        }
 
         generateCalendarItems(displayDatesRange)
 
@@ -535,7 +567,7 @@ class CalendarView @JvmOverloads constructor(
             return dateSelectionStrategy.isDateSelected(date)
         }
 
-        override fun isDateDisabled(date: CalendarDate): Boolean {
+        override fun isDateOutOfRange(date: CalendarDate): Boolean {
             val minDate = minMaxDatesRange.dateFrom
             val maxDate = minMaxDatesRange.dateTo
 

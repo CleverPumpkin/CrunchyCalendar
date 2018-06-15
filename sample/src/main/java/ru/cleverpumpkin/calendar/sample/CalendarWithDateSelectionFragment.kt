@@ -6,9 +6,11 @@ import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarView
 import ru.cleverpumpkin.calendar.sample.DemoListFragment.DemoMode
 import java.lang.IllegalStateException
+import java.util.*
 
 class CalendarWithDateSelectionFragment : Fragment() {
 
@@ -36,7 +38,7 @@ class CalendarWithDateSelectionFragment : Fragment() {
         val demoModeName = arguments?.getString(ARG_DEMO_MODE)
                 ?: throw IllegalStateException()
 
-        val demoMode = DemoMode.valueOf(demoModeName)
+        val demoMode = DemoListFragment.DemoMode.valueOf(demoModeName)
 
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
         toolbar.run {
@@ -46,8 +48,54 @@ class CalendarWithDateSelectionFragment : Fragment() {
         }
 
         val calendarView = view.findViewById<CalendarView>(R.id.calendar_view)
+
         if (savedInstanceState == null) {
-            calendarView.setupCalendar(selectionMode = demoMode.selectionMode)
+            val selectedDates = when (demoMode.selectionMode) {
+                CalendarView.SelectionMode.NON -> emptyList()
+                CalendarView.SelectionMode.SINGLE -> singleSelectedDate()
+                CalendarView.SelectionMode.MULTIPLE -> multipleSelectedDate()
+                CalendarView.SelectionMode.RANGE -> rangeSelectedDate()
+            }
+
+            calendarView.setupCalendar(
+                selectionMode = demoMode.selectionMode,
+                selectedDates = selectedDates
+            )
         }
+    }
+
+    private fun singleSelectedDate(): List<CalendarDate> {
+        val calendar = Calendar.getInstance()
+        calendar.set(2018, Calendar.JUNE, 18)
+        return listOf(CalendarDate(calendar.time))
+    }
+
+    private fun multipleSelectedDate(): List<CalendarDate> {
+        val calendar = Calendar.getInstance()
+        val selectedDates = mutableListOf<CalendarDate>()
+
+        calendar.set(2018, Calendar.JUNE, 13)
+        selectedDates += CalendarDate(calendar.time)
+
+        calendar.set(2018, Calendar.JUNE, 16)
+        selectedDates += CalendarDate(calendar.time)
+
+        calendar.set(2018, Calendar.JUNE, 19)
+        selectedDates += CalendarDate(calendar.time)
+
+        return selectedDates
+    }
+
+    private fun rangeSelectedDate(): List<CalendarDate> {
+        val calendar = Calendar.getInstance()
+        val selectedDates = mutableListOf<CalendarDate>()
+
+        calendar.set(2018, Calendar.JUNE, 13)
+        selectedDates += CalendarDate(calendar.time)
+
+        calendar.set(2018, Calendar.JUNE, 18)
+        selectedDates += CalendarDate(calendar.time)
+
+        return selectedDates
     }
 }

@@ -134,7 +134,7 @@ class CalendarAdapter(
 
         dateView.isToday = dateInfoProvider.isToday(calendarDate)
         dateView.isDateSelected = dateInfoProvider.isDateSelected(calendarDate)
-        dateView.isDateDisabled = dateInfoProvider.isDateDisabled(calendarDate)
+        dateView.isDateDisabled = dateInfoProvider.isDateOutOfRange(calendarDate)
         dateView.isWeekend = dateInfoProvider.isWeekend(calendarDate)
         dateView.dateIndicators = dateInfoProvider.getDateIndicators(calendarDate)
         dateView.dayNumber = dayFormatter.format(calendarDate.date)
