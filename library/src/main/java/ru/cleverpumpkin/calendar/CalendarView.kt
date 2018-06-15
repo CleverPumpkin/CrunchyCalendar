@@ -261,8 +261,8 @@ class CalendarView @JvmOverloads constructor(
     }
 
     private fun setupDaysBar(daysBarView: ViewGroup) {
-        if (daysBarView.childCount != DAYS_IN_WEEK) {
-            throw IllegalStateException("Days container has incorrect number of child views")
+        require(daysBarView.childCount != DAYS_IN_WEEK) {
+            "Days container has incorrect number of child views"
         }
 
         daysBarView.setBackgroundColor(daysBarBackground)
@@ -317,8 +317,8 @@ class CalendarView @JvmOverloads constructor(
         maxDate: CalendarDate? = null,
         selectionMode: SelectionMode = SelectionMode.NON
     ) {
-        if (minDate != null && maxDate != null && minDate > maxDate) {
-            throw IllegalStateException("minDate must be before maxDate: $minDate, maxDate: $maxDate")
+        require(minDate != null && maxDate != null && minDate > maxDate) {
+            "minDate must be before maxDate: $minDate, maxDate: $maxDate"
         }
 
         val displayDatesFrom: CalendarDate
