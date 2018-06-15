@@ -9,6 +9,7 @@ import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -16,6 +17,7 @@ import ru.cleverpumpkin.calendar.adapter.CalendarAdapter
 import ru.cleverpumpkin.calendar.adapter.CalendarItemsGenerator
 import ru.cleverpumpkin.calendar.decorations.GridDividerItemDecoration
 import ru.cleverpumpkin.calendar.selection.*
+import ru.cleverpumpkin.calendar.utils.dpToPix
 import ru.cleverpumpkin.calendar.utils.getColorInt
 import java.lang.IllegalStateException
 import java.text.SimpleDateFormat
@@ -60,6 +62,7 @@ class CalendarView @JvmOverloads constructor(
         private const val MAX_RECYCLED_DAY_VIEWS = 90
         private const val MAX_RECYCLED_EMPTY_VIEWS = 20
         private const val MONTHS_PER_PAGE = 6
+        private const val WRAP_CONTENT_HEIGHT = 440.0f
 
         private const val BUNDLE_SUPER_STATE = "ru.cleverpumpkin.calendar.super_state"
         private const val BUNDLE_DISPLAY_DATE_RANGE = "ru.cleverpumpkin.calendar.display_date_range"
@@ -549,6 +552,13 @@ class CalendarView @JvmOverloads constructor(
         } else {
             super.onRestoreInstanceState(state)
         }
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        val wrapContentHeight = context.dpToPix(WRAP_CONTENT_HEIGHT)
+        val heightSpec = View.resolveSize(wrapContentHeight.toInt(), heightMeasureSpec)
+        setMeasuredDimension(widthMeasureSpec, heightSpec)
     }
 
     /**
