@@ -1,0 +1,13 @@
+def abIconTextColor = '00ffffff'
+def abIconBackgroundColor = '55000000'
+
+task processDebugIcon(type: Exec) {
+    commandLine './../ABIcons',
+            '-resourcesPath', 'src/main/res',
+            '-mode', 'android',
+            '-applicationVersion', app.version_name,
+            '-versionTextColor', abIconTextColor,
+            '-versionBackgroundColor', abIconBackgroundColor,
+            '-originalIconPrefix', 'orig_',
+            '-originalIconSuffix', ''
+}

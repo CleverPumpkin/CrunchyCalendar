@@ -2,6 +2,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
+apply from: "abicons.gradle"
+
 android {
     compileSdkVersion app.compile_sdk_version
 
@@ -9,8 +11,8 @@ android {
         applicationId "ru.cleverpumpkin.calendar.sample"
         minSdkVersion app.min_sdk_version
         targetSdkVersion app.target_sdk_version
-        versionCode 1
-        versionName "1.0"
+        versionCode app.version_code
+        versionName app.version_name
 
     }
     buildTypes {
@@ -31,4 +33,8 @@ dependencies {
 
     // Support libraries
     implementation "com.android.support:appcompat-v7:$libs.support_lib_version"
+}
+
+afterEvaluate {
+    tasks.generateDebugResources.dependsOn(processDebugIcon)
 }
