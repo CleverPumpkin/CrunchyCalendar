@@ -84,15 +84,15 @@ class CalendarDateView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         textPaint.color = textColor
 
-        val xPos = (canvas.width / 2).toFloat()
-        val yPos = (canvas.height / 2 - (textPaint.descent() + textPaint.ascent()) / 2)
+        val xPos = canvas.width / 2.0f
+        val yPos = canvas.height / 2.0f - (textPaint.descent() + textPaint.ascent()) / 2.0f
 
-        canvas.drawText(text, xPos - (textWidth / 2), yPos, textPaint)
+        canvas.drawText(text, xPos - (textWidth / 2.0f), yPos, textPaint)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        setMeasuredDimension(measuredWidth, measuredWidth)
+        val size = getDefaultSize(suggestedMinimumWidth, widthMeasureSpec)
+        setMeasuredDimension(size, size)
     }
 
     override fun onCreateDrawableState(extraSpace: Int): IntArray {

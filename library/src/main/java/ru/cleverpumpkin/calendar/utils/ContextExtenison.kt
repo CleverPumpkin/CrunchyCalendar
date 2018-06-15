@@ -5,14 +5,13 @@ import android.support.annotation.ColorInt
 import android.support.annotation.ColorRes
 import android.support.v4.content.ContextCompat
 import android.util.TypedValue
-import ru.cleverpumpkin.calendar.R
 
 fun Context.spToPix(spValue: Float): Float {
     return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, spValue, resources.displayMetrics)
 }
 
-fun Context.dpToPix(spValue: Float): Float {
-    return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, spValue, resources.displayMetrics)
+fun Context.dpToPix(dpValue: Float): Float {
+    return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue, resources.displayMetrics)
 }
 
 @ColorInt
