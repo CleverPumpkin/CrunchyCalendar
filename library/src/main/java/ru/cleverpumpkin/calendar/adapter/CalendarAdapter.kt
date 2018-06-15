@@ -131,11 +131,13 @@ class CalendarAdapter(
     private fun bindDateItemViewHolder(holder: DateItemViewHolder, dateItem: DateItem) {
         val calendarDate = dateItem.date
         val dateView = holder.dateView
+
         dateView.isToday = dateInfoProvider.isToday(calendarDate)
         dateView.isDateSelected = dateInfoProvider.isDateSelected(calendarDate)
         dateView.isDateDisabled = dateInfoProvider.isDateDisabled(calendarDate)
         dateView.isWeekend = dateInfoProvider.isWeekend(calendarDate)
-        dateView.text = dayFormatter.format(calendarDate.date)
+        dateView.dateIndicators = dateInfoProvider.getDateIndicators(calendarDate)
+        dateView.dayNumber = dayFormatter.format(calendarDate.date)
     }
 
     private fun bindMonthItemViewHolder(holder: MonthItemViewHolder, monthItem: MonthItem) {

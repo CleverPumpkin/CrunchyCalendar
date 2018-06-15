@@ -8,11 +8,12 @@ import android.support.annotation.AttrRes
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
+import ru.cleverpumpkin.calendar.utils.dpToPix
 import ru.cleverpumpkin.calendar.utils.getColorInt
 import ru.cleverpumpkin.calendar.utils.spToPix
 
 /**
- * This view class represents a single date cell of calendar.
+ * This view class represents a single date cell of calendar with optional colors indicators.
  *
  * This view class control its drawable state with [isToday], [isDateSelected], [isDateDisabled]
  * and [isWeekend] properties.
@@ -26,6 +27,9 @@ class CalendarDateView @JvmOverloads constructor(
 
     companion object {
         private const val DEFAULT_TEXT_SIZE = 14.0f
+        private const val INDICATOR_RADIUS = 3.5f
+        private const val SPACE_BETWEEN_INDICATORS = 4.0f
+        private const val MAX_INDICATORS_COUNT = 4
 
         private val stateToday = intArrayOf(R.attr.cpcalendar_state_today)
         private val stateDateSelected = intArrayOf(R.attr.cpcalendar_state_selected)
@@ -33,11 +37,18 @@ class CalendarDateView @JvmOverloads constructor(
         private val stateWeekend = intArrayOf(R.attr.cpcalendar_state_weekend)
     }
 
-    private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+    private val radiusPx = context.dpToPix(INDICATOR_RADIUS)
+    private val spacePx = context.dpToPix(SPACE_BETWEEN_INDICATORS)
+
+    private val textPaint = TextPaint().apply {
         textSize = context.spToPix(DEFAULT_TEXT_SIZE)
     }
 
-    private var textWidth = 0.0f
+    private val indicatorPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+    }
+
+    private var dayNumberWidth = 0.0f
     private var textColor: Int = context.getColorInt(R.color.calendar_date_text_color)
 
     var isToday: Boolean = false
@@ -73,21 +84,56 @@ class CalendarDateView @JvmOverloads constructor(
             }
         }
 
-    var text: String = ""
+    var dayNumber: String = ""
         set(value) {
             field = value
-            textWidth = textPaint.measureText(value)
+            dayNumberWidth = textPaint.measureText(value)
         }
+
+    var dateIndicators: List<DateIndicator> = emptyList()
 
     var textColorStateList: ColorStateList? = null
 
     override fun onDraw(canvas: Canvas) {
+        canvas.drawDayNumber()
+        canvas.drawIndicators()
+    }
+
+    private fun Canvas.drawDayNumber() {
         textPaint.color = textColor
 
-        val xPos = canvas.width / 2.0f
-        val yPos = canvas.height / 2.0f - (textPaint.descent() + textPaint.ascent()) / 2.0f
+        val xPos = width / 2.0f
+        val yPos = height / 2.0f - (textPaint.descent() + textPaint.ascent()) / 2.0f
 
-        canvas.drawText(text, xPos - (textWidth / 2.0f), yPos, textPaint)
+        drawText(dayNumber, xPos - (dayNumberWidth / 2.0f), yPos, textPaint)
+    }
+
+    private fun Canvas.drawIndicators() {
+        if (dateIndicators.isEmpty()) {
+            return
+        }
+
+        val indicatorsCount = if (dateIndicators.size > MAX_INDICATORS_COUNT) {
+            MAX_INDICATORS_COUNT
+        } else {
+            dateIndicators.size
+        }
+
+        val drawableAreaWidth = radiusPx * 2.0f * indicatorsCount + spacePx * (indicatorsCount - 1)
+
+        var xPosition = ((width - drawableAreaWidth) / 2.0f) + radiusPx
+        val yPosition = height - height / 6.0f
+
+        dateIndicators.forEachIndexed { i, indicator ->
+            if (i > MAX_INDICATORS_COUNT - 1) {
+                return
+            }
+
+            indicatorPaint.color = indicator.color
+            drawCircle(xPosition, yPosition, radiusPx, indicatorPaint)
+
+            xPosition += radiusPx * 2.0f + spacePx
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

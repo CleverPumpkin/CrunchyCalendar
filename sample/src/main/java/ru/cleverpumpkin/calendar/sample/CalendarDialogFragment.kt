@@ -21,7 +21,7 @@ class CalendarDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        dialog.window.requestFeature(Window.FEATURE_NO_TITLE);
+        dialog.window.requestFeature(Window.FEATURE_NO_TITLE)
 
         val calendarView = view.findViewById<CalendarView>(R.id.calendar_view)
         if (savedInstanceState == null) {
