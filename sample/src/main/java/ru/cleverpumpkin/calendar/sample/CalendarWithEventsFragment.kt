@@ -2,7 +2,6 @@ package ru.cleverpumpkin.calendar.sample
 
 import android.content.Context
 import android.os.Bundle
-import android.support.annotation.ColorInt
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.Toolbar
@@ -14,7 +13,6 @@ import android.widget.TextView
 import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarView
 import ru.cleverpumpkin.calendar.CalendarView.SelectionMode
-import ru.cleverpumpkin.calendar.DateIndicator
 import ru.cleverpumpkin.calendar.utils.getColorInt
 import java.util.*
 
@@ -44,15 +42,14 @@ class CalendarWithEventsFragment : Fragment() {
         }
 
         val events = generateCalendarEvents()
-        val groupedEvents = events.groupBy { it.calendarDate }
-
-        calendarView.datesIndicators = events.map { DateIndicator(it.calendarDate, it.color) }
+        calendarView.datesIndicators = events
 
         calendarView.onDateClickListener = { date ->
-            val eventsForDate = groupedEvents[date]?.toTypedArray()
-            if (eventsForDate != null) {
-                showDialogWithEvents(eventsForDate)
-            }
+            val eventsForDate = calendarView.getDateIndicators(date)
+                .filterIsInstance<CalendarEvent>()
+                .toTypedArray()
+
+            showDialogWithEvents(eventsForDate)
         }
     }
 
@@ -73,38 +70,38 @@ class CalendarWithEventsFragment : Fragment() {
 
         val event1 = CalendarEvent(
             eventName = "Event #1",
-            calendarDate = CalendarDate(calendar.time),
+            date = CalendarDate(calendar.time),
             color = context.getColorInt(R.color.event_1_color)
         )
 
         val event2 = CalendarEvent(
             eventName = "Event #2",
-            calendarDate = CalendarDate(calendar.time),
+            date = CalendarDate(calendar.time),
             color = context.getColorInt(R.color.event_2_color)
         )
 
         val event3 = CalendarEvent(
             eventName = "Event #3",
-            calendarDate = CalendarDate(calendar.time),
+            date = CalendarDate(calendar.time),
             color = context.getColorInt(R.color.event_3_color)
         )
 
         val event4 = CalendarEvent(
             eventName = "Event #4",
-            calendarDate = CalendarDate(calendar.time),
+            date = CalendarDate(calendar.time),
             color = context.getColorInt(R.color.event_4_color)
         )
 
         val event5 = CalendarEvent(
             eventName = "Event #5",
-            calendarDate = CalendarDate(calendar.time),
+            date = CalendarDate(calendar.time),
             color = context.getColorInt(R.color.event_5_color)
         )
 
         calendar.set(2018, Calendar.JUNE, 18)
         val event6 = CalendarEvent(
             eventName = "Event #6",
-            calendarDate = CalendarDate(calendar.time),
+            date = CalendarDate(calendar.time),
             color = context.getColorInt(R.color.event_6_color)
         )
 
@@ -112,10 +109,11 @@ class CalendarWithEventsFragment : Fragment() {
     }
 
     class CalendarEvent(
-        val eventName: String,
-        val calendarDate: CalendarDate,
-        @ColorInt val color: Int
-    )
+        override val date: CalendarDate,
+        override val color: Int,
+        val eventName: String
+
+    ) : CalendarView.DateIndicator
 
     class EventsDialogAdapter(
         context: Context,

@@ -13,7 +13,7 @@ import ru.cleverpumpkin.calendar.utils.getColorInt
 import ru.cleverpumpkin.calendar.utils.spToPix
 
 /**
- * This view class represents a single date cell of calendar with optional colors indicators.
+ * This view class represents a single date cell of calendar with optional colored indicators.
  *
  * This view class control its drawable state with [isToday], [isDateSelected], [isDateDisabled]
  * and [isWeekend] properties.
@@ -90,7 +90,7 @@ class CalendarDateView @JvmOverloads constructor(
             dayNumberWidth = textPaint.measureText(value)
         }
 
-    var dateIndicators: List<DateIndicator> = emptyList()
+    var dateIndicators: List<CalendarView.DateIndicator> = emptyList()
 
     var textColorStateList: ColorStateList? = null
 
@@ -121,8 +121,8 @@ class CalendarDateView @JvmOverloads constructor(
 
         val drawableAreaWidth = radiusPx * 2.0f * indicatorsCount + spacePx * (indicatorsCount - 1)
 
-        var xPosition = ((width - drawableAreaWidth) / 2.0f) + radiusPx
-        val yPosition = height - height / 6.0f
+        var xPos = ((width - drawableAreaWidth) / 2.0f) + radiusPx
+        val yPos = height - height / 6.0f
 
         dateIndicators.forEachIndexed { i, indicator ->
             if (i > MAX_INDICATORS_COUNT - 1) {
@@ -130,9 +130,9 @@ class CalendarDateView @JvmOverloads constructor(
             }
 
             indicatorPaint.color = indicator.color
-            drawCircle(xPosition, yPosition, radiusPx, indicatorPaint)
+            drawCircle(xPos, yPos, radiusPx, indicatorPaint)
 
-            xPosition += radiusPx * 2.0f + spacePx
+            xPos += radiusPx * 2.0f + spacePx
         }
     }
 
