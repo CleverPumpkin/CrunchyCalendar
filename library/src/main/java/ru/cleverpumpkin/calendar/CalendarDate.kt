@@ -82,7 +82,7 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
     }
 
     override fun toString(): String {
-        return "$dayOfMonth-$month-$year"
+        return "$dayOfMonth/${month.inc()}/$year"
     }
 
     override fun writeToParcel(dest: Parcel, flags: Int) {

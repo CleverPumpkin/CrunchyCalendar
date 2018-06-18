@@ -6,6 +6,7 @@ import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarView
 import ru.cleverpumpkin.calendar.sample.DemoListFragment.DemoMode
@@ -24,16 +25,22 @@ class CalendarWithDateSelectionFragment : Fragment() {
         }
     }
 
+    private lateinit var calendarView: CalendarView
+    private lateinit var selectedDatesView: TextView
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_demo, container, false)
+        return inflater.inflate(R.layout.fragment_selected_dates_demo, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        calendarView = view.findViewById(R.id.calendar_view)
+        selectedDatesView = view.findViewById(R.id.selected_dates_view)
 
         val demoModeName = arguments?.getString(ARG_DEMO_MODE)
                 ?: throw IllegalStateException()
@@ -47,8 +54,6 @@ class CalendarWithDateSelectionFragment : Fragment() {
             setNavigationOnClickListener { activity?.onBackPressed() }
         }
 
-        val calendarView = view.findViewById<CalendarView>(R.id.calendar_view)
-
         if (savedInstanceState == null) {
             val selectedDates = when (demoMode.selectionMode) {
                 CalendarView.SelectionMode.NON -> emptyList()
@@ -57,11 +62,44 @@ class CalendarWithDateSelectionFragment : Fragment() {
                 CalendarView.SelectionMode.RANGE -> rangeSelectedDate()
             }
 
-            calendarView.setupCalendar(
-                selectionMode = demoMode.selectionMode,
-                selectedDates = selectedDates
-            )
+            if (demoMode == DemoMode.LIMITED_DATES_SELECTION) {
+                val calendar = Calendar.getInstance()
+                calendar.set(2018, Calendar.JUNE, 1)
+                val initialDate = CalendarDate(calendar.time)
+
+                calendar.set(2018, Calendar.MAY, 28)
+                val minDate = CalendarDate(calendar.time)
+
+                calendar.set(2018, Calendar.JULY, 2)
+                val maxDate = CalendarDate(calendar.time)
+
+                calendarView.setupCalendar(
+                    initialDate = initialDate,
+                    minDate = minDate,
+                    maxDate = maxDate,
+                    selectionMode = CalendarView.SelectionMode.MULTIPLE
+                )
+            } else {
+                calendarView.setupCalendar(
+                    selectionMode = demoMode.selectionMode,
+                    selectedDates = selectedDates
+                )
+            }
         }
+
+        calendarView.onDateClickListener = {
+            updateSelectedDatesView()
+        }
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        updateSelectedDatesView()
+    }
+
+    private fun updateSelectedDatesView() {
+        val selectedDates = "Selected dates = ${calendarView.selectedDates}"
+        selectedDatesView.text = selectedDates
     }
 
     private fun singleSelectedDate(): List<CalendarDate> {
