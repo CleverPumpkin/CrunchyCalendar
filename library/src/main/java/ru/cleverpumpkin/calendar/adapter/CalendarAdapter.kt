@@ -14,6 +14,9 @@ import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarDateView
 import ru.cleverpumpkin.calendar.CalendarView
 import ru.cleverpumpkin.calendar.R
+import ru.cleverpumpkin.calendar.adapter.CalendarAdapter.Companion.DATE_VIEW_TYPE
+import ru.cleverpumpkin.calendar.adapter.CalendarAdapter.Companion.EMPTY_VIEW_TYPE
+import ru.cleverpumpkin.calendar.adapter.CalendarAdapter.Companion.MONTH_VIEW_TYPE
 import ru.cleverpumpkin.calendar.adapter.item.CalendarItem
 import ru.cleverpumpkin.calendar.adapter.item.DateItem
 import ru.cleverpumpkin.calendar.adapter.item.EmptyItem
@@ -129,19 +132,19 @@ class CalendarAdapter(
     }
 
     private fun bindDateItemViewHolder(holder: DateItemViewHolder, dateItem: DateItem) {
-        val calendarDate = dateItem.date
+        val date = dateItem.date
         val dateView = holder.dateView
 
-        dateView.isToday = dateInfoProvider.isToday(calendarDate)
-        dateView.isDateSelected = dateInfoProvider.isDateSelected(calendarDate)
-        dateView.isDateDisabled = dateInfoProvider.isDateOutOfRange(calendarDate)
-        dateView.isWeekend = dateInfoProvider.isWeekend(calendarDate)
-        dateView.dateIndicators = dateInfoProvider.getDateIndicators(calendarDate)
-        dateView.dayNumber = dayFormatter.format(calendarDate.date)
+        dateView.isToday = dateInfoProvider.isToday(date)
+        dateView.isDateSelected = dateInfoProvider.isDateSelected(date)
+        dateView.isDateDisabled = dateInfoProvider.isDateOutOfRange(date)
+        dateView.isWeekend = dateInfoProvider.isWeekend(date)
+        dateView.dateIndicators = dateInfoProvider.getDateIndicators(date)
+        dateView.dayNumber = dayFormatter.format(date.date)
     }
 
     private fun bindMonthItemViewHolder(holder: MonthItemViewHolder, monthItem: MonthItem) {
-        val monthName = monthFormatter.format(monthItem.calendarDate.date)
+        val monthName = monthFormatter.format(monthItem.date.date)
         holder.textView.text = monthName.capitalize()
         holder.textView.setTextColor(itemsAttributes.monthTextColor)
     }
@@ -149,13 +152,13 @@ class CalendarAdapter(
     // endregion
 
 
-    fun findMonthPosition(calendarDate: CalendarDate): Int {
-        val year = calendarDate.year
-        val month = calendarDate.month
+    fun findMonthPosition(date: CalendarDate): Int {
+        val year = date.year
+        val month = date.month
 
         return calendarItems.indexOfFirst { item ->
             if (item is MonthItem) {
-                if (item.calendarDate.year == year && item.calendarDate.month == month) {
+                if (item.date.year == year && item.date.month == month) {
                     return@indexOfFirst true
                 }
             }
@@ -164,10 +167,10 @@ class CalendarAdapter(
         }
     }
 
-    fun findDatePosition(calendarDate: CalendarDate): Int {
+    fun findDatePosition(date: CalendarDate): Int {
         return calendarItems.indexOfFirst { item ->
             if (item is DateItem) {
-                if (item.date == calendarDate) {
+                if (item.date == date) {
                     return@indexOfFirst true
                 }
             }
