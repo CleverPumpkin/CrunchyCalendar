@@ -242,9 +242,9 @@ class CalendarView @JvmOverloads constructor(
         calendarAdapter = CalendarAdapter(
             itemsAttributes = itemsAttributes,
             dateInfoProvider = dateInfoProvider,
-            onDateClickHandler = { calendarDate ->
-                dateSelectionStrategy.onDateSelected(calendarDate)
-                onDateClickListener?.invoke(calendarDate)
+            onDateClickHandler = { date ->
+                dateSelectionStrategy.onDateSelected(date)
+                onDateClickListener?.invoke(date)
             }
         )
 
@@ -553,7 +553,7 @@ class CalendarView @JvmOverloads constructor(
      * Restore internal calendar state.
      *
      * Note: If Calendar was initialized with [setupCalendar] method before [onRestoreInstanceState],
-     * restoring of internal calendar state wont'n performed, because new state already set up.
+     * restoring of internal calendar state won't performed, because new state already set up.
      */
     override fun onRestoreInstanceState(state: Parcelable?) {
         if (state is Bundle) {
