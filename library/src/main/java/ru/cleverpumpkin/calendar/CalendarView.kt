@@ -39,6 +39,15 @@ class CalendarView @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
     /**
+     * This interface represents a colored indicator for specific date that will be displayed
+     * on the calendar.
+     */
+    interface DateIndicator {
+        val date: CalendarDate
+        val color: Int
+    }
+
+    /**
      * Interface for internal needs that provide required information for specific calendar date.
      */
     interface DateInfoProvider {
@@ -131,12 +140,12 @@ class CalendarView @JvmOverloads constructor(
         }
 
     /**
-     * Grouped by date indicators that will be displayed on the calendar date views
+     * Grouped by date indicators that will be displayed on the calendar.
      */
     private val groupedDatesIndicators = ArrayMap<CalendarDate, MutableList<DateIndicator>>()
 
     /**
-     * List of indicators that will be displayed on the calendar for specific dates.
+     * List of indicators that will be displayed on the calendar.
      */
     var datesIndicators: List<DateIndicator> = emptyList()
         set(value) {
@@ -144,6 +153,13 @@ class CalendarView @JvmOverloads constructor(
             value.groupByTo(groupedDatesIndicators) { it.date }
             recyclerView.adapter.notifyDataSetChanged()
         }
+
+    /**
+     * Returns list of indicators for specific date.
+     */
+    fun getDateIndicators(date: CalendarDate): List<DateIndicator> {
+        return groupedDatesIndicators[date] ?: emptyList()
+    }
 
     /**
      * Listener that will be be notified when a date is clicked.
@@ -592,7 +608,7 @@ class CalendarView @JvmOverloads constructor(
         }
 
         override fun getDateIndicators(date: CalendarDate): List<DateIndicator> {
-            return groupedDatesIndicators[date] ?: emptyList()
+            return this@CalendarView.getDateIndicators(date)
         }
     }
 
