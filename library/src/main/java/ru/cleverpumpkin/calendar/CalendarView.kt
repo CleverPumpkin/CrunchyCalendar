@@ -22,8 +22,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * This class allow displaying calendar grid, selecting dates
- * and handling date selection with custom action.
+ * This class allow displaying calendar grid, selecting dates, displaying colored indicators for
+ * specific dates and handling date selection with custom action.
  *
  * Calendar must be initialize with a [setupCalendar] method where you can specify
  * parameters for calendar.
