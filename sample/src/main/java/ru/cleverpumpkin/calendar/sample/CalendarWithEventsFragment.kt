@@ -49,7 +49,9 @@ class CalendarWithEventsFragment : Fragment() {
                 .filterIsInstance<CalendarEvent>()
                 .toTypedArray()
 
-            showDialogWithEvents(eventsForDate)
+            if (eventsForDate.isNotEmpty()) {
+                showDialogWithEvents(eventsForDate)
+            }
         }
     }
 
