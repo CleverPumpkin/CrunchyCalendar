@@ -22,11 +22,8 @@ class MainActivity : AppCompatActivity(), DemoListFragment.OnDemoModeClickListen
 
     override fun onDemoModeClick(demoMode: DemoMode) {
         val fragment = when (demoMode) {
-            DISPLAY_ONLY, SINGLE_SELECTION, MULTIPLE_SELECTION, RANGE_SELECTION -> {
+            DISPLAY_ONLY, SINGLE_SELECTION, MULTIPLE_SELECTION, RANGE_SELECTION, LIMITED_DATES_SELECTION -> {
                 CalendarWithDateSelectionFragment.newInstance(demoMode)
-            }
-            LIMITED_DATES_SELECTION -> {
-                CalendarWithLimitedDateSelectionFragment()
             }
             CUSTOM_EVENTS -> {
                 CalendarWithEventsFragment()
