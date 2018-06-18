@@ -45,7 +45,10 @@ calendarView.setupCalendar(
                 
 ```
 
-Calendar widget is able to save and restore its state, so no needs to call `setupCalendar()` every time, when `Activity` or `Fragment` recreated. 
+# Calendar state 
+Calendar widget is able to save and restore its internal state (selected dates, selection mode, etc.), so no needs to call `setupCalendar()` method every time, when `Activity` or `Fragment` recreated. 
+
+If Calendar was set up with `setupCalendar()` method **before** state restoring, previous saved state will be ignored. 
 
 # Calendar selection mode
 Calendar widget supports several selection mods for dates selecting: **single**, **multiple** and **range**.
@@ -86,7 +89,21 @@ calendarView.setupCalendar(selectionMode = SelectionMode.RANGE)
 
 ```
 
+# Color indicators
+Calendar widget is able to display simple color indicators on the date cell. Indicators represent as colored dots (max 4 dots per date cell). 
 
+```kotlin
+
+val calendarView = view.findViewById(R.id.calendar_view)
+
+// Set up calendar
+calendarView.setupCalendar()
+
+// Set List of indicators that will be displayed on the calendar.
+val indicators: List<DateIndicator> = generateDatesIndicators()
+calendarView.datesIndicators = indicators
+
+````
 
 
 
