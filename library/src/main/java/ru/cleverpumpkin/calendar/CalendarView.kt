@@ -22,11 +22,15 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * This class allow displaying calendar grid, selecting dates, displaying colored indicators for
- * specific dates and handling date selection with custom action.
+ * This class represents a Calendar that allow displaying calendar grid, selecting dates,
+ * displaying colored indicators for specific dates and handling date selection with custom action.
  *
  * Calendar must be initialize with a [setupCalendar] method where you can specify
  * parameters for calendar.
+ *
+ * Calendar UI open for customization.
+ * Using XML attributes you can define grid divider color, date cell selectors etc.
+ * Using standard [RecyclerView.ItemDecoration] you can define special drawing for calendar items.
  *
  * This class overrides [onSaveInstanceState] and [onRestoreInstanceState], so it is able
  * to save and restore its state.
