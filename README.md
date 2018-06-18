@@ -90,7 +90,7 @@ calendarView.setupCalendar(selectionMode = SelectionMode.RANGE)
 ```
 
 # Color indicators
-Calendar widget is able to display simple color indicators on the date cell. Indicators represent as colored dots (max 4 dots per date cell). 
+Calendar widget is able to display simple color indicators on the date cell.
 
 ```kotlin
 
@@ -104,6 +104,17 @@ val indicators: List<DateIndicator> = generateDatesIndicators()
 calendarView.datesIndicators = indicators
 
 ````
+
+To display any object as color indicator, this object should implement `DateIndicator` interface.
+
+```kotlin
+
+interface DateIndicator {
+    val date: CalendarDate
+    val color: Int
+}
+
+```
 
 
 
