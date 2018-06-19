@@ -91,6 +91,9 @@ class CalendarDateView @JvmOverloads constructor(
         }
 
     var dateIndicators: List<CalendarView.DateIndicator> = emptyList()
+        set(indicators) {
+            field = indicators.take(MAX_INDICATORS_COUNT)
+        }
 
     var textColorStateList: ColorStateList? = null
 
@@ -113,22 +116,13 @@ class CalendarDateView @JvmOverloads constructor(
             return
         }
 
-        val indicatorsCount = if (dateIndicators.size > MAX_INDICATORS_COUNT) {
-            MAX_INDICATORS_COUNT
-        } else {
-            dateIndicators.size
-        }
-
+        val indicatorsCount = dateIndicators.size
         val drawableAreaWidth = radiusPx * 2.0f * indicatorsCount + spacePx * (indicatorsCount - 1)
 
         var xPos = ((width - drawableAreaWidth) / 2.0f) + radiusPx
         val yPos = height - height / 6.0f
 
-        dateIndicators.forEachIndexed { i, indicator ->
-            if (i > MAX_INDICATORS_COUNT - 1) {
-                return
-            }
-
+        dateIndicators.forEach { indicator ->
             indicatorPaint.color = indicator.color
             drawCircle(xPos, yPos, radiusPx, indicatorPaint)
 
