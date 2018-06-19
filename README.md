@@ -1,12 +1,15 @@
 # Calendar
 
-Calendar widget that allow displaying calendar grid, selecting dates, displaying color indicators for specific dates and handling date selection with custom action.
+Calendar widget that allow displaying vertical scrolled calendar grid, selecting dates and 
+displaying color indicators for specific dates.
 
 ![alt text](images/calendar.jpg)
 
-# Sample of usage
+## Sample of Usage
 
-First of all, you should declare `CalendarView` in your lyout XML file:
+Here's a basic example of Calendar usage.
+ 
+First of all, you should declare `CalendarView` in your layout XML file.
 
 ```xml
   <ru.cleverpumpkin.calendar.CalendarView 
@@ -15,7 +18,7 @@ First of all, you should declare `CalendarView` in your lyout XML file:
         android:layout_height="match_parent" />
 ```
 
-In the code perform calendar widget seting up.
+In your `Activity` or `Fragment` class perform setting up.
 
 ```kotlin
 
@@ -34,9 +37,9 @@ val minDate = CalendarDate(calendar.time)
 calendar.set(2018, Calendar.JULY, 15)
 val maxDate = CalendarDate(calendar.time)
 
-// Set up calendar
+// Set up calendar with all available parameters
 calendarView.setupCalendar(
-    initialDate = initialDate,
+    initialDate = initialDate, 
     minDate = minDate,
     maxDate = maxDate,
     selectionMode = SelectionMode.NON,
@@ -45,56 +48,83 @@ calendarView.setupCalendar(
                 
 ```
 
-# Calendar state 
-Calendar widget is able to save and restore its internal state (selected dates, selection mode, etc.), so no needs to call `setupCalendar()` method every time, when `Activity` or `Fragment` recreated. 
 
-If Calendar was set up with `setupCalendar()` method **before** state restoring, previous saved state will be ignored. 
+## Saving and Restoring state  
+Calendar is able to save and restore its internal state (selected dates, selection mode, etc.), 
+so no needs to save it manually and setting up the calendar with `setupCalendar()` method every time, 
+when `Activity` or `Fragment` recreated. 
 
-# Calendar selection mode
-Calendar widget supports several selection mods for dates selecting: **single**, **multiple** and **range**.
+If Calendar was set up with `setupCalendar()` method **before** restoring state, previous saved 
+state will be ignored. 
 
-### Single date selection 
-Only one date will be selectable. If there is already a selected date and you select a new one or the same, the old date    will be unselected.
+## Dates Selection
+Calendar supports several selection modes for dates selecting: **single**, **multiple** and **range**.
+
+#### Single date selection 
+Only one date will be able for selection. If there is already selected date and you select another one, previous
+selected date will be unselected.
 
 ```kotlin
-
-val calendarView = view.findViewById(R.id.calendar_view)
 
 // Set up calendar with SelectionMode.SINGLE
 calendarView.setupCalendar(selectionMode = SelectionMode.SINGLE)
 
+...
+
+// Get selected date or null
+val selectedDate: CalendarDate? = calendarView.selectedDate
+
+// Get list with single selected date or empty list
+val selectedDates: List<CalendarDate> = calendarView.selectedDates
 ```
 
-### Multiple date selection 
-Multiple dates will be selectable. Selecting an already selected date will unselect it.
+#### Multiple date selection 
+Multiple dates will be able for selection. Selecting an already selected date will unselect it.
 
 ```kotlin
-
-val calendarView = view.findViewById(R.id.calendar_view)
 
 // Set up calendar with SelectionMode.MULTIPLE
 calendarView.setupCalendar(selectionMode = SelectionMode.MULTIPLE)
 
+...
+
+// Get all selected dates in order they were added or empty list
+val selectedDates: List<CalendarDate> = calendarView.selectedDates
+
 ```
 
-### Range date selection 
-Allows you to select a date range. Previous selections are cleared when you select another date.
+#### Range date selection 
+Allows you to select a date range. Previous selected range is cleared when you select another one.
 
 ```kotlin
-
-val calendarView = view.findViewById(R.id.calendar_view)
 
 // Set up calendar with SelectionMode.RANGE
 calendarView.setupCalendar(selectionMode = SelectionMode.RANGE)
 
+... 
+
+// Get all selected dates in range (includes start and end) or empty list
+val selectedDates: List<CalendarDate> = calendarView.selectedDates
+
 ```
 
-# Color indicators
-Calendar widget is able to display simple color indicators on the date cell.
+## Color Indicators
+Calendar is able to display simple color indicators (dots) on the date cell.
+
+Color indicator represents as simple interface, which you can implement in your classes.  
 
 ```kotlin
 
-val calendarView = view.findViewById(R.id.calendar_view)
+interface DateIndicator {
+    val date: CalendarDate // indicator date
+    val color: Int // indicator color
+}
+
+```
+
+Here's an example of setting indicators to display on the Calendar.
+ 
+```kotlin
 
 // Set up calendar
 calendarView.setupCalendar()
@@ -103,18 +133,50 @@ calendarView.setupCalendar()
 val indicators: List<DateIndicator> = generateDatesIndicators()
 calendarView.datesIndicators = indicators
 
+calendarView.onDateClickListener = { date ->
+    // Get all indicators for specific date
+    val indicatorsForDate = calendarView.getDateIndicators(date)
+    
+    // do something ... 
+}
+
 ````
 
-To display any object as color indicator, this object should implement `DateIndicator` interface.
+## View Customization
 
-```kotlin
+Calendar appearance can be customized with XML attributes.
 
-interface DateIndicator {
-    val date: CalendarDate
-    val color: Int
-}
+
+Here's an example of applying custom attributes for changing Calendar appearance.
+
+```xml
+
+<ru.cleverpumpkin.calendar.CalendarView
+    android:id="@+id/calendar_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:cpcalendar_grid_on_selected_dates="false"
+    app:cpcalendar_date_background="@drawable/custom_date_bg_selector"
+    app:cpcalendar_date_text_color="@color/custom_date_text_selector"
+    app:cpcalendar_day_bar_background="@color/custom_calendar_days_bar_background"
+    app:cpcalendar_day_bar_text_color="@color/custom_calendar_days_bar_text_color"
+    app:cpcalendar_grid_color="@color/custom_calendar_grid_color"
+    app:cpcalendar_month_text_color="@color/custom_calendar_month_text_color" />
 
 ```
 
+If you need to do some custom drawing logic for Calendar, you can implement standard 
+`RecyclerView.ItemDecoration` and add it for Calendar using `addCustomItemDecoration()` method.
 
+```kotlin
+// Set up calendar
+calendarView.setupCalendar()
 
+// Some custom decoration logic 
+val customItemDecoration = CustomItemDecoration()
+calendarView.addCustomItemDecoration(customItemDecoration)
+
+```    
+
+There is an abstract helper class `AbsDateItemDecoration` that you can use for decoration 
+of specific date cell views.
