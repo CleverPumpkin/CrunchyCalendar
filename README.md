@@ -1,11 +1,19 @@
 # Calendar
 
-Calendar widget that allow displaying vertical scrolled calendar grid, selecting dates and 
-displaying color indicators for specific dates.
+**Light**, **powerful** and **easy to use** Calendar Widget with a number of features out of the box:
+* Endless vertical scrolling in both directions;
+* Setting date boundaries to restrict scrolling inside of a specific time period;
+* Single / multiple / range dates selection;
+* Pre-selecting dates;
+* Customizing colors;
+* Displaying color indicators;
+* Setting own custom ItemDecoration;
+* Presented as a View subclass which can be displayed everywhere: in Activity, Fragment or Dialog, 
+or can be integrated into another custom View.
 
 ![alt text](images/calendar.jpg)
 
-## Sample of Usage
+## Usage
 
 Here's a basic example of Calendar usage.
  
@@ -18,7 +26,7 @@ First of all, you should declare `CalendarView` in your layout XML file.
         android:layout_height="match_parent" />
 ```
 
-In your `Activity` or `Fragment` class perform setting up.
+Perform Calendar setup in your `Activity` or `Fragment` class.
 
 ```kotlin
 
@@ -37,32 +45,50 @@ val minDate = CalendarDate(calendar.time)
 calendar.set(2018, Calendar.JULY, 15)
 val maxDate = CalendarDate(calendar.time)
 
+// List of preselected dates that will be initially selected
+val preselectedDates: List<CalendarDate> = getPreselectedDates()
+
 // Set up calendar with all available parameters
 calendarView.setupCalendar(
     initialDate = initialDate, 
     minDate = minDate,
     maxDate = maxDate,
     selectionMode = SelectionMode.NON,
-    selectedDates = emptyList()
+    selectedDates = preselectedDates
 )
                 
 ```
 
+**Note:** all parameters in `setupCalendar` method are optional and has default values. 
+
+To handle date click with custom action, you can do this:
+
+```kotlin
+
+// Set date click callback 
+calendarView.onDateClickListener = { 
+
+    // Do something ... 
+    // for example get list of selected dates
+    val selectedDates = calendarView.selectedDates 
+}
+
+```
+
 
 ## Saving and Restoring state  
-Calendar is able to save and restore its internal state (selected dates, selection mode, etc.), 
-so no needs to save it manually and setting up the calendar with `setupCalendar()` method every time, 
-when `Activity` or `Fragment` recreated. 
+Calendar takes care of saving and restoring its internal state (selected dates, selection mode, etc.),
+so no need to save it manually and call setupCalendar() method every time, 
+when `Activity` or `Fragment` is recreated.
 
 If Calendar was set up with `setupCalendar()` method **before** restoring state, previous saved 
 state will be ignored. 
 
 ## Dates Selection
-Calendar supports several selection modes for dates selecting: **single**, **multiple** and **range**.
+Calendar supports several selection modes: **single**, **multiple** and **range**.
 
 #### Single date selection 
-Only one date will be able for selection. If there is already selected date and you select another one, previous
-selected date will be unselected.
+Only one date can be selected at a time.
 
 ```kotlin
 
@@ -78,8 +104,8 @@ val selectedDate: CalendarDate? = calendarView.selectedDate
 val selectedDates: List<CalendarDate> = calendarView.selectedDates
 ```
 
-#### Multiple date selection 
-Multiple dates will be able for selection. Selecting an already selected date will unselect it.
+#### Multiple dates selection 
+A number of dates can be selected. Pressing an already selected date will unselect it.
 
 ```kotlin
 
@@ -103,7 +129,7 @@ calendarView.setupCalendar(selectionMode = SelectionMode.RANGE)
 
 ... 
 
-// Get all selected dates in range (includes start and end) or empty list
+// Get all selected dates in range (includes start and end date) or empty list
 val selectedDates: List<CalendarDate> = calendarView.selectedDates
 
 ```
@@ -129,18 +155,29 @@ Here's an example of setting indicators to display on the Calendar.
 // Set up calendar
 calendarView.setupCalendar()
 
-// Set List of indicators that will be displayed on the calendar.
-val indicators: List<DateIndicator> = generateDatesIndicators()
+
+val indicators: List<DateIndicator> = getDatesIndicators()
+
+// Set List of indicators that will be displayed on the calendar 
 calendarView.datesIndicators = indicators
 
+
+````
+
+To get all indicators for specific date, you can do this:
+
+```kotlin
+
+// Set date click callback 
 calendarView.onDateClickListener = { date ->
-    // Get all indicators for specific date
+
+    // Get all indicators for date
     val indicatorsForDate = calendarView.getDateIndicators(date)
     
     // do something ... 
 }
 
-````
+```
 
 ## View Customization
 
@@ -174,15 +211,19 @@ calendarView.setupCalendar()
 
 // Some custom decoration logic 
 val customItemDecoration = CustomItemDecoration()
+
+// Add custom item decoration for calendar
 calendarView.addCustomItemDecoration(customItemDecoration)
 
 ```    
 
-There is an abstract helper class `AbsDateItemDecoration` that you can use for decoration 
-of specific date cell views.
+There is an abstract helper class `AbsDateItemDecoration` that you can extend to implement custom 
+drawing logic for specific dates cells.
 
 ## License
+
 ```
+
 MIT License
 
 Copyright (c) 2018 CleverPumpkin Ltd.
@@ -204,4 +245,5 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
 ```
