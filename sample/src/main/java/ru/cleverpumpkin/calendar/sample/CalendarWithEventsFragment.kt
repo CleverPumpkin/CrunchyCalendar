@@ -124,7 +124,7 @@ class CalendarWithEventsFragment : Fragment() {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val view = if (convertView == null) {
-                LayoutInflater.from(parent.context).inflate(R.layout.item_event, null)
+                LayoutInflater.from(parent.context).inflate(R.layout.item_event, parent, false)
             } else {
                 convertView
             }

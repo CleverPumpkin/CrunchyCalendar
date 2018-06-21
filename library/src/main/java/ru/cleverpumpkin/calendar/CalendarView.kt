@@ -154,6 +154,7 @@ class CalendarView @JvmOverloads constructor(
     var datesIndicators: List<DateIndicator> = emptyList()
         set(value) {
             field = value
+            groupedDatesIndicators.clear()
             value.groupByTo(groupedDatesIndicators) { it.date }
             recyclerView.adapter.notifyDataSetChanged()
         }
