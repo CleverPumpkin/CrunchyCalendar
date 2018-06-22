@@ -9,4 +9,5 @@
     <string name="demo_mode_events">Custom events and action dialog</string>
     <string name="demo_mode_custom_style">Custom styles</string>
     <string name="demo_mode_dialog">Dialog</string>
+    <string name="demo_mode_move_to_date">Move to today</string>
 </resources>

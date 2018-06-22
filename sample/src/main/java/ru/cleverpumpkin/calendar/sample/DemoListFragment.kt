@@ -56,6 +56,10 @@ class DemoListFragment : Fragment() {
         DIALOG(
             descriptionRes = R.string.demo_mode_dialog,
             selectionMode = SelectionMode.MULTIPLE
+        ),
+        MOVE_TO_DATE(
+            descriptionRes = R.string.demo_mode_move_to_date,
+            selectionMode = SelectionMode.MULTIPLE
         )
     }
 

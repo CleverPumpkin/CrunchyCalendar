@@ -34,6 +34,9 @@ class MainActivity : AppCompatActivity(), DemoListFragment.OnDemoModeClickListen
             DIALOG -> {
                 CalendarDialogFragment()
             }
+            MOVE_TO_DATE -> {
+                CalendarMoveToDateFragment()
+            }
         }
 
         if (demoMode == DIALOG) {
