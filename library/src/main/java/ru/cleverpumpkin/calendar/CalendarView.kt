@@ -639,16 +639,8 @@ class CalendarView @JvmOverloads constructor(
         }
 
         override fun isDateOutOfRange(date: CalendarDate): Boolean {
-            val minDate = minMaxDatesRange.dateFrom
-            val maxDate = minMaxDatesRange.dateTo
-
-            return when {
-                minDate == null && maxDate != null -> date > maxDate
-                minDate != null && maxDate == null -> date < minDate
-                minDate != null && maxDate != null -> date < minDate || date > maxDate
-                minDate == null && maxDate == null -> false
-                else -> false
-            }
+            val (minDate, maxDate) = minMaxDatesRange
+            return (minDate != null && date < minDate) || (maxDate != null && date > maxDate)
         }
 
         override fun isWeekend(date: CalendarDate): Boolean {
