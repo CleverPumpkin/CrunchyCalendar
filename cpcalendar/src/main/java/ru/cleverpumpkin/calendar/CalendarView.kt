@@ -22,8 +22,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * This class represents a Calendar that allow displaying calendar grid, selecting dates,
- * displaying colored indicators for specific dates and handling date selection with custom action.
+ * This class represents a Calendar Widget that allow displaying calendar grid, selecting dates,
+ * displaying color indicators for specific dates and handling date selection with custom action.
  *
  * Calendar must be initialize with a [setupCalendar] method where you can specify
  * parameters for calendar.
@@ -158,13 +158,6 @@ class CalendarView @JvmOverloads constructor(
             value.groupByTo(groupedDatesIndicators) { it.date }
             recyclerView.adapter.notifyDataSetChanged()
         }
-
-    /**
-     * Returns list of indicators for specific date.
-     */
-    fun getDateIndicators(date: CalendarDate): List<DateIndicator> {
-        return groupedDatesIndicators[date] ?: emptyList()
-    }
 
     /**
      * Listener that will be be notified when a date is clicked.
@@ -403,7 +396,7 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Method for fast moving to a specific calendar date.
+     * Fast moving to a specific calendar date.
      * If [date] is out of min-max date boundaries, moving won't perform.
      */
     fun moveToDate(date: CalendarDate) {
@@ -446,6 +439,13 @@ class CalendarView @JvmOverloads constructor(
      */
     fun removeCustomItemDecoration(itemDecoration: RecyclerView.ItemDecoration) {
         recyclerView.removeItemDecoration(itemDecoration)
+    }
+
+    /**
+     * Returns list of indicators for a specific date.
+     */
+    fun getDateIndicators(date: CalendarDate): List<DateIndicator> {
+        return groupedDatesIndicators[date] ?: emptyList()
     }
 
     private fun prepareDisplayDatesRange(
