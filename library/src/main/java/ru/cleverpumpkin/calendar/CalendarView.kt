@@ -373,6 +373,56 @@ class CalendarView @JvmOverloads constructor(
             throw IllegalStateException("minDate must be before maxDate: $minDate, maxDate: $maxDate")
         }
 
+        minMaxDatesRange = NullableDatesRange(dateFrom = minDate, dateTo = maxDate)
+        this.selectionMode = selectionMode
+
+        if (selectedDates.isNotEmpty()) {
+            when {
+                selectionMode == SelectionMode.NON -> {
+                    throw IllegalStateException("NON mode can't be used with selected dates")
+                }
+
+                selectionMode == SelectionMode.SINGLE && selectedDates.size > 1 -> {
+                    throw IllegalStateException("SINGLE mode can't be used with multiple selected dates")
+                }
+
+                selectionMode == SelectionMode.RANGE && selectedDates.size > 2 -> {
+                    throw IllegalStateException("RANGE mode only allows two selected dates")
+                }
+
+                else -> {
+                    selectedDates.forEach { date ->
+                        if (dateInfoProvider.isDateOutOfRange(date)) {
+                            throw IllegalStateException(
+                                "Selected date must be between minDate and maxDate. " +
+                                        "Selected date: $date, minDate: $minDate, maxDate: $maxDate"
+                            )
+                        }
+                        dateSelectionStrategy.onDateSelected(date)
+                    }
+                }
+            }
+        }
+
+        displayDatesRange = prepareDisplayDatesRange(
+            initialDate = initialDate,
+            minDate = minDate,
+            maxDate = maxDate
+        )
+
+        generateCalendarItems(displayDatesRange)
+        moveToDate(initialDate)
+
+        initializedWithSetup = true
+    }
+
+    private fun prepareDisplayDatesRange(
+        initialDate: CalendarDate,
+        minDate: CalendarDate? = null,
+        maxDate: CalendarDate? = null
+
+    ): DatesRange {
+
         val displayDatesFrom: CalendarDate
         val displayDatesTo: CalendarDate
 
@@ -422,46 +472,36 @@ class CalendarView @JvmOverloads constructor(
             else -> throw IllegalStateException() // unreachable branch
         }
 
-        this.selectionMode = selectionMode
-        minMaxDatesRange = NullableDatesRange(dateFrom = minDate, dateTo = maxDate)
-        displayDatesRange = DatesRange(dateFrom = displayDatesFrom, dateTo = displayDatesTo)
+        return DatesRange(dateFrom = displayDatesFrom, dateTo = displayDatesTo)
+    }
 
-        if (selectedDates.isNotEmpty()) {
-            when {
-                selectionMode == SelectionMode.NON -> {
-                    throw IllegalStateException("NON mode can't be used with selected dates")
-                }
+    fun moveToDate(date: CalendarDate) {
+        val (minDate, maxDate) = minMaxDatesRange
 
-                selectionMode == SelectionMode.SINGLE && selectedDates.size > 1 -> {
-                    throw IllegalStateException("SINGLE mode can't be used with multiple selected dates")
-                }
-
-                selectionMode == SelectionMode.RANGE && selectedDates.size > 2 -> {
-                    throw IllegalStateException("RANGE mode only allows two selected dates")
-                }
-
-                else -> {
-                    selectedDates.forEach { date ->
-                        if (dateInfoProvider.isDateOutOfRange(date)) {
-                            throw IllegalStateException(
-                                "Selected date must be between minDate and maxDate. " +
-                                        "Selected date: $date, minDate: $minDate, maxDate: $maxDate"
-                            )
-                        }
-                        dateSelectionStrategy.onDateSelected(date)
-                    }
-                }
-            }
+        if ((minDate != null && date < minDate.monthBeginning()) ||
+            (maxDate != null && date > maxDate.monthEnd())) {
+            return
         }
 
-        generateCalendarItems(displayDatesRange)
+        val (displayDatesFrom, displayDatesTo) = displayDatesRange
 
-        val initialMonthPosition = calendarAdapter.findMonthPosition(initialDate)
-        if (initialMonthPosition != -1) {
-            recyclerView.scrollToPosition(initialMonthPosition)
+        if (date.isBetween(dateFrom = displayDatesFrom, dateTo = displayDatesTo).not()) {
+            displayDatesRange = prepareDisplayDatesRange(
+                initialDate = date,
+                minDate = minDate,
+                maxDate = maxDate
+            )
+
+            generateCalendarItems(displayDatesRange)
         }
 
-        initializedWithSetup = true
+        val dateMonthPosition = calendarAdapter.findMonthPosition(date)
+        if (dateMonthPosition != -1) {
+            val gridLayoutManager = recyclerView.layoutManager as GridLayoutManager
+            gridLayoutManager.scrollToPositionWithOffset(dateMonthPosition, 0)
+            recyclerView.stopScroll()
+        }
+
     }
 
     private fun generateCalendarItems(datesRange: DatesRange) {

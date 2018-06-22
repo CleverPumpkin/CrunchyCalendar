@@ -115,6 +115,20 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
         return diffYear * 12 + other.month - this.month
     }
 
+    fun monthBeginning(): CalendarDate {
+        val tmpCalendar = Calendar.getInstance()
+        tmpCalendar.set(year, month, 1)
+
+        return CalendarDate(tmpCalendar.time)
+    }
+
+    fun monthEnd(): CalendarDate {
+        val tmpCalendar = Calendar.getInstance()
+        tmpCalendar.set(year, month, calendar.getActualMaximum(Calendar.DAY_OF_MONTH))
+
+        return CalendarDate(tmpCalendar.time)
+    }
+
     @Suppress("ConvertTwoComparisonsToRangeCheck")
     fun isBetween(dateFrom: CalendarDate, dateTo: CalendarDate): Boolean {
         return this >= dateFrom && this <= dateTo
