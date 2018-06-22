@@ -324,20 +324,6 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Add custom [RecyclerView.ItemDecoration] that will be used for calendar view decoration.
-     */
-    fun addCustomItemDecoration(itemDecoration: RecyclerView.ItemDecoration) {
-        recyclerView.addItemDecoration(itemDecoration)
-    }
-
-    /**
-     * Remove specific [RecyclerView.ItemDecoration] that previously was added.
-     */
-    fun removeCustomItemDecoration(itemDecoration: RecyclerView.ItemDecoration) {
-        recyclerView.removeItemDecoration(itemDecoration)
-    }
-
-    /**
      * Method for initial calendar set up. All parameters have default values.
      *
      * [initialDate] the date that will be displayed initially.
@@ -417,8 +403,8 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Fast move to a specific calendar date.
-     * If [date] out of min-max date boundaries, moving won't perform.
+     * Method for fast moving to a specific calendar date.
+     * If [date] is out of min-max date boundaries, moving won't perform.
      */
     fun moveToDate(date: CalendarDate) {
         val (minDate, maxDate) = minMaxDatesRange
@@ -446,6 +432,20 @@ class CalendarView @JvmOverloads constructor(
             gridLayoutManager.scrollToPositionWithOffset(dateMonthPosition, 0)
             recyclerView.stopScroll()
         }
+    }
+
+    /**
+     * Add custom [RecyclerView.ItemDecoration] that will be used for calendar view decoration.
+     */
+    fun addCustomItemDecoration(itemDecoration: RecyclerView.ItemDecoration) {
+        recyclerView.addItemDecoration(itemDecoration)
+    }
+
+    /**
+     * Remove specific [RecyclerView.ItemDecoration] that previously was added.
+     */
+    fun removeCustomItemDecoration(itemDecoration: RecyclerView.ItemDecoration) {
+        recyclerView.removeItemDecoration(itemDecoration)
     }
 
     private fun prepareDisplayDatesRange(
