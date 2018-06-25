@@ -13,6 +13,27 @@ or can be integrated into another custom View.
 
 ![alt text](images/calendar.jpg)
 
+## Dependency
+
+This library is available on [jCenter](https://bintray.com/cleverpumpkin/maven/cpcalendar). jCenter is the default Maven repository used by Android Studio.
+
+#### Gradle
+
+```
+implementation 'ru.cleverpumpkin:cpcalendar:1.0.0'
+```
+
+#### Maven
+
+```xml
+<dependency>
+  <groupId>ru.cleverpumpkin</groupId>
+  <artifactId>cpcalendar</artifactId>
+  <version>1.0.0</version>
+  <type>pom</type>
+</dependency>
+```
+
 ## Usage
 
 Here's a basic example of Calendar usage.
