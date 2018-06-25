@@ -52,7 +52,7 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Interface for internal needs that provide required information for specific calendar date.
+     * Interface for internal needs that provides required information for specific calendar date.
      */
     interface DateInfoProvider {
 
@@ -90,19 +90,17 @@ class CalendarView @JvmOverloads constructor(
         NON,
 
         /**
-         * Only one date will be selectable. If there is already a selected date and
-         * you select a new one or the same, the old date will be unselected.
+         * Only one date can be selected at a time.
          */
         SINGLE,
 
         /**
-         * Multiple dates will be selectable. Selecting an already-selected date will un-select it.
+         * A number of dates can be selected. Pressing an already selected date will unselect it.
          */
         MULTIPLE,
 
         /**
-         * Allows you to select a date range. Previous selections are cleared when you
-         * have a range selected and select another date.
+         * Allows you to select a date range. Previous selected range is cleared when you select another one.
          */
         RANGE
     }
@@ -333,13 +331,13 @@ class CalendarView @JvmOverloads constructor(
      * [selectionMode] mode for dates selecting.
      * Default value - [SelectionMode.NON]
      *
-     * [selectedDates] list of initially selected dates.
-     * Default value - empty list
-     *
      * When selection mode is:
      * [SelectionMode.SINGLE], [selectedDates] should contains only one date.
      * [SelectionMode.MULTIPLE], [selectedDates] can contains multiple date.
      * [SelectionMode.RANGE], [selectedDates] should contains two dates that represent selected range.
+     *
+     * [selectedDates] list of initially selected dates.
+     * Default value - empty list
      */
     fun setupCalendar(
         initialDate: CalendarDate = CalendarDate.today,
