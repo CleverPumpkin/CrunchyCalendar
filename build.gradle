@@ -21,22 +21,23 @@ buildscript {
         // Gradle plugins versions
         gradle_plugins = [
                 android_plugin_version: '3.1.1',
-                kotlin_plugin_version : libs.kotlin_version
+                kotlin_plugin_version : libs.kotlin_version,
+                bintray_plugin_version: '1.8.0',
+                maven_plugin_version: '2.0'
         ]
     }
 
     repositories {
         google()
         jcenter()
-
-        maven {
-            url 'https://maven.fabric.io/public'
-        }
     }
 
     dependencies {
         classpath "com.android.tools.build:gradle:$gradle_plugins.android_plugin_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$gradle_plugins.kotlin_plugin_version"
+
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:$gradle_plugins.bintray_plugin_version"
+        classpath "com.github.dcendents:android-maven-gradle-plugin:$gradle_plugins.maven_plugin_version"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
