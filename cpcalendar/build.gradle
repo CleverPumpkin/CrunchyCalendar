@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdkVersion app.min_sdk_version
         targetSdkVersion app.target_sdk_version
-        versionCode 1
-        versionName "1.0"
+        versionCode app.version_code
+        versionName app.version_name
     }
 
     buildTypes {
