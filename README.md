@@ -15,12 +15,12 @@ or can be integrated into another custom View.
 
 ## Dependency
 
-This library is available on [jCenter](https://bintray.com/cleverpumpkin/maven/cpcalendar). jCenter is the default Maven repository used by Android Studio.
+This library is available on [jCenter](https://bintray.com/cleverpumpkin/maven/CrunchyCalendar). jCenter is the default Maven repository used by Android Studio.
 
 #### Gradle
 
 ```
-implementation 'ru.cleverpumpkin:cpcalendar:1.0.0'
+implementation 'ru.cleverpumpkin:crunchycalendar:1.0.0'
 ```
 
 #### Maven
@@ -28,7 +28,7 @@ implementation 'ru.cleverpumpkin:cpcalendar:1.0.0'
 ```xml
 <dependency>
   <groupId>ru.cleverpumpkin</groupId>
-  <artifactId>cpcalendar</artifactId>
+  <artifactId>crunchycalendar</artifactId>
   <version>1.0.0</version>
   <type>pom</type>
 </dependency>
@@ -213,13 +213,13 @@ Here's an example of applying custom attributes for changing Calendar appearance
     android:id="@+id/calendar_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:cpcalendar_grid_on_selected_dates="false"
-    app:cpcalendar_date_background="@drawable/custom_date_bg_selector"
-    app:cpcalendar_date_text_color="@color/custom_date_text_selector"
-    app:cpcalendar_day_bar_background="@color/custom_calendar_days_bar_background"
-    app:cpcalendar_day_bar_text_color="@color/custom_calendar_days_bar_text_color"
-    app:cpcalendar_grid_color="@color/custom_calendar_grid_color"
-    app:cpcalendar_month_text_color="@color/custom_calendar_month_text_color" />
+    app:calendar_grid_on_selected_dates="false"
+    app:calendar_date_background="@drawable/custom_date_bg_selector"
+    app:calendar_date_text_color="@color/custom_date_text_selector"
+    app:calendar_day_bar_background="@color/custom_calendar_days_bar_background"
+    app:calendar_day_bar_text_color="@color/custom_calendar_days_bar_text_color"
+    app:calendar_grid_color="@color/custom_calendar_grid_color"
+    app:calendar_month_text_color="@color/custom_calendar_month_text_color" />
 
 ```
 
