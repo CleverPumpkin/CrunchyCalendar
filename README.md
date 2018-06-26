@@ -1,4 +1,4 @@
-# CPCalendar
+# CrunchyCalendar
 
 **Light**, **powerful** and **easy to use** Calendar Widget with a number of features out of the box:
 * Endless vertical scrolling in both directions;
