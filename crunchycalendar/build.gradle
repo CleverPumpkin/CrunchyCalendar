@@ -4,20 +4,20 @@ apply plugin: 'kotlin-android'
 // Bintray publication data
 ext {
     bintrayRepo = 'maven'
-    bintrayPackageName = 'cpcalendar'
+    bintrayPackageName = 'CrunchyCalendar'
 
     // Library package info
     groupId = 'ru.cleverpumpkin'
-    artifactId = 'cpcalendar'
+    artifactId = 'crunchycalendar'
     libraryVersion = app.version_name
 
     // Library name and description
-    libraryName = 'CPCalendar'
+    libraryName = 'CrunchyCalendar'
     libraryDescription = 'Light, powerful and easy to use Calendar Widget with a number of features out of the box'
 
     // Git info
-    siteUrl = 'https://github.com/CleverPumpkin/cpcalendar-android'
-    gitUrl = 'https://github.com/CleverPumpkin/cpcalendar-android.git'
+    siteUrl = 'https://github.com/CleverPumpkin/CrunchyCalendar'
+    gitUrl = 'https://github.com/CleverPumpkin/CrunchyCalendar.git'
 
     // Developer info
     developerId = 'alexsurinov'
