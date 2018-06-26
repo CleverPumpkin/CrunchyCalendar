@@ -19,13 +19,13 @@
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize"
         android:background="@android:color/white"
-        app:cpcalendar_grid_on_selected_dates="false"
-        app:cpcalendar_date_background="@drawable/custom_date_bg_selector"
-        app:cpcalendar_date_text_color="@color/custom_date_text_selector"
-        app:cpcalendar_day_bar_background="@color/custom_calendar_days_bar_background"
-        app:cpcalendar_day_bar_text_color="@color/custom_calendar_days_bar_text_color"
-        app:cpcalendar_grid_color="@color/custom_calendar_grid_color"
-        app:cpcalendar_month_text_color="@color/custom_calendar_month_text_color" />
+        app:calendar_grid_on_selected_dates="false"
+        app:calendar_date_background="@drawable/custom_date_bg_selector"
+        app:calendar_date_text_color="@color/custom_date_text_selector"
+        app:calendar_day_bar_background="@color/custom_calendar_days_bar_background"
+        app:calendar_day_bar_text_color="@color/custom_calendar_days_bar_text_color"
+        app:calendar_grid_color="@color/custom_calendar_grid_color"
+        app:calendar_month_text_color="@color/custom_calendar_month_text_color" />
 
 </FrameLayout>
 

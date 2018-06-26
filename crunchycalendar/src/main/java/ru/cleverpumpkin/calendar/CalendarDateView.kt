@@ -31,10 +31,10 @@ class CalendarDateView @JvmOverloads constructor(
         private const val SPACE_BETWEEN_INDICATORS = 4.0f
         private const val MAX_INDICATORS_COUNT = 4
 
-        private val stateToday = intArrayOf(R.attr.cpcalendar_state_today)
-        private val stateDateSelected = intArrayOf(R.attr.cpcalendar_state_selected)
-        private val stateDateDisabled = intArrayOf(R.attr.cpcalendar_state_disabled)
-        private val stateWeekend = intArrayOf(R.attr.cpcalendar_state_weekend)
+        private val stateToday = intArrayOf(R.attr.calendar_state_today)
+        private val stateDateSelected = intArrayOf(R.attr.calendar_state_selected)
+        private val stateDateDisabled = intArrayOf(R.attr.calendar_state_disabled)
+        private val stateWeekend = intArrayOf(R.attr.calendar_state_weekend)
     }
 
     private val radiusPx = context.dpToPix(INDICATOR_RADIUS)

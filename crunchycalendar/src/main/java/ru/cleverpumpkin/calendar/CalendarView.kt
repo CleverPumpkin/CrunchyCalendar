@@ -191,37 +191,37 @@ class CalendarView @JvmOverloads constructor(
 
             try {
                 drawGridOnSelectedDates = typedArray.getBoolean(
-                    R.styleable.CalendarView_cpcalendar_grid_on_selected_dates,
+                    R.styleable.CalendarView_calendar_grid_on_selected_dates,
                     drawGridOnSelectedDates
                 )
 
                 gridColor = typedArray.getColor(
-                    R.styleable.CalendarView_cpcalendar_grid_color,
+                    R.styleable.CalendarView_calendar_grid_color,
                     gridColor
                 )
 
                 daysBarBackground = typedArray.getColor(
-                    R.styleable.CalendarView_cpcalendar_day_bar_background,
+                    R.styleable.CalendarView_calendar_day_bar_background,
                     daysBarBackground
                 )
 
                 daysBarTextColor = typedArray.getColor(
-                    R.styleable.CalendarView_cpcalendar_day_bar_text_color,
+                    R.styleable.CalendarView_calendar_day_bar_text_color,
                     daysBarTextColor
                 )
 
                 monthTextColor = typedArray.getColor(
-                    R.styleable.CalendarView_cpcalendar_month_text_color,
+                    R.styleable.CalendarView_calendar_month_text_color,
                     monthTextColor
                 )
 
                 calendarDateBackgroundResId = typedArray.getResourceId(
-                    R.styleable.CalendarView_cpcalendar_date_background,
+                    R.styleable.CalendarView_calendar_date_background,
                     calendarDateBackgroundResId
                 )
 
                 calendarDateTextColorResId = typedArray.getResourceId(
-                    R.styleable.CalendarView_cpcalendar_date_text_color,
+                    R.styleable.CalendarView_calendar_date_text_color,
                     calendarDateTextColorResId
                 )
             } finally {
