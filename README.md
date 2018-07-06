@@ -80,7 +80,7 @@ calendarView.setupCalendar(
                 
 ```
 
-**Note:** all parameters in `setupCalendar` method are optional and has default values. 
+**Note:** all parameters in `setupCalendar` method are optional and have default values. 
 
 To handle date click with custom action, you can do this:
 
