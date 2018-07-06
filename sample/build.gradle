@@ -2,8 +2,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
-apply from: "abicons.gradle"
-
 android {
     compileSdkVersion app.compile_sdk_version
 
@@ -36,6 +34,3 @@ dependencies {
     implementation "com.android.support:recyclerview-v7:$libs.support_lib_version"
 }
 
-afterEvaluate {
-    tasks.generateDebugResources.dependsOn(processDebugIcon)
-}
