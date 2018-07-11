@@ -31,7 +31,7 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
         val today: CalendarDate get() = CalendarDate(Date())
     }
 
-    private val calendar = Calendar.getInstance().apply {
+    private val _calendar = Calendar.getInstance().apply {
         this.time = date
         this.set(Calendar.HOUR_OF_DAY, 0)
         this.set(Calendar.MINUTE, 0)
@@ -39,15 +39,24 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
         this.set(Calendar.MILLISECOND, 0)
     }
 
-    val year: Int get() = calendar.get(Calendar.YEAR)
+    val year: Int get() = _calendar.get(Calendar.YEAR)
 
-    val month: Int get() = calendar.get(Calendar.MONTH)
+    val month: Int get() = _calendar.get(Calendar.MONTH)
 
-    val dayOfMonth: Int get() = calendar.get(Calendar.DAY_OF_MONTH)
+    val dayOfMonth: Int get() = _calendar.get(Calendar.DAY_OF_MONTH)
 
-    val dayOfWeek: Int get() = calendar.get(Calendar.DAY_OF_WEEK)
+    val dayOfWeek: Int get() = _calendar.get(Calendar.DAY_OF_WEEK)
 
-    val date: Date get() = calendar.time
+    val date: Date get() = _calendar.time
+
+    val timeInMillis: Long get() = _calendar.timeInMillis
+
+    val calendar: Calendar
+        get() {
+            val newCalendar = Calendar.getInstance()
+            newCalendar.timeInMillis = _calendar.timeInMillis
+            return newCalendar
+        }
 
     override fun compareTo(other: CalendarDate): Int {
         var result = year - other.year
@@ -86,14 +95,14 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
     }
 
     override fun writeToParcel(dest: Parcel, flags: Int) {
-        dest.writeLong(calendar.timeInMillis)
+        dest.writeLong(_calendar.timeInMillis)
     }
 
     override fun describeContents() = 0
 
     fun minusMonths(monthsCount: Int): CalendarDate {
         val tmpCalendar = Calendar.getInstance()
-        tmpCalendar.time = calendar.time
+        tmpCalendar.time = _calendar.time
         tmpCalendar.add(Calendar.MONTH, monthsCount.unaryMinus())
 
         return CalendarDate(tmpCalendar.time)
@@ -101,7 +110,7 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
 
     fun plusMonths(monthsCount: Int): CalendarDate {
         val tmpCalendar = Calendar.getInstance()
-        tmpCalendar.time = calendar.time
+        tmpCalendar.time = _calendar.time
         tmpCalendar.add(Calendar.MONTH, monthsCount)
 
         return CalendarDate(tmpCalendar.time)
@@ -124,7 +133,7 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
 
     fun monthEnd(): CalendarDate {
         val tmpCalendar = Calendar.getInstance()
-        tmpCalendar.set(year, month, calendar.getActualMaximum(Calendar.DAY_OF_MONTH))
+        tmpCalendar.set(year, month, _calendar.getActualMaximum(Calendar.DAY_OF_MONTH))
 
         return CalendarDate(tmpCalendar.time)
     }
