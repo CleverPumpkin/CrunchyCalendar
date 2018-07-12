@@ -1,31 +1,33 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
-// Bintray publication data
+// Bintray publication data for uploading scripts that is placed in `bintray` directory
 ext {
-    bintrayRepo = 'maven'
-    bintrayPackageName = 'CrunchyCalendar'
+    bintrayRepo = 'maven'                   // The repository name in Bintray dashboard
+    bintrayPackageName = 'CrunchyCalendar'  // The package name of th Bintray repository
 
-    // Library package info
-    groupId = 'ru.cleverpumpkin'
-    artifactId = 'crunchycalendar'
+    // Library package information.
+    groupId = 'ru.cleverpumpkin'            // The group ID you want to add in `implementation` line
+
+    artifactId = 'crunchycalendar'          // The artifact you want to add in `implementation` line
+                                            // it is also your module name in Android Studio project
     libraryVersion = app.version_name
 
-    // Library name and description
+    // Library name and description.
     libraryName = 'CrunchyCalendar'
     libraryDescription = 'Light, powerful and easy to use Calendar Widget with a number of features out of the box'
 
-    // Git info
+    // Git information.
     siteUrl = 'https://github.com/CleverPumpkin/CrunchyCalendar'
     gitUrl = 'https://github.com/CleverPumpkin/CrunchyCalendar.git'
 
-    // Developer info
+    // Developer information.
     developerId = 'alexsurinov'
     developerName = 'Alexander Surinov'
     developerEmail = 'alexander.surinov@cleverpumpkin.ru'
     organization = 'cleverpumpkin'
 
-    // License info
+    // License information.
     licenseName = 'MIT'
     licenseUrl = 'https://opensource.org/licenses/MIT'
     allLicenses = ["MIT"]
@@ -66,5 +68,6 @@ tasks.withType(Javadoc).all {
     enabled = false
 }
 
+// This is the ready-to-use scripts to make uploading to bintray easy.
 apply from: '../bintray/install.gradle'
 apply from: '../bintray/bintray.gradle'
