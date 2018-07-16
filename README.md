@@ -1,3 +1,5 @@
+![alt text](images/Cover.png)
+
 # CrunchyCalendar
 
 **Light**, **powerful** and **easy to use** Calendar Widget with a number of features out of the box:
