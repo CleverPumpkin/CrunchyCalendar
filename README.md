@@ -243,6 +243,11 @@ calendarView.addCustomItemDecoration(customItemDecoration)
 There is an abstract helper class `AbsDateItemDecoration` that you can extend to implement custom 
 drawing logic for specific dates cells.
 
+## Sketch file
+
+Wouldn’t it be a real pain for your designer to ignore Calendar View in your apps mockups? Or to try to explain you, what colors you should use by adding them to Jira task in plain text?
+That is lame. That’s why we’ve added a `.sketch`-file to this repository [here](Calendar%20for%20Android.sketch). Have fun!
+
 ## License
 
 ```
