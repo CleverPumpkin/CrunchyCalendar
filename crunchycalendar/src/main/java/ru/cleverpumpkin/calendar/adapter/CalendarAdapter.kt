@@ -36,7 +36,7 @@ import java.util.*
 class CalendarAdapter(
     var itemsAttributes: ItemsAttributes,
     private val dateInfoProvider: CalendarView.DateInfoProvider,
-    private val onDateClickHandler: (CalendarDate) -> Unit
+    private val onDateClickListener: (CalendarDate, Boolean) -> Unit
 
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -92,11 +92,20 @@ class CalendarAdapter(
 
         dateView.setOnClickListener {
             val adapterPosition = dayItemViewHolder.adapterPosition
-
             if (adapterPosition != RecyclerView.NO_POSITION) {
                 val dateItem = calendarItems[adapterPosition] as DateItem
-                onDateClickHandler.invoke(dateItem.date)
+                onDateClickListener.invoke(dateItem.date, false)
             }
+        }
+
+        dateView.setOnLongClickListener {
+            val adapterPosition = dayItemViewHolder.adapterPosition
+            if (adapterPosition != RecyclerView.NO_POSITION) {
+                val dateItem = calendarItems[adapterPosition] as DateItem
+                onDateClickListener.invoke(dateItem.date, true)
+            }
+
+            return@setOnLongClickListener true
         }
 
         return dayItemViewHolder

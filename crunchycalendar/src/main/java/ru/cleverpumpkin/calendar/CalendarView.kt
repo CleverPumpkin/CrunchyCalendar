@@ -169,9 +169,14 @@ class CalendarView @JvmOverloads constructor(
         }
 
     /**
-     * Listener that will be be notified when a date is clicked.
+     * Listener that will be notified when a date is clicked.
      */
     var onDateClickListener: ((CalendarDate) -> Unit)? = null
+
+    /**
+     * Listener that will be notified when a date is long clicked.
+     */
+    var onDateLongClickListener: ((CalendarDate) -> Unit)? = null
 
     /**
      * Returns selected dates according to [selectionMode]. When selection mode is:
@@ -249,9 +254,13 @@ class CalendarView @JvmOverloads constructor(
         calendarAdapter = CalendarAdapter(
             itemsAttributes = itemsAttributes,
             dateInfoProvider = dateInfoProvider,
-            onDateClickHandler = { date ->
-                dateSelectionStrategy.onDateSelected(date)
-                onDateClickListener?.invoke(date)
+            onDateClickListener = { date, longClick ->
+                if (longClick) {
+                    onDateLongClickListener?.invoke(date)
+                } else {
+                    dateSelectionStrategy.onDateSelected(date)
+                    onDateClickListener?.invoke(date)
+                }
             }
         )
 
