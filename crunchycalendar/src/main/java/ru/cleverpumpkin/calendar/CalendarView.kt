@@ -17,6 +17,7 @@ import ru.cleverpumpkin.calendar.adapter.CalendarItemsGenerator
 import ru.cleverpumpkin.calendar.decorations.GridDividerItemDecoration
 import ru.cleverpumpkin.calendar.selection.*
 import ru.cleverpumpkin.calendar.utils.getColorInt
+import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -25,8 +26,8 @@ import java.util.*
  * This class represents a Calendar Widget that allow displaying calendar grid, selecting dates,
  * displaying color indicators for specific dates and handling date selection with custom action.
  *
- * Calendar must be initialize with a [setupCalendar] method where you can specify
- * parameters for calendar.
+ * Calendar must be initialized with the [setupCalendar] method where you can specify
+ * parameters for the calendar.
  *
  * Calendar UI open for customization.
  * Using XML attributes you can define grid divider color, date cell selectors etc.
@@ -43,7 +44,7 @@ class CalendarView @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
     /**
-     * This interface represents a colored indicator for specific date that will be displayed
+     * This interface represents a colored indicator for the specific date that will be displayed
      * on the calendar.
      */
     interface DateIndicator {
@@ -78,6 +79,7 @@ class CalendarView @JvmOverloads constructor(
         private const val BUNDLE_DISPLAY_DATE_RANGE = "ru.cleverpumpkin.calendar.display_date_range"
         private const val BUNDLE_LIMIT_DATE_RANGE = "ru.cleverpumpkin.calendar.limit_date_range"
         private const val BUNDLE_SELECTION_MODE = "ru.cleverpumpkin.calendar.selection_mode"
+        private const val BUNDLE_FIRST_DAY_OF_WEEK = "ru.cleverpumpkin.calendar.first_day_of_week"
     }
 
     /**
@@ -118,7 +120,7 @@ class CalendarView @JvmOverloads constructor(
     private val calendarAdapter: CalendarAdapter
 
     /**
-     * Flag, that indicates whether the [setupCalendar] method was called or not
+     * Internal flag, that indicates whether the [setupCalendar] method was called or not
      */
     private var initializedWithSetup = false
 
@@ -126,7 +128,16 @@ class CalendarView @JvmOverloads constructor(
     private var minMaxDatesRange = NullableDatesRange()
 
     private var dateSelectionStrategy: DateSelectionStrategy = NoDateSelectionStrategy()
-    private val calendarItemsGenerator = CalendarItemsGenerator()
+
+    private lateinit var calendarItemsGenerator: CalendarItemsGenerator
+
+    private var firstDayOfWeek: Int = Calendar.getInstance().firstDayOfWeek
+        set(value) {
+            field = value
+            setupDaysBar(daysBarView, value)
+            calendarItemsGenerator = CalendarItemsGenerator(value)
+        }
+
     private val dateInfoProvider = DateInfoProviderImpl()
 
     private var selectionMode: SelectionMode = SelectionMode.NON
@@ -248,7 +259,6 @@ class CalendarView @JvmOverloads constructor(
         recyclerView = findViewById(R.id.recycler_view)
 
         setupRecyclerView(recyclerView)
-        setupDaysBar(daysBarView)
     }
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
@@ -294,7 +304,7 @@ class CalendarView @JvmOverloads constructor(
         }
     }
 
-    private fun setupDaysBar(daysBarView: ViewGroup) {
+    private fun setupDaysBar(daysBarView: ViewGroup, firstDayOfWeek: Int) {
         if (daysBarView.childCount != DAYS_IN_WEEK) {
             throw IllegalStateException("Days container has incorrect number of child views")
         }
@@ -302,7 +312,7 @@ class CalendarView @JvmOverloads constructor(
         daysBarView.setBackgroundColor(daysBarBackground)
 
         val calendar = Calendar.getInstance()
-        calendar.set(Calendar.DAY_OF_WEEK, calendar.firstDayOfWeek)
+        calendar.set(Calendar.DAY_OF_WEEK, firstDayOfWeek)
 
         val dayOfWeekFormatter = SimpleDateFormat(DAY_OF_WEEK_FORMAT, Locale.getDefault())
 
@@ -338,17 +348,27 @@ class CalendarView @JvmOverloads constructor(
      *
      * [selectedDates] list of initially selected dates.
      * Default value - empty list
+     *
+     * [firstDayOfWeek] the first day of week: [Calendar.SUNDAY], [Calendar.MONDAY], etc.
+     * Default value - the first day of week according to current Locale
      */
     fun setupCalendar(
         initialDate: CalendarDate = CalendarDate.today,
         minDate: CalendarDate? = null,
         maxDate: CalendarDate? = null,
         selectionMode: SelectionMode = SelectionMode.NON,
-        selectedDates: List<CalendarDate> = emptyList()
+        selectedDates: List<CalendarDate> = emptyList(),
+        firstDayOfWeek: Int = Calendar.getInstance().firstDayOfWeek
     ) {
         if (minDate != null && maxDate != null && minDate > maxDate) {
-            throw IllegalStateException("minDate must be before maxDate: $minDate, maxDate: $maxDate")
+            throw IllegalArgumentException("minDate must be before maxDate: $minDate, maxDate: $maxDate")
         }
+
+        if (firstDayOfWeek < Calendar.SUNDAY && firstDayOfWeek > Calendar.SATURDAY) {
+            throw IllegalArgumentException("Incorrect value of firstDayOfWeek: $firstDayOfWeek")
+        }
+
+        this.firstDayOfWeek = firstDayOfWeek
 
         minMaxDatesRange = NullableDatesRange(dateFrom = minDate, dateTo = maxDate)
         this.selectionMode = selectionMode
@@ -588,6 +608,7 @@ class CalendarView @JvmOverloads constructor(
 
         return Bundle().apply {
             putString(BUNDLE_SELECTION_MODE, selectionMode.name)
+            putInt(BUNDLE_FIRST_DAY_OF_WEEK, firstDayOfWeek)
             putParcelable(BUNDLE_DISPLAY_DATE_RANGE, displayDatesRange)
             putParcelable(BUNDLE_LIMIT_DATE_RANGE, minMaxDatesRange)
             putParcelable(BUNDLE_SUPER_STATE, superState)
@@ -609,6 +630,7 @@ class CalendarView @JvmOverloads constructor(
             if (initializedWithSetup.not()) {
                 val modeName = state.getString(BUNDLE_SELECTION_MODE, SelectionMode.NON.name)
                 selectionMode = SelectionMode.valueOf(modeName)
+                firstDayOfWeek = state.getInt(BUNDLE_FIRST_DAY_OF_WEEK)
                 displayDatesRange = state.getParcelable(BUNDLE_DISPLAY_DATE_RANGE)
                 minMaxDatesRange = state.getParcelable(BUNDLE_LIMIT_DATE_RANGE)
                 dateSelectionStrategy.restoreSelectedDates(state)

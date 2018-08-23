@@ -10,24 +10,15 @@ import java.util.*
 /**
  * This class responsible for generation items for [CalendarAdapter]
  */
-class CalendarItemsGenerator {
+class CalendarItemsGenerator(firstDayOfWeek: Int) {
 
     companion object {
         private const val DAYS_IN_WEEK = 7
     }
 
-    /**
-     * List of week days that positioned according with Locale.
-     *
-     * For example, for US Locale:
-     * [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
-     *
-     * For RU Locale:
-     * [Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday]
-     */
     private val positionedDaysOfWeek: List<Int> = mutableListOf<Int>().apply {
         val calendar = Calendar.getInstance()
-        calendar.set(Calendar.DAY_OF_WEEK, calendar.firstDayOfWeek)
+        calendar.set(Calendar.DAY_OF_WEEK, firstDayOfWeek)
 
         repeat(DAYS_IN_WEEK) {
             this += calendar.get(Calendar.DAY_OF_WEEK)
