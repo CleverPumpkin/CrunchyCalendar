@@ -63,6 +63,8 @@ class CalendarView @JvmOverloads constructor(
 
         fun isDateOutOfRange(date: CalendarDate): Boolean
 
+        fun isDateSelectable(date: CalendarDate): Boolean
+
         fun isWeekend(date: CalendarDate): Boolean
 
         fun getDateIndicators(date: CalendarDate): List<DateIndicator>
@@ -134,6 +136,7 @@ class CalendarView @JvmOverloads constructor(
     private var firstDayOfWeek: Int = Calendar.getInstance().firstDayOfWeek
         set(value) {
             field = value
+
             setupDaysBar(daysBarView, value)
             calendarItemsGenerator = CalendarItemsGenerator(value)
         }
@@ -177,6 +180,11 @@ class CalendarView @JvmOverloads constructor(
      * Listener that will be notified when a date is long clicked.
      */
     var onDateLongClickListener: ((CalendarDate) -> Unit)? = null
+
+    /**
+     * Date selection filter that indicates whether a date available for selection or not.
+     */
+    var dateSelectionFilter: ((CalendarDate) -> Boolean)? = null
 
     /**
      * Returns selected dates according to [selectionMode]. When selection mode is:
@@ -670,6 +678,10 @@ class CalendarView @JvmOverloads constructor(
         override fun isDateOutOfRange(date: CalendarDate): Boolean {
             val (minDate, maxDate) = minMaxDatesRange
             return (minDate != null && date < minDate) || (maxDate != null && date > maxDate)
+        }
+
+        override fun isDateSelectable(date: CalendarDate): Boolean {
+            return dateSelectionFilter?.invoke(date) ?: true
         }
 
         override fun isWeekend(date: CalendarDate): Boolean {

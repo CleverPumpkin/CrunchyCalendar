@@ -148,7 +148,11 @@ class CalendarAdapter(
 
         dateView.isToday = dateInfoProvider.isToday(date)
         dateView.isDateSelected = dateInfoProvider.isDateSelected(date)
-        dateView.isDateDisabled = dateInfoProvider.isDateOutOfRange(date)
+
+        dateView.isDateDisabled =
+                dateInfoProvider.isDateOutOfRange(date) ||
+                dateInfoProvider.isDateSelectable(date).not()
+
         dateView.isWeekend = dateInfoProvider.isWeekend(date)
         dateView.dateIndicators = dateInfoProvider.getDateIndicators(date)
         dateView.dayNumber = dayFormatter.format(date.date)

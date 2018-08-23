@@ -74,6 +74,7 @@ class CalendarDateView @JvmOverloads constructor(
                 refreshDrawableState()
             }
             isClickable = value.not()
+            isLongClickable = value.not()
         }
 
     var isWeekend: Boolean = false
