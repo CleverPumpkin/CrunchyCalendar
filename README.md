@@ -71,29 +71,39 @@ val maxDate = CalendarDate(calendar.time)
 // List of preselected dates that will be initially selected
 val preselectedDates: List<CalendarDate> = getPreselectedDates()
 
+// The first day of week
+val firstDayOfWeek = java.util.Calendar.MONDAY
+
 // Set up calendar with all available parameters
 calendarView.setupCalendar(
     initialDate = initialDate, 
     minDate = minDate,
     maxDate = maxDate,
     selectionMode = SelectionMode.NON,
-    selectedDates = preselectedDates
+    selectedDates = preselectedDates,
+    firstDayOfWeek = firstDayOfWeek
 )
                 
 ```
 
 **Note:** all parameters in `setupCalendar` method are optional and have default values. 
 
-To handle date click with custom action, you can do this:
+To handle date click / long click with custom action, you can do this:
 
 ```kotlin
 
 // Set date click callback 
-calendarView.onDateClickListener = { 
+calendarView.onDateClickListener = { date ->
 
     // Do something ... 
     // for example get list of selected dates
     val selectedDates = calendarView.selectedDates 
+}
+
+// Set date long click callback 
+calendarView.onDateLongClickListener = { date ->
+
+    // Do something ... 
 }
 
 ```
