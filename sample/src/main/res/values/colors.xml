@@ -25,6 +25,9 @@
     <color name="custom_calendar_date_today_text_color">#0f6c52</color>
     <color name="custom_calendar_date_today_background">#FFFFFF</color>
 
+    <color name="custom_calendar_date_weekend_text_color">#0f6c52</color>
+    <color name="custom_calendar_date_weekend_background">#a8f1db</color>
+
     <color name="event_1_color">#a31a0b</color>
     <color name="event_2_color">#0c41bc</color>
     <color name="event_3_color">#0f6c52</color>

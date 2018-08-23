@@ -11,6 +11,8 @@
 
     <item android:color="@color/custom_calendar_date_selected_text_color" android:state_selected="true" />
 
+    <item android:color="@color/custom_calendar_date_weekend_text_color" app:calendar_state_weekend="true" />
+
     <item android:color="@color/custom_calendar_date_text_color" />
 
 </selector>
