@@ -14,7 +14,7 @@ buildscript {
 
         // 3-rd party libraries versions
         libs = [
-                kotlin_version     : '1.2.31',
+                kotlin_version     : '1.2.51',
                 support_lib_version: '27.1.1'
         ]
 
