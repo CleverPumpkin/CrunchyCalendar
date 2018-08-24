@@ -22,7 +22,7 @@
     <color name="custom_calendar_date_disabled_text_color">#757575</color>
     <color name="custom_calendar_date_disabled_background">#eeeeee</color>
 
-    <color name="custom_calendar_date_today_text_color">#0f6c52</color>
+    <color name="custom_calendar_date_today_text_color">#f2e81a</color>
     <color name="custom_calendar_date_today_background">#FFFFFF</color>
 
     <color name="custom_calendar_date_weekend_text_color">#0f6c52</color>

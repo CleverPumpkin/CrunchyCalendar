@@ -1,13 +1,16 @@
 <resources>
-    <string name="app_name">Calendar demo</string>
+    <string name="app_name">CrunchyCalendar</string>
 
-    <string name="demo_mode_no_selection">Display only mode</string>
-    <string name="demo_mode_single_selection">Single date selection</string>
-    <string name="demo_mode_multiple_selection">Multiple dates selection </string>
-    <string name="demo_mode_range_selection">Range dates selection</string>
-    <string name="demo_mode_limited_selection">Limited dates selection</string>
-    <string name="demo_mode_events">Custom events and action dialog</string>
-    <string name="demo_mode_custom_style">Custom styles</string>
-    <string name="demo_mode_dialog">Dialog</string>
-    <string name="demo_mode_move_to_date">Move to today</string>
+    <string name="selection_sample">Selection sample</string>
+    <string name="custom_style_sample">Custom style sample</string>
+    <string name="date_indicators_sample">Date indicators sample</string>
+    <string name="dialog_sample">Dialog</string>
+
+    <string name="single">Single</string>
+    <string name="multi">Multiple</string>
+    <string name="range">Range</string>
+    <string name="boundaries">Date boundaries</string>
+
+    <string name="move_to_date">Move to today</string>
+
 </resources>

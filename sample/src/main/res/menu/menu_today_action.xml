@@ -4,7 +4,7 @@
     <item
         android:id="@+id/move_to_today"
         android:icon="@drawable/ic_today_24dp"
-        android:title="@string/demo_mode_move_to_date"
+        android:title="@string/move_to_date"
         android:visible="true"
         app:showAsAction="ifRoom" />
 

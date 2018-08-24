@@ -8,14 +8,14 @@ import android.view.ViewGroup
 import android.view.Window
 import ru.cleverpumpkin.calendar.CalendarView
 
-class CalendarDialogFragment : DialogFragment() {
+class DialogSampleFragment : DialogFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_demo_dialog, container, false)
+        return inflater.inflate(R.layout.fragment_dialog_sample, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

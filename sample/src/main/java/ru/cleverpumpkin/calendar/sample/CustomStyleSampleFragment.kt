@@ -9,9 +9,8 @@ import android.view.ViewGroup
 import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarView
 import ru.cleverpumpkin.calendar.CalendarView.SelectionMode
-import java.util.*
 
-class CalendarMoveToDateFragment : Fragment() {
+class CustomStyleSampleFragment : Fragment() {
 
     private lateinit var calendarView: CalendarView
 
@@ -20,43 +19,29 @@ class CalendarMoveToDateFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_demo, container, false)
+        return inflater.inflate(R.layout.fragment_custom_style_sample, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        calendarView = view.findViewById(R.id.calendar_view)
+
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
         toolbar.run {
+            setTitle(R.string.custom_style_sample)
+            setNavigationIcon(R.drawable.ic_arrow_back_24dp)
+            setNavigationOnClickListener { activity?.onBackPressed() }
+
             inflateMenu(R.menu.menu_today_action)
             setOnMenuItemClickListener(Toolbar.OnMenuItemClickListener {
                 calendarView.moveToDate(CalendarDate.today)
                 return@OnMenuItemClickListener true
             })
-
-            setTitle(R.string.demo_mode_move_to_date)
-            setNavigationIcon(R.drawable.ic_arrow_back_24dp)
-            setNavigationOnClickListener { activity?.onBackPressed() }
         }
-
-        calendarView = view.findViewById(R.id.calendar_view)
 
         if (savedInstanceState == null) {
-            val calendar = Calendar.getInstance()
-            calendar.set(2015, Calendar.JUNE, 1)
-            val initialDate = CalendarDate(calendar.time)
-
-            calendar.set(2018, Calendar.APRIL, 28)
-            val minDate = CalendarDate(calendar.time)
-
-            calendar.set(2018, Calendar.MAY, 1)
-            val maxDate = CalendarDate(calendar.time)
-
-            calendarView.setupCalendar(
-                initialDate = initialDate,
-                selectionMode = SelectionMode.MULTIPLE
-            )
+            calendarView.setupCalendar(selectionMode = SelectionMode.MULTIPLE)
         }
     }
-
 }
