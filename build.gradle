@@ -14,13 +14,13 @@ buildscript {
 
         // 3-rd party libraries versions
         libs = [
-                kotlin_version     : '1.2.51',
+                kotlin_version     : '1.2.61',
                 support_lib_version: '27.1.1'
         ]
 
         // Gradle plugins versions
         gradle_plugins = [
-                android_plugin_version: '3.1.1',
+                android_plugin_version: '3.1.4',
                 kotlin_plugin_version : libs.kotlin_version,
                 bintray_plugin_version: '1.8.0',
                 maven_plugin_version: '2.0'
