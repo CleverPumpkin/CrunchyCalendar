@@ -133,12 +133,13 @@ class CalendarView @JvmOverloads constructor(
 
     private lateinit var calendarItemsGenerator: CalendarItemsGenerator
 
-    private var firstDayOfWeek: Int = Calendar.getInstance().firstDayOfWeek
+    private var firstDayOfWeek: Int? = null
         set(value) {
             field = value
 
-            setupDaysBar(daysBarView, value)
-            calendarItemsGenerator = CalendarItemsGenerator(value)
+            val firstDayOfWeek = value ?: Calendar.getInstance().firstDayOfWeek
+            setupDaysBar(daysBarView, firstDayOfWeek)
+            calendarItemsGenerator = CalendarItemsGenerator(firstDayOfWeek)
         }
 
     private val dateInfoProvider = DateInfoProviderImpl()
@@ -367,7 +368,7 @@ class CalendarView @JvmOverloads constructor(
      * Default value - empty list
      *
      * [firstDayOfWeek] the first day of week: [Calendar.SUNDAY], [Calendar.MONDAY], etc.
-     * Default value - the first day of week according to current Locale
+     * Default value - null
      */
     fun setupCalendar(
         initialDate: CalendarDate = CalendarDate.today,
@@ -375,13 +376,13 @@ class CalendarView @JvmOverloads constructor(
         maxDate: CalendarDate? = null,
         selectionMode: SelectionMode = SelectionMode.NON,
         selectedDates: List<CalendarDate> = emptyList(),
-        firstDayOfWeek: Int = Calendar.getInstance().firstDayOfWeek
+        firstDayOfWeek: Int? = null
     ) {
         if (minDate != null && maxDate != null && minDate > maxDate) {
             throw IllegalArgumentException("minDate must be before maxDate: $minDate, maxDate: $maxDate")
         }
 
-        if (firstDayOfWeek < Calendar.SUNDAY && firstDayOfWeek > Calendar.SATURDAY) {
+        if (firstDayOfWeek != null && (firstDayOfWeek < Calendar.SUNDAY || firstDayOfWeek > Calendar.SATURDAY)) {
             throw IllegalArgumentException("Incorrect value of firstDayOfWeek: $firstDayOfWeek")
         }
 
@@ -625,11 +626,15 @@ class CalendarView @JvmOverloads constructor(
 
         return Bundle().apply {
             putString(BUNDLE_SELECTION_MODE, selectionMode.name)
-            putInt(BUNDLE_FIRST_DAY_OF_WEEK, firstDayOfWeek)
             putParcelable(BUNDLE_DISPLAY_DATE_RANGE, displayDatesRange)
             putParcelable(BUNDLE_LIMIT_DATE_RANGE, minMaxDatesRange)
             putParcelable(BUNDLE_SUPER_STATE, superState)
             dateSelectionStrategy.saveSelectedDates(this)
+
+            val firstDayOfWeek = firstDayOfWeek
+            if (firstDayOfWeek != null) {
+                putInt(BUNDLE_FIRST_DAY_OF_WEEK, firstDayOfWeek)
+            }
         }
     }
 
@@ -647,10 +652,15 @@ class CalendarView @JvmOverloads constructor(
             if (initializedWithSetup.not()) {
                 val modeName = state.getString(BUNDLE_SELECTION_MODE, SelectionMode.NON.name)
                 selectionMode = SelectionMode.valueOf(modeName)
-                firstDayOfWeek = state.getInt(BUNDLE_FIRST_DAY_OF_WEEK)
                 displayDatesRange = state.getParcelable(BUNDLE_DISPLAY_DATE_RANGE)
                 minMaxDatesRange = state.getParcelable(BUNDLE_LIMIT_DATE_RANGE)
                 dateSelectionStrategy.restoreSelectedDates(state)
+
+                firstDayOfWeek = if (state.containsKey(BUNDLE_FIRST_DAY_OF_WEEK)) {
+                    state.getInt(BUNDLE_FIRST_DAY_OF_WEEK)
+                } else {
+                    null
+                }
 
                 generateCalendarItems(displayDatesRange)
             }
