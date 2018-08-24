@@ -142,7 +142,35 @@ class CalendarView @JvmOverloads constructor(
             calendarItemsGenerator = CalendarItemsGenerator(firstDayOfWeek)
         }
 
-    private val dateInfoProvider = DateInfoProviderImpl()
+    private val dateInfoProvider = object : DateInfoProvider {
+
+        private val todayCalendarDate = CalendarDate.today
+
+        override fun isToday(date: CalendarDate): Boolean {
+            return date == todayCalendarDate
+        }
+
+        override fun isDateSelected(date: CalendarDate): Boolean {
+            return dateSelectionStrategy.isDateSelected(date)
+        }
+
+        override fun isDateOutOfRange(date: CalendarDate): Boolean {
+            val (minDate, maxDate) = minMaxDatesRange
+            return (minDate != null && date < minDate) || (maxDate != null && date > maxDate)
+        }
+
+        override fun isDateSelectable(date: CalendarDate): Boolean {
+            return dateSelectionFilter?.invoke(date) ?: true
+        }
+
+        override fun isWeekend(date: CalendarDate): Boolean {
+            return date.dayOfWeek == Calendar.SUNDAY || date.dayOfWeek == Calendar.SATURDAY
+        }
+
+        override fun getDateIndicators(date: CalendarDate): List<DateIndicator> {
+            return this@CalendarView.getDateIndicators(date)
+        }
+    }
 
     private var selectionMode: SelectionMode = SelectionMode.NON
         set(value) {
@@ -666,40 +694,6 @@ class CalendarView @JvmOverloads constructor(
             }
         } else {
             super.onRestoreInstanceState(state)
-        }
-    }
-
-    /**
-     * Inner implementation of [DateInfoProvider] interface that provide required information
-     * for specific calendar date.
-     */
-    private inner class DateInfoProviderImpl : DateInfoProvider {
-
-        private val todayCalendarDate = CalendarDate.today
-
-        override fun isToday(date: CalendarDate): Boolean {
-            return date == todayCalendarDate
-        }
-
-        override fun isDateSelected(date: CalendarDate): Boolean {
-            return dateSelectionStrategy.isDateSelected(date)
-        }
-
-        override fun isDateOutOfRange(date: CalendarDate): Boolean {
-            val (minDate, maxDate) = minMaxDatesRange
-            return (minDate != null && date < minDate) || (maxDate != null && date > maxDate)
-        }
-
-        override fun isDateSelectable(date: CalendarDate): Boolean {
-            return dateSelectionFilter?.invoke(date) ?: true
-        }
-
-        override fun isWeekend(date: CalendarDate): Boolean {
-            return date.dayOfWeek == Calendar.SUNDAY || date.dayOfWeek == Calendar.SATURDAY
-        }
-
-        override fun getDateIndicators(date: CalendarDate): List<DateIndicator> {
-            return this@CalendarView.getDateIndicators(date)
         }
     }
 
