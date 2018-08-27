@@ -2,9 +2,13 @@ package ru.cleverpumpkin.calendar.selection
 
 import android.os.Bundle
 import ru.cleverpumpkin.calendar.CalendarDate
+import ru.cleverpumpkin.calendar.CalendarView
 import ru.cleverpumpkin.calendar.adapter.CalendarAdapter
 
-class SingleDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSelectionStrategy {
+class SingleDateSelectionStrategy(
+    private val adapter: CalendarAdapter,
+    private val dateInfoProvider: CalendarView.DateInfoProvider
+) : DateSelectionStrategy {
 
     companion object {
         private const val BUNDLE_SELECTED_DATE = "ru.cleverpumpkin.calendar.selected_date"
@@ -13,6 +17,10 @@ class SingleDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSe
     private var selectedDate: CalendarDate? = null
 
     override fun onDateSelected(date: CalendarDate) {
+        if (dateInfoProvider.isDateSelectable(date).not()) {
+            return
+        }
+
         if (selectedDate == date) {
             selectedDate = null
         } else {

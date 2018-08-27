@@ -1,11 +1,15 @@
 package ru.cleverpumpkin.calendar.selection
 
 import android.os.Bundle
-import ru.cleverpumpkin.calendar.NullableDatesRange
 import ru.cleverpumpkin.calendar.CalendarDate
+import ru.cleverpumpkin.calendar.CalendarView
+import ru.cleverpumpkin.calendar.NullableDatesRange
 import ru.cleverpumpkin.calendar.adapter.CalendarAdapter
 
-class RangeDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSelectionStrategy {
+class RangeDateSelectionStrategy(
+    private val adapter: CalendarAdapter,
+    private val dateInfoProvider: CalendarView.DateInfoProvider
+) : DateSelectionStrategy {
 
     companion object {
         private const val BUNDLE_DATES_RANGE = "ru.cleverpumpkin.calendar.dates_range"
@@ -55,7 +59,9 @@ class RangeDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSel
 
         return if (dateFrom != null && dateTo != null) {
             adapter.getDateRange(dateFrom = dateFrom, dateTo = dateTo)
-        } else if (dateFrom != null){
+                .filter { dateInfoProvider.isDateSelectable(it) }
+
+        } else if (dateFrom != null) {
             listOf(dateFrom)
         } else {
             emptyList()
@@ -66,10 +72,18 @@ class RangeDateSelectionStrategy(private val adapter: CalendarAdapter) : DateSel
         val dateFrom = datesRange.dateFrom
         val dateTo = datesRange.dateTo
 
-        return if (dateFrom != null && dateTo != null) {
-            date >= dateFrom && date <= dateTo
-        } else {
-            dateFrom == date || dateTo == date
+        return when {
+            dateInfoProvider.isDateSelectable(date).not() -> {
+                false
+            }
+
+            (dateFrom != null && dateTo != null) -> {
+                date.isBetween(dateFrom, dateTo)
+            }
+
+            else -> {
+                dateFrom == date || dateTo == date
+            }
         }
     }
 

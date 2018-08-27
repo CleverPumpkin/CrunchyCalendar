@@ -178,9 +178,9 @@ class CalendarView @JvmOverloads constructor(
 
             dateSelectionStrategy = when (value) {
                 SelectionMode.NON -> NoDateSelectionStrategy()
-                SelectionMode.SINGLE -> SingleDateSelectionStrategy(calendarAdapter)
-                SelectionMode.MULTIPLE -> MultipleDateSelectionStrategy(calendarAdapter)
-                SelectionMode.RANGE -> RangeDateSelectionStrategy(calendarAdapter)
+                SelectionMode.SINGLE -> SingleDateSelectionStrategy(calendarAdapter, dateInfoProvider)
+                SelectionMode.MULTIPLE -> MultipleDateSelectionStrategy(calendarAdapter, dateInfoProvider)
+                SelectionMode.RANGE -> RangeDateSelectionStrategy(calendarAdapter, dateInfoProvider)
             }
         }
 
@@ -460,8 +460,8 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Fast moving to a specific calendar date.
-     * If [date] is out of min-max date boundaries, moving won't perform.
+     * Fast moving to the specific calendar date.
+     * If [date] is out of min-max date boundaries, moving won't be performed.
      */
     fun moveToDate(date: CalendarDate) {
         val (minDate, maxDate) = minMaxDatesRange
