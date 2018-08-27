@@ -24,14 +24,14 @@ import java.util.*
 
 /**
  * This class represents a Calendar Widget that allow displaying calendar grid, selecting dates,
- * displaying color indicators for specific dates and handling date selection with custom action.
+ * displaying color indicators for the specific dates and handling date selection with a custom action.
  *
- * Calendar must be initialized with the [setupCalendar] method where you can specify
+ * The Calendar must be initialized with the [setupCalendar] method where you can specify
  * parameters for the calendar.
  *
- * Calendar UI open for customization.
+ * The Calendar UI open for customization.
  * Using XML attributes you can define grid divider color, date cell selectors etc.
- * Using standard [RecyclerView.ItemDecoration] you can define special drawing for calendar items.
+ * Using standard [RecyclerView.ItemDecoration] you can define special drawing for the calendar items.
  *
  * This class overrides [onSaveInstanceState] and [onRestoreInstanceState], so it is able
  * to save and restore its state.
@@ -53,7 +53,7 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Interface for internal needs that provides required information for specific calendar date.
+     * Interface for internal needs that provides required information for the specific calendar date.
      */
     interface DateInfoProvider {
 
@@ -396,7 +396,7 @@ class CalendarView @JvmOverloads constructor(
      * Default value - empty list
      *
      * [firstDayOfWeek] the first day of week: [Calendar.SUNDAY], [Calendar.MONDAY], etc.
-     * Default value - null
+     * Default value - null, will be used the first day of week from default Locale
      */
     fun setupCalendar(
         initialDate: CalendarDate = CalendarDate.today,
@@ -493,7 +493,7 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Add custom [RecyclerView.ItemDecoration] that will be used for calendar view decoration.
+     * Add custom [RecyclerView.ItemDecoration] that will be used for the calendar view decoration.
      */
     fun addCustomItemDecoration(itemDecoration: RecyclerView.ItemDecoration) {
         recyclerView.addItemDecoration(itemDecoration)
@@ -507,7 +507,7 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Returns list of indicators for a specific date.
+     * Returns list of indicators for the specific date.
      */
     fun getDateIndicators(date: CalendarDate): List<DateIndicator> {
         return groupedDatesIndicators[date] ?: emptyList()
@@ -648,7 +648,7 @@ class CalendarView @JvmOverloads constructor(
 
     /**
      * Save internal calendar state: displayed dates, min-max dates,
-     * selection mode, selected dates and view super state.
+     * selection mode, selected dates, first day of week and view super state.
      */
     override fun onSaveInstanceState(): Parcelable {
         val superState = super.onSaveInstanceState()
@@ -671,7 +671,7 @@ class CalendarView @JvmOverloads constructor(
      * Restore internal calendar state.
      *
      * Note: If Calendar was initialized with [setupCalendar] method before [onRestoreInstanceState],
-     * restoring of internal calendar state won't performed, because new state already set up.
+     * restoring of internal calendar state won't be performed, because new state already set up.
      */
     override fun onRestoreInstanceState(state: Parcelable?) {
         if (state is Bundle) {
@@ -698,10 +698,6 @@ class CalendarView @JvmOverloads constructor(
         }
     }
 
-    /**
-     * Inner class that monitor scroll events and perform generating next/previous
-     * calendar items when needed.
-     */
     private inner class CalendarScrollListener : RecyclerView.OnScrollListener() {
 
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
