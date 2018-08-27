@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
@@ -26,16 +27,14 @@
             android:padding="8dp">
 
             <RadioButton
-                android:id="@+id/single_mode_button"
+                android:id="@+id/single_mode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
                 android:text="@string/single"
                 android:textAllCaps="true" />
 
             <RadioButton
-                android:id="@+id/multi_mode_button"
+                android:id="@+id/multiple_mode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
@@ -44,7 +43,7 @@
                 android:textAllCaps="true" />
 
             <RadioButton
-                android:id="@+id/range_mode_button"
+                android:id="@+id/range_mode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
@@ -53,7 +52,7 @@
                 android:textAllCaps="true" />
 
             <RadioButton
-                android:id="@+id/boundaries_button"
+                android:id="@+id/boundaries_mode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
@@ -61,7 +60,34 @@
                 android:text="@string/boundaries"
                 android:textAllCaps="true" />
 
+            <RadioButton
+                android:id="@+id/selection_filter_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:text="@string/selection_filter"
+                android:textAllCaps="true" />
+
         </RadioGroup>
+
+    </HorizontalScrollView>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="48dp">
+
+        <TextView
+            android:id="@+id/selected_dates_view"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:background="@android:color/white"
+            android:gravity="center_vertical"
+            android:paddingLeft="16dp"
+            android:paddingStart="16dp"
+            android:textColor="@android:color/black"
+            tools:ignore="RtlSymmetry"
+            tools:text="Selected dates = [1/01/1993 - 1/02/1993]" />
 
     </HorizontalScrollView>
 

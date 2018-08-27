@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioGroup
+import android.widget.TextView
 import android.widget.Toast
 import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarView
@@ -15,8 +16,15 @@ import java.util.*
 
 class SelectionSampleFragment : Fragment() {
 
+    companion object {
+        private const val BUNDLE_SELECTED_MODE = "selected_mode"
+    }
+
     private lateinit var calendarView: CalendarView
-    private lateinit var selectionModeGroup: RadioGroup
+    private lateinit var selectedDatesView: TextView
+    private lateinit var selectionModeGroupView: RadioGroup
+
+    private var selectedMode = R.id.single_mode
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,7 +38,8 @@ class SelectionSampleFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         calendarView = view.findViewById(R.id.calendar_view)
-        selectionModeGroup = view.findViewById(R.id.selection_modes_group)
+        selectedDatesView = view.findViewById(R.id.selected_dates_view)
+        selectionModeGroupView = view.findViewById(R.id.selection_modes_group)
 
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
         toolbar.run {
@@ -48,23 +57,44 @@ class SelectionSampleFragment : Fragment() {
         calendarView.onDateLongClickListener = { date ->
             Toast.makeText(view.context, "Long click on date: $date", Toast.LENGTH_LONG).show()
         }
+
+        calendarView.onDateClickListener = {
+            updateSelectedDatesView()
+        }
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
 
-        selectionModeGroup.setOnCheckedChangeListener { _, checkedId ->
-            when (checkedId) {
-                R.id.single_mode_button -> setupCalendarWithSelectionMode(SelectionMode.SINGLE)
-                R.id.multi_mode_button -> setupCalendarWithSelectionMode(SelectionMode.MULTIPLE)
-                R.id.range_mode_button -> setupCalendarWithSelectionMode(SelectionMode.RANGE)
-                R.id.boundaries_button -> setupCalendarWithBoundaries()
+        selectionModeGroupView.setOnCheckedChangeListener { _, selectedMode ->
+            this.selectedMode = selectedMode
+
+            when (selectedMode) {
+                R.id.single_mode -> setupCalendarWithSelectionMode(SelectionMode.SINGLE)
+                R.id.multiple_mode -> setupCalendarWithSelectionMode(SelectionMode.MULTIPLE)
+                R.id.range_mode -> setupCalendarWithSelectionMode(SelectionMode.RANGE)
+                R.id.boundaries_mode -> setupCalendarWithBoundaries()
+                R.id.selection_filter_mode -> setupCalendarWithDateSelectionFilter()
             }
+
+            updateSelectedDatesView()
         }
 
         if (savedInstanceState == null) {
-            selectionModeGroup.check(R.id.single_mode_button)
+            selectionModeGroupView.check(selectedMode)
+        } else {
+            selectedMode = savedInstanceState.getInt(BUNDLE_SELECTED_MODE)
+            if (selectedMode == R.id.selection_filter_mode) {
+                setDateSelectionFilter()
+            }
         }
+
+        updateSelectedDatesView()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(BUNDLE_SELECTED_MODE, selectedMode)
     }
 
     private fun setupCalendarWithSelectionMode(selectionMode: CalendarView.SelectionMode) {
@@ -78,6 +108,8 @@ class SelectionSampleFragment : Fragment() {
             SelectionMode.MULTIPLE -> preselectedMultipleDates()
             SelectionMode.RANGE -> preselectedDatesRange()
         }
+
+        calendarView.dateSelectionFilter = null
 
         calendarView.setupCalendar(
             initialDate = initialDate,
@@ -99,6 +131,8 @@ class SelectionSampleFragment : Fragment() {
 
         val preselectedDates = preselectedMultipleDates()
 
+        calendarView.dateSelectionFilter = null
+
         calendarView.setupCalendar(
             initialDate = initialDate,
             minDate = minDate,
@@ -106,6 +140,22 @@ class SelectionSampleFragment : Fragment() {
             selectionMode = SelectionMode.MULTIPLE,
             selectedDates = preselectedDates
         )
+    }
+
+    private fun setupCalendarWithDateSelectionFilter() {
+        calendarView.setupCalendar(selectionMode = SelectionMode.RANGE)
+        setDateSelectionFilter()
+    }
+
+    private fun setDateSelectionFilter() {
+        calendarView.dateSelectionFilter = { date ->
+            date.dayOfWeek != Calendar.SATURDAY && date.dayOfWeek != Calendar.SUNDAY
+        }
+    }
+
+    private fun updateSelectedDatesView() {
+        val selectedDates = "Selected dates = ${calendarView.selectedDates}"
+        selectedDatesView.text = selectedDates
     }
 
     private fun preselectedSingleDate(): List<CalendarDate> {
