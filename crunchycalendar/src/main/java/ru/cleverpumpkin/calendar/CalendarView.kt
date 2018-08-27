@@ -410,7 +410,8 @@ class CalendarView @JvmOverloads constructor(
             throw IllegalArgumentException("minDate must be before maxDate: $minDate, maxDate: $maxDate")
         }
 
-        if (firstDayOfWeek != null && (firstDayOfWeek < Calendar.SUNDAY || firstDayOfWeek > Calendar.SATURDAY)) {
+        if (firstDayOfWeek != null &&
+            (firstDayOfWeek < Calendar.SUNDAY || firstDayOfWeek > Calendar.SATURDAY)) {
             throw IllegalArgumentException("Incorrect value of firstDayOfWeek: $firstDayOfWeek")
         }
 

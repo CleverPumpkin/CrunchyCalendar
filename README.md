@@ -166,6 +166,16 @@ calendarView.setupCalendar(selectionMode = SelectionMode.RANGE)
 val selectedDates: List<CalendarDate> = calendarView.selectedDates
 
 ```
+---
+You can disable selection of the specific calendar dates by implementing your custom filtration logic:
+
+```kotlin
+
+// Weekends are unavailable for selection
+calendarView.dateSelectionFilter = { date ->
+    date.dayOfWeek != Calendar.SATURDAY && date.dayOfWeek != Calendar.SUNDAY
+}
+```
 
 ## Color Indicators
 Calendar is able to display simple color indicators (dots) on the date cell.
