@@ -327,6 +327,7 @@ class CalendarView @JvmOverloads constructor(
             background = daysBarBackground,
             textColor = daysBarTextColor
         )
+
         daysBarView.applyStyle(daysBarStyle)
 
         val yearSelectionStyle = YearSelectionView.YearSelectionStyle(
@@ -334,7 +335,11 @@ class CalendarView @JvmOverloads constructor(
             arrowsColor = yearSelectionArrowsColor,
             yearTextColor = yearSelectionTextColor
         )
+
         yearSelectionView.applyStyle(yearSelectionStyle)
+        yearSelectionView.onYearChangeListener = { selectedDate ->
+            moveToDate(selectedDate)
+        }
 
         setupRecyclerView(recyclerView)
     }
@@ -378,8 +383,8 @@ class CalendarView @JvmOverloads constructor(
             val divider = GridDividerItemDecoration(context, gridColor, drawGridOnSelectedDates)
             addItemDecoration(divider)
 
-            addOnScrollListener(CalendarItemsGenerationListener())
-            addOnScrollListener(YearTitleUpdateListener())
+            addOnScrollListener(CalendarItemsGenerationScrollListener())
+            addOnScrollListener(DislpayedYearUpdateScrollListener())
         }
     }
 
@@ -431,7 +436,7 @@ class CalendarView @JvmOverloads constructor(
         this.firstDayOfWeek = firstDayOfWeek
         this.selectionMode = selectionMode
         minMaxDatesRange = NullableDatesRange(dateFrom = minDate, dateTo = maxDate)
-        yearSelectionView.displayedYear = initialDate.year
+        yearSelectionView.displayedYear = initialDate
 
         if (selectedDates.isNotEmpty()) {
             when {
@@ -477,12 +482,12 @@ class CalendarView @JvmOverloads constructor(
      * Fast moving to the specific calendar date.
      * If [date] is out of min-max date boundaries, moving won't be performed.
      */
-    fun moveToDate(date: CalendarDate) {
+    fun moveToDate(date: CalendarDate): Boolean {
         val (minDate, maxDate) = minMaxDatesRange
 
         if ((minDate != null && date < minDate.monthBeginning()) ||
             (maxDate != null && date > maxDate.monthEnd())) {
-            return
+            return false
         }
 
         val (displayDatesFrom, displayDatesTo) = displayDatesRange
@@ -503,6 +508,8 @@ class CalendarView @JvmOverloads constructor(
             gridLayoutManager.scrollToPositionWithOffset(dateMonthPosition, 0)
             recyclerView.stopScroll()
         }
+
+        return true
     }
 
     /**
@@ -668,7 +675,7 @@ class CalendarView @JvmOverloads constructor(
 
         return Bundle().apply {
             putString(BUNDLE_SELECTION_MODE, selectionMode.name)
-            putInt(BUNDLE_DISPLAYED_YEAR, yearSelectionView.displayedYear)
+            putParcelable(BUNDLE_DISPLAYED_YEAR, yearSelectionView.displayedYear)
             putParcelable(BUNDLE_DISPLAY_DATE_RANGE, displayDatesRange)
             putParcelable(BUNDLE_LIMIT_DATE_RANGE, minMaxDatesRange)
             putParcelable(BUNDLE_SUPER_STATE, superState)
@@ -695,7 +702,7 @@ class CalendarView @JvmOverloads constructor(
             if (initializedWithSetup.not()) {
                 val modeName = state.getString(BUNDLE_SELECTION_MODE, SelectionMode.NON.name)
                 selectionMode = SelectionMode.valueOf(modeName)
-                yearSelectionView.displayedYear = state.getInt(BUNDLE_DISPLAYED_YEAR)
+                yearSelectionView.displayedYear = state.getParcelable(BUNDLE_DISPLAYED_YEAR)
                 displayDatesRange = state.getParcelable(BUNDLE_DISPLAY_DATE_RANGE)
                 minMaxDatesRange = state.getParcelable(BUNDLE_LIMIT_DATE_RANGE)
                 dateSelectionStrategy.restoreSelectedDates(state)
@@ -713,7 +720,7 @@ class CalendarView @JvmOverloads constructor(
         }
     }
 
-    private inner class CalendarItemsGenerationListener : RecyclerView.OnScrollListener() {
+    private inner class CalendarItemsGenerationScrollListener : RecyclerView.OnScrollListener() {
 
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
@@ -735,7 +742,7 @@ class CalendarView @JvmOverloads constructor(
         }
     }
 
-    private inner class YearTitleUpdateListener : RecyclerView.OnScrollListener() {
+    private inner class DislpayedYearUpdateScrollListener : RecyclerView.OnScrollListener() {
 
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
@@ -745,9 +752,9 @@ class CalendarView @JvmOverloads constructor(
 
             val calendarItem = calendarAdapter.getCalendarItemAt(firstChildAdapterPosition)
             if (calendarItem is DateItem) {
-                yearSelectionView.displayedYear = calendarItem.date.year
+                yearSelectionView.displayedYear = calendarItem.date
             } else if (calendarItem is MonthItem) {
-                yearSelectionView.displayedYear = calendarItem.date.year
+                yearSelectionView.displayedYear = calendarItem.date
             }
         }
     }

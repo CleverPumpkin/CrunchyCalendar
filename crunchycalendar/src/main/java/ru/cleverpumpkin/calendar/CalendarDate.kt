@@ -20,6 +20,7 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
     constructor(parcel: Parcel) : this(parcel.readLong())
 
     companion object {
+        private const val MONTHS_IN_YEAR = 12
 
         @JvmField
         val CREATOR = object : Parcelable.Creator<CalendarDate> {
@@ -100,6 +101,14 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
 
     override fun describeContents() = 0
 
+    fun prevYear(): CalendarDate {
+        return minusMonths(MONTHS_IN_YEAR)
+    }
+
+    fun nextYear(): CalendarDate {
+        return plusMonths(MONTHS_IN_YEAR)
+    }
+
     fun minusMonths(monthsCount: Int): CalendarDate {
         val tmpCalendar = Calendar.getInstance()
         tmpCalendar.time = _calendar.time
@@ -121,7 +130,7 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
             return 0
         }
         val diffYear = other.year - this.year
-        return diffYear * 12 + other.month - this.month
+        return diffYear * MONTHS_IN_YEAR + other.month - this.month
     }
 
     fun monthBeginning(): CalendarDate {
