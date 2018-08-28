@@ -49,7 +49,7 @@ class CalendarDateView @JvmOverloads constructor(
     }
 
     private var dayNumberWidth = 0.0f
-    private var textColor: Int = context.getColorInt(R.color.calendar_date_text_color)
+    private var textColor: Int = getColorInt(R.color.calendar_date_text_color)
 
     var isToday: Boolean = false
         set(value) {

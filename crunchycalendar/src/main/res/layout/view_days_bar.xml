@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/day_1"
+        style="@style/CalendarWeekDay"
+        tools:text="ПН" />
+
+    <TextView
+        android:id="@+id/day_2"
+        style="@style/CalendarWeekDay"
+        tools:text="ВТ" />
+
+    <TextView
+        android:id="@+id/day_3"
+        style="@style/CalendarWeekDay"
+        tools:text="СР" />
+
+    <TextView
+        android:id="@+id/day_4"
+        style="@style/CalendarWeekDay"
+        tools:text="ЧТ" />
+
+    <TextView
+        android:id="@+id/day_5"
+        style="@style/CalendarWeekDay"
+        tools:text="ПТ" />
+
+    <TextView
+        android:id="@+id/day_6"
+        style="@style/CalendarWeekDay"
+        tools:text="СБ" />
+
+    <TextView
+        android:id="@+id/day_7"
+        style="@style/CalendarWeekDay"
+        tools:text="ВС" />
+
+</merge>

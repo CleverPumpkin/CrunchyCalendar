@@ -34,7 +34,7 @@ import java.util.*
  * [EMPTY_VIEW_TYPE] - empty view that represents start and end offset for each month
  */
 class CalendarAdapter(
-    var itemsAttributes: ItemsAttributes,
+    private val adapterItemsStyle: AdapterItemsStyle,
     private val dateInfoProvider: CalendarView.DateInfoProvider,
     private val onDateClickListener: (CalendarDate, Boolean) -> Unit
 
@@ -80,8 +80,8 @@ class CalendarAdapter(
     }
 
     private fun createDateItemViewHolder(context: Context): DateItemViewHolder {
-        val dateViewBackgroundRes = itemsAttributes.calendarDateBackgroundResId
-        val dateTextColorResId = itemsAttributes.calendarDateTextColorResId
+        val dateViewBackgroundRes = adapterItemsStyle.dateBackgroundResId
+        val dateTextColorResId = adapterItemsStyle.dateTextColorResId
         val dateTextColorStateList = ContextCompat.getColorStateList(context, dateTextColorResId)
 
         val dateView = CalendarDateView(context)
@@ -161,7 +161,7 @@ class CalendarAdapter(
     private fun bindMonthItemViewHolder(holder: MonthItemViewHolder, monthItem: MonthItem) {
         val monthName = monthFormatter.format(monthItem.date.date)
         holder.textView.text = monthName.capitalize()
-        holder.textView.setTextColor(itemsAttributes.monthTextColor)
+        holder.textView.setTextColor(adapterItemsStyle.monthTextColor)
     }
 
     // endregion
@@ -229,10 +229,10 @@ class CalendarAdapter(
     }
 
 
-    data class ItemsAttributes(
+    class AdapterItemsStyle(
         @ColorInt val monthTextColor: Int,
-        @DrawableRes val calendarDateBackgroundResId: Int,
-        @ColorRes val calendarDateTextColorResId: Int
+        @DrawableRes val dateBackgroundResId: Int,
+        @ColorRes val dateTextColorResId: Int
     )
 
     class DateItemViewHolder(val dateView: CalendarDateView) : RecyclerView.ViewHolder(dateView)

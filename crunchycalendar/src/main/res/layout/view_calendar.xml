@@ -1,61 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/days_container"
+    <ru.cleverpumpkin.calendar.YearSelectionView
+        android:id="@+id/year_selection_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF" />
+
+    <ru.cleverpumpkin.calendar.DaysBarView
+        android:id="@+id/days_bar_view"
         style="@style/CalendarWeekDaysBar"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/day_1"
-            style="@style/CalendarWeekDay"
-            tools:text="ПН" />
-
-        <TextView
-            android:id="@+id/day_2"
-            style="@style/CalendarWeekDay"
-            tools:text="ВТ" />
-
-        <TextView
-            android:id="@+id/day_3"
-            style="@style/CalendarWeekDay"
-            tools:text="СР" />
-
-        <TextView
-            android:id="@+id/day_4"
-            style="@style/CalendarWeekDay"
-            tools:text="ЧТ" />
-
-        <TextView
-            android:id="@+id/day_5"
-            style="@style/CalendarWeekDay"
-            tools:text="ПТ" />
-
-        <TextView
-            android:id="@+id/day_6"
-            style="@style/CalendarWeekDay"
-            tools:text="СБ" />
-
-        <TextView
-            android:id="@+id/day_7"
-            style="@style/CalendarWeekDay"
-            tools:text="ВС" />
-
-    </LinearLayout>
+        android:layout_below="@id/year_selection_view" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/calendar_week_days_bar_height" />
+        android:layout_below="@id/days_bar_view" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="4dp"
-        android:layout_marginTop="@dimen/calendar_week_days_bar_height"
+        android:layout_below="@id/days_bar_view"
         android:background="@drawable/shadow" />
 
-</merge>
+</RelativeLayout>

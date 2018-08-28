@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="margin_small">8dp</dimen>
     <dimen name="margin_medium">16dp</dimen>
 
     <dimen name="calendar_week_days_bar_height">24dp</dimen>

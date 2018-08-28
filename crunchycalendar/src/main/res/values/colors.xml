@@ -4,6 +4,10 @@
     <color name="calendar_grid_color">#E9E9E9</color>
     <color name="calendar_month_text_color">#000000</color>
 
+    <color name="calendar_year_selection_background">#FFFFFF</color>
+    <color name="calendar_year_selection_arrows_color">#55B3F3</color>
+    <color name="calendar_year_selection_text_color">#000000</color>
+
     <color name="calendar_days_bar_background">#FFFFFF</color>
     <color name="calendar_days_bar_text_color">#AD000000</color>
 
