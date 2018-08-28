@@ -22,8 +22,8 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:text="2017 Год"
-        android:textColor="@color/calendar_month_text_color" />
+        android:textColor="@color/calendar_month_text_color"
+        tools:text="2017 Год" />
 
     <ImageView
         android:id="@+id/arrow_right"

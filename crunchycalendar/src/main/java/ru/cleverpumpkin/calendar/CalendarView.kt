@@ -12,6 +12,8 @@ import android.view.LayoutInflater
 import android.widget.FrameLayout
 import ru.cleverpumpkin.calendar.adapter.CalendarAdapter
 import ru.cleverpumpkin.calendar.adapter.CalendarItemsGenerator
+import ru.cleverpumpkin.calendar.adapter.item.DateItem
+import ru.cleverpumpkin.calendar.adapter.item.MonthItem
 import ru.cleverpumpkin.calendar.decorations.GridDividerItemDecoration
 import ru.cleverpumpkin.calendar.selection.*
 import ru.cleverpumpkin.calendar.utils.getColorInt
@@ -74,6 +76,7 @@ class CalendarView @JvmOverloads constructor(
         private const val MONTHS_PER_PAGE = 6
 
         private const val BUNDLE_SUPER_STATE = "ru.cleverpumpkin.calendar.super_state"
+        private const val BUNDLE_DISPLAYED_YEAR = "ru.cleverpumpkin.calendar.displayed_year"
         private const val BUNDLE_DISPLAY_DATE_RANGE = "ru.cleverpumpkin.calendar.display_date_range"
         private const val BUNDLE_LIMIT_DATE_RANGE = "ru.cleverpumpkin.calendar.limit_date_range"
         private const val BUNDLE_SELECTION_MODE = "ru.cleverpumpkin.calendar.selection_mode"
@@ -375,7 +378,8 @@ class CalendarView @JvmOverloads constructor(
             val divider = GridDividerItemDecoration(context, gridColor, drawGridOnSelectedDates)
             addItemDecoration(divider)
 
-            addOnScrollListener(CalendarScrollListener())
+            addOnScrollListener(CalendarItemsGenerationListener())
+            addOnScrollListener(YearTitleUpdateListener())
         }
     }
 
@@ -425,9 +429,9 @@ class CalendarView @JvmOverloads constructor(
         }
 
         this.firstDayOfWeek = firstDayOfWeek
-
-        minMaxDatesRange = NullableDatesRange(dateFrom = minDate, dateTo = maxDate)
         this.selectionMode = selectionMode
+        minMaxDatesRange = NullableDatesRange(dateFrom = minDate, dateTo = maxDate)
+        yearSelectionView.displayedYear = initialDate.year
 
         if (selectedDates.isNotEmpty()) {
             when {
@@ -664,6 +668,7 @@ class CalendarView @JvmOverloads constructor(
 
         return Bundle().apply {
             putString(BUNDLE_SELECTION_MODE, selectionMode.name)
+            putInt(BUNDLE_DISPLAYED_YEAR, yearSelectionView.displayedYear)
             putParcelable(BUNDLE_DISPLAY_DATE_RANGE, displayDatesRange)
             putParcelable(BUNDLE_LIMIT_DATE_RANGE, minMaxDatesRange)
             putParcelable(BUNDLE_SUPER_STATE, superState)
@@ -690,6 +695,7 @@ class CalendarView @JvmOverloads constructor(
             if (initializedWithSetup.not()) {
                 val modeName = state.getString(BUNDLE_SELECTION_MODE, SelectionMode.NON.name)
                 selectionMode = SelectionMode.valueOf(modeName)
+                yearSelectionView.displayedYear = state.getInt(BUNDLE_DISPLAYED_YEAR)
                 displayDatesRange = state.getParcelable(BUNDLE_DISPLAY_DATE_RANGE)
                 minMaxDatesRange = state.getParcelable(BUNDLE_LIMIT_DATE_RANGE)
                 dateSelectionStrategy.restoreSelectedDates(state)
@@ -707,7 +713,7 @@ class CalendarView @JvmOverloads constructor(
         }
     }
 
-    private inner class CalendarScrollListener : RecyclerView.OnScrollListener() {
+    private inner class CalendarItemsGenerationListener : RecyclerView.OnScrollListener() {
 
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
@@ -725,6 +731,23 @@ class CalendarView @JvmOverloads constructor(
 
             if (firstChildAdapterPosition == 0) {
                 recyclerView.post { generatePrevCalendarItems() }
+            }
+        }
+    }
+
+    private inner class YearTitleUpdateListener : RecyclerView.OnScrollListener() {
+
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+
+            val firstChild = recyclerView.layoutManager.getChildAt(0)
+            val firstChildAdapterPosition = recyclerView.getChildAdapterPosition(firstChild)
+
+            val calendarItem = calendarAdapter.getCalendarItemAt(firstChildAdapterPosition)
+            if (calendarItem is DateItem) {
+                yearSelectionView.displayedYear = calendarItem.date.year
+            } else if (calendarItem is MonthItem) {
+                yearSelectionView.displayedYear = calendarItem.date.year
             }
         }
     }

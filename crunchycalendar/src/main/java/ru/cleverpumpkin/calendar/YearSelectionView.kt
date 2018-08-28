@@ -18,9 +18,22 @@ class YearSelectionView @JvmOverloads constructor(
 
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
+    companion object {
+        private const val DEFAULT_DISPLAYED_YEAR_VALUE = -1
+    }
+
     private val arrowLeftView: ImageView
     private val arrowRightView: ImageView
     private val yearTextView: TextView
+
+    var displayedYear = DEFAULT_DISPLAYED_YEAR_VALUE
+        set(value) {
+            if (field != value) {
+                yearTextView.text = value.toString()
+            }
+
+            field = value
+        }
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_year_selection, this, true)
