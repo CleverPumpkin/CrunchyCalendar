@@ -10,6 +10,9 @@ import android.widget.TextView
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * This view class represents a bar with week days. It is used as a part of the Calendar Widget.
+ */
 class DaysBarView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -27,6 +30,7 @@ class DaysBarView @JvmOverloads constructor(
 
     fun applyStyle(style: DaysBarStyle) {
         setBackgroundColor(style.background)
+
         for (i in 0..childCount) {
             val dayView = getChildAt(i) as? TextView
             dayView?.setTextColor(style.textColor)

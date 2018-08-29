@@ -17,11 +17,9 @@
 
     <TextSwitcher
         android:id="@+id/text_switcher"
-        style="@style/ClickableView"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="?attr/selectableItemBackground">
+        android:layout_weight="1">
 
         <TextView
             style="@style/YearSelectionText"

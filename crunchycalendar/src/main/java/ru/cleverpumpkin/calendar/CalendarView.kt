@@ -125,9 +125,7 @@ class CalendarView @JvmOverloads constructor(
     private val recyclerView: RecyclerView
     private val calendarAdapter: CalendarAdapter
 
-    /**
-     * Internal flag, that indicates whether the [setupCalendar] method was called or not
-     */
+    /** Internal flag, that indicates whether the [setupCalendar] method was called or not */
     private var initializedWithSetup = false
 
     private var displayDatesRange = DatesRange.emptyRange()
@@ -395,7 +393,7 @@ class CalendarView @JvmOverloads constructor(
             addItemDecoration(divider)
 
             addOnScrollListener(CalendarItemsGenerationListener())
-            addOnScrollListener(DisplayedDateUpdateListener())
+            addOnScrollListener(DisplayedYearUpdateListener())
         }
     }
 
@@ -425,7 +423,7 @@ class CalendarView @JvmOverloads constructor(
      * Default value - empty list
      *
      * [firstDayOfWeek] the first day of week: [Calendar.SUNDAY], [Calendar.MONDAY], etc.
-     * Default value - null, will be used the first day of week from default Locale
+     * Default value - null. If null, Calendar will be initialized with the `firstDayOfWeek` from the default Locale
      */
     fun setupCalendar(
         initialDate: CalendarDate = CalendarDate.today,
@@ -469,7 +467,7 @@ class CalendarView @JvmOverloads constructor(
 
                 else -> {
                     selectedDates.forEach { date ->
-                        if (dateInfoProvider.isDateOutOfRange(date)) {
+                        if (minMaxDatesRange.isDateOutOfRange(date)) {
                             throw IllegalStateException(
                                 "Selected date must be between minDate and maxDate. " +
                                         "Selected date: $date, minDate: $minDate, maxDate: $maxDate"
@@ -494,7 +492,7 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Fast moving to the specific calendar date.
+     * Method for fast moving to the specific calendar date.
      * If [date] is out of min-max date boundaries, moving won't be performed.
      */
     fun moveToDate(date: CalendarDate) {
@@ -760,7 +758,7 @@ class CalendarView @JvmOverloads constructor(
         }
     }
 
-    private inner class DisplayedDateUpdateListener : RecyclerView.OnScrollListener() {
+    private inner class DisplayedYearUpdateListener : RecyclerView.OnScrollListener() {
 
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)

@@ -16,6 +16,9 @@ import android.widget.TextView
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * This view class represents a year selection control. It is used as a part of the Calendar Widget.
+ */
 class YearSelectionView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -41,11 +44,11 @@ class YearSelectionView @JvmOverloads constructor(
 
     var displayedDate: CalendarDate = CalendarDate.today
         set(newDate) {
-            val currentDisplayedDate = field
+            val oldDate = field
             field = newDate
 
-            if (currentDisplayedDate.year != newDate.year) {
-                updateAnimations(currentYear = currentDisplayedDate.year, newYear = newDate.year)
+            if (oldDate.year != newDate.year) {
+                updateAnimations(oldYear = oldDate.year, newYear = newDate.year)
                 textSwitcher.setText(yearFormatter.format(newDate.date))
                 updateArrowButtonsState()
             }
@@ -95,8 +98,8 @@ class YearSelectionView @JvmOverloads constructor(
         updateArrowButtonsState()
     }
 
-    private fun updateAnimations(currentYear: Int, newYear: Int) {
-        if (newYear > currentYear) {
+    private fun updateAnimations(oldYear: Int, newYear: Int) {
+        if (newYear > oldYear) {
             textSwitcher.outAnimation = slideOutTopAnim
             textSwitcher.inAnimation = slideInBottomAnim
         } else {
