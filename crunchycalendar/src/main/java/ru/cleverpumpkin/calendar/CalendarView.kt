@@ -257,7 +257,8 @@ class CalendarView @JvmOverloads constructor(
         recyclerView = findViewById(R.id.recycler_view)
 
         if (attrs != null) {
-            val typedArray = context.obtainStyledAttributes(attrs, R.styleable.CalendarView)
+            val typedArray =
+                context.obtainStyledAttributes(attrs, R.styleable.CalendarView, defStyleAttr, 0)
 
             try {
                 drawGridOnSelectedDates = typedArray.getBoolean(
