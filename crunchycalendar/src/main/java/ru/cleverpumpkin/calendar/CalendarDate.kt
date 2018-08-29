@@ -3,6 +3,7 @@ package ru.cleverpumpkin.calendar
 import android.os.Parcel
 import android.os.Parcelable
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 /**
  * This is an immutable class that represents a date as year-month-day.
@@ -123,6 +124,15 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
         }
         val diffYear = other.year - this.year
         return diffYear * MONTHS_IN_YEAR + other.month - this.month
+    }
+
+    fun daysBetween(other: CalendarDate): Int {
+        if (other < this) {
+            return 0
+        }
+
+        val diff = other.timeInMillis - this.timeInMillis
+        return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS).toInt()
     }
 
     fun monthBeginning(): CalendarDate {
