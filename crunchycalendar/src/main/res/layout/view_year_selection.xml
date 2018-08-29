@@ -12,6 +12,7 @@
         style="@style/ClickableView.YearSelectionArrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:rotationY="@integer/angle"
         android:tint="@color/calendar_date_today_text_color"
         app:srcCompat="@drawable/ic_keyboard_arrow_left_24dp"
         tools:ignore="ContentDescription" />
@@ -30,6 +31,7 @@
         style="@style/ClickableView.YearSelectionArrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:rotationY="@integer/angle"
         android:tint="@color/calendar_date_today_text_color"
         app:srcCompat="@drawable/ic_keyboard_arrow_right_24dp"
         tools:ignore="ContentDescription" />
