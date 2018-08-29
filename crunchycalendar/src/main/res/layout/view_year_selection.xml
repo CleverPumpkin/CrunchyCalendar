@@ -12,27 +12,36 @@
         style="@style/ClickableView.YearSelectionArrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:rotationY="@integer/angle"
-        android:tint="@color/calendar_date_today_text_color"
         app:srcCompat="@drawable/ic_keyboard_arrow_left_24dp"
         tools:ignore="ContentDescription" />
 
-    <TextView
-        android:id="@+id/year_text_view"
-        style="@style/ClickableView.YearSelectionText"
+    <TextSwitcher
+        android:id="@+id/text_switcher"
+        style="@style/ClickableView"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:textColor="@color/calendar_month_text_color"
-        tools:text="2017 Год" />
+        android:background="?attr/selectableItemBackground">
+
+        <TextView
+            style="@style/YearSelectionText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:text="2017 Год" />
+
+        <TextView
+            style="@style/YearSelectionText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:text="2017 Год" />
+
+    </TextSwitcher>
 
     <ImageView
         android:id="@+id/arrow_next"
         style="@style/ClickableView.YearSelectionArrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:rotationY="@integer/angle"
-        android:tint="@color/calendar_date_today_text_color"
         app:srcCompat="@drawable/ic_keyboard_arrow_right_24dp"
         tools:ignore="ContentDescription" />
 

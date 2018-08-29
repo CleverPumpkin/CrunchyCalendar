@@ -348,8 +348,8 @@ class CalendarView @JvmOverloads constructor(
             )
         )
 
-        yearSelectionView.onYearChangeListener = { selectedDate ->
-            moveToDate(selectedDate)
+        yearSelectionView.onYearChangeListener = { displayedDate ->
+            moveToDate(displayedDate)
         }
 
         setupRecyclerView(recyclerView)

@@ -8,8 +8,10 @@ import android.support.v4.widget.ImageViewCompat
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View.OnClickListener
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextSwitcher
 import android.widget.TextView
 import java.text.SimpleDateFormat
 import java.util.*
@@ -27,7 +29,12 @@ class YearSelectionView @JvmOverloads constructor(
 
     private val arrowPrevView: ImageView
     private val arrowNextView: ImageView
-    private val yearTextView: TextView
+    private val textSwitcher: TextSwitcher
+
+    private val slideInBottomAnim = AnimationUtils.loadAnimation(context, R.anim.slide_in_bottom)
+    private val slideInTopAnim = AnimationUtils.loadAnimation(context, R.anim.slide_in_top)
+    private val slideOutBottomAnim = AnimationUtils.loadAnimation(context, R.anim.slide_out_bottom)
+    private val slideOutTopAnim = AnimationUtils.loadAnimation(context, R.anim.slide_out_top)
 
     private val yearFormatter = SimpleDateFormat(YEAR_FORMAT, Locale.getDefault())
     private var minMaxDatesRange = NullableDatesRange()
@@ -38,7 +45,8 @@ class YearSelectionView @JvmOverloads constructor(
             field = newDate
 
             if (currentDisplayedDate.year != newDate.year) {
-                yearTextView.text = yearFormatter.format(newDate.date)
+                updateAnimations(currentYear = currentDisplayedDate.year, newYear = newDate.year)
+                textSwitcher.setText(yearFormatter.format(newDate.date))
                 updateArrowButtonsState()
             }
         }
@@ -50,9 +58,9 @@ class YearSelectionView @JvmOverloads constructor(
 
         arrowPrevView = findViewById(R.id.arrow_prev)
         arrowNextView = findViewById(R.id.arrow_next)
-        yearTextView = findViewById(R.id.year_text_view)
+        textSwitcher = findViewById(R.id.text_switcher)
 
-        yearTextView.text = yearFormatter.format(displayedDate.date)
+        textSwitcher.setText(yearFormatter.format(displayedDate.date))
 
         val arrowClickListener = OnClickListener { v ->
             val (minDate, maxDate) = minMaxDatesRange
@@ -87,6 +95,16 @@ class YearSelectionView @JvmOverloads constructor(
         updateArrowButtonsState()
     }
 
+    private fun updateAnimations(currentYear: Int, newYear: Int) {
+        if (newYear > currentYear) {
+            textSwitcher.outAnimation = slideOutTopAnim
+            textSwitcher.inAnimation = slideInBottomAnim
+        } else {
+            textSwitcher.outAnimation = slideOutBottomAnim
+            textSwitcher.inAnimation = slideInTopAnim
+        }
+    }
+
     private fun updateArrowButtonsState() {
         val (minDate, maxDate) = minMaxDatesRange
 
@@ -111,7 +129,11 @@ class YearSelectionView @JvmOverloads constructor(
         setBackgroundColor(style.background)
         ImageViewCompat.setImageTintList(arrowPrevView, ColorStateList.valueOf(style.arrowsColor))
         ImageViewCompat.setImageTintList(arrowNextView, ColorStateList.valueOf(style.arrowsColor))
-        yearTextView.setTextColor(style.yearTextColor)
+
+        for (i in 0..textSwitcher.childCount) {
+            val textView = textSwitcher.getChildAt(i) as? TextView
+            textView?.setTextColor(style.yearTextColor)
+        }
     }
 
     class YearSelectionStyle(
