@@ -76,7 +76,7 @@ class CalendarView @JvmOverloads constructor(
         private const val MONTHS_PER_PAGE = 6
 
         private const val BUNDLE_SUPER_STATE = "ru.cleverpumpkin.calendar.super_state"
-        private const val BUNDLE_DISPLAYED_YEAR = "ru.cleverpumpkin.calendar.displayed_year"
+        private const val BUNDLE_DISPLAYED_DATE = "ru.cleverpumpkin.calendar.displayed_date"
         private const val BUNDLE_DISPLAY_DATE_RANGE = "ru.cleverpumpkin.calendar.display_date_range"
         private const val BUNDLE_LIMIT_DATE_RANGE = "ru.cleverpumpkin.calendar.limit_date_range"
         private const val BUNDLE_SELECTION_MODE = "ru.cleverpumpkin.calendar.selection_mode"
@@ -108,6 +108,7 @@ class CalendarView @JvmOverloads constructor(
         RANGE
     }
 
+    /** Custom attrs with default values */
     private var drawGridOnSelectedDates = true
     private var gridColor = getColorInt(R.color.calendar_grid_color)
     private var yearSelectionBackground = getColorInt(R.color.calendar_year_selection_background)
@@ -130,6 +131,7 @@ class CalendarView @JvmOverloads constructor(
     private var initializedWithSetup = false
 
     private var displayDatesRange = DatesRange.emptyRange()
+
     private var minMaxDatesRange = NullableDatesRange()
 
     private var dateSelectionStrategy: DateSelectionStrategy = NoDateSelectionStrategy()
@@ -145,6 +147,7 @@ class CalendarView @JvmOverloads constructor(
             calendarItemsGenerator = CalendarItemsGenerator(firstDayOfWeek)
         }
 
+
     private val dateInfoProvider = object : DateInfoProvider {
 
         private val todayCalendarDate = CalendarDate.today
@@ -158,8 +161,7 @@ class CalendarView @JvmOverloads constructor(
         }
 
         override fun isDateOutOfRange(date: CalendarDate): Boolean {
-            val (minDate, maxDate) = minMaxDatesRange
-            return (minDate != null && date < minDate) || (maxDate != null && date > maxDate)
+            return minMaxDatesRange.isDateOutOfRange(date)
         }
 
         override fun isDateSelectable(date: CalendarDate): Boolean {
@@ -175,15 +177,24 @@ class CalendarView @JvmOverloads constructor(
         }
     }
 
+
     private var selectionMode: SelectionMode = SelectionMode.NON
         set(value) {
             field = value
 
             dateSelectionStrategy = when (value) {
-                SelectionMode.NON -> NoDateSelectionStrategy()
-                SelectionMode.SINGLE -> SingleDateSelectionStrategy(calendarAdapter, dateInfoProvider)
-                SelectionMode.MULTIPLE -> MultipleDateSelectionStrategy(calendarAdapter, dateInfoProvider)
-                SelectionMode.RANGE -> RangeDateSelectionStrategy(calendarAdapter, dateInfoProvider)
+                SelectionMode.NON -> {
+                    NoDateSelectionStrategy()
+                }
+                SelectionMode.SINGLE -> {
+                    SingleDateSelectionStrategy(calendarAdapter, dateInfoProvider)
+                }
+                SelectionMode.MULTIPLE -> {
+                    MultipleDateSelectionStrategy(calendarAdapter, dateInfoProvider)
+                }
+                SelectionMode.RANGE -> {
+                    RangeDateSelectionStrategy(calendarAdapter, dateInfoProvider)
+                }
             }
         }
 
@@ -219,7 +230,9 @@ class CalendarView @JvmOverloads constructor(
     var dateSelectionFilter: ((CalendarDate) -> Boolean)? = null
 
     /**
-     * Returns selected dates according to [selectionMode]. When selection mode is:
+     * Returns selected dates according to the [selectionMode].
+     *
+     * When selection mode is:
      * [SelectionMode.NON] returns empty list
      * [SelectionMode.SINGLE] returns list with a single selected date
      * [SelectionMode.MULTIPLE] returns all selected dates in order they were added
@@ -229,8 +242,7 @@ class CalendarView @JvmOverloads constructor(
         get() = dateSelectionStrategy.getSelectedDates()
 
     /**
-     * Returns selected date or null, when selection mode is [SelectionMode.SINGLE],
-     * otherwise returns first date or null from the list of selected dates.
+     * Returns selected date or null according to the [selectionMode].
      */
     val selectedDate: CalendarDate?
         get() = dateSelectionStrategy.getSelectedDates()
@@ -304,14 +316,12 @@ class CalendarView @JvmOverloads constructor(
             }
         }
 
-        val adapterItemsStyle = CalendarAdapter.AdapterItemsStyle(
-            monthTextColor = monthTextColor,
-            dateBackgroundResId = calendarDateBackgroundResId,
-            dateTextColorResId = calendarDateTextColorResId
-        )
-
         calendarAdapter = CalendarAdapter(
-            adapterItemsStyle = adapterItemsStyle,
+            style = CalendarAdapter.AdapterItemsStyle(
+                monthTextColor = monthTextColor,
+                dateBackgroundResId = calendarDateBackgroundResId,
+                dateTextColorResId = calendarDateTextColorResId
+            ),
             dateInfoProvider = dateInfoProvider,
             onDateClickListener = { date, longClick ->
                 if (longClick) {
@@ -323,20 +333,21 @@ class CalendarView @JvmOverloads constructor(
             }
         )
 
-        val daysBarStyle = DaysBarView.DaysBarStyle(
-            background = daysBarBackground,
-            textColor = daysBarTextColor
+        daysBarView.applyStyle(
+            style = DaysBarView.DaysBarStyle(
+                background = daysBarBackground,
+                textColor = daysBarTextColor
+            )
         )
 
-        daysBarView.applyStyle(daysBarStyle)
-
-        val yearSelectionStyle = YearSelectionView.YearSelectionStyle(
-            background = yearSelectionBackground,
-            arrowsColor = yearSelectionArrowsColor,
-            yearTextColor = yearSelectionTextColor
+        yearSelectionView.applyStyle(
+            style = YearSelectionView.YearSelectionStyle(
+                background = yearSelectionBackground,
+                arrowsColor = yearSelectionArrowsColor,
+                yearTextColor = yearSelectionTextColor
+            )
         )
 
-        yearSelectionView.applyStyle(yearSelectionStyle)
         yearSelectionView.onYearChangeListener = { selectedDate ->
             moveToDate(selectedDate)
         }
@@ -383,8 +394,8 @@ class CalendarView @JvmOverloads constructor(
             val divider = GridDividerItemDecoration(context, gridColor, drawGridOnSelectedDates)
             addItemDecoration(divider)
 
-            addOnScrollListener(CalendarItemsGenerationScrollListener())
-            addOnScrollListener(DislpayedYearUpdateScrollListener())
+            addOnScrollListener(CalendarItemsGenerationListener())
+            addOnScrollListener(DisplayedDateUpdateListener())
         }
     }
 
@@ -436,20 +447,24 @@ class CalendarView @JvmOverloads constructor(
         this.firstDayOfWeek = firstDayOfWeek
         this.selectionMode = selectionMode
         minMaxDatesRange = NullableDatesRange(dateFrom = minDate, dateTo = maxDate)
-        yearSelectionView.displayedYear = initialDate
+
+        yearSelectionView.setupYearSelectionView(
+            displayedDate = initialDate,
+            minMaxDatesRange = minMaxDatesRange
+        )
 
         if (selectedDates.isNotEmpty()) {
             when {
                 selectionMode == SelectionMode.NON -> {
-                    throw IllegalStateException("NON mode can't be used with selected dates")
+                    throw IllegalStateException("NON selection mode can't be used with selected dates")
                 }
 
                 selectionMode == SelectionMode.SINGLE && selectedDates.size > 1 -> {
-                    throw IllegalStateException("SINGLE mode can't be used with multiple selected dates")
+                    throw IllegalStateException("SINGLE selection mode can't be used with multiple selected dates")
                 }
 
                 selectionMode == SelectionMode.RANGE && selectedDates.size > 2 -> {
-                    throw IllegalStateException("RANGE mode only allows two selected dates")
+                    throw IllegalStateException("RANGE selection mode only allows two selected dates")
                 }
 
                 else -> {
@@ -482,12 +497,12 @@ class CalendarView @JvmOverloads constructor(
      * Fast moving to the specific calendar date.
      * If [date] is out of min-max date boundaries, moving won't be performed.
      */
-    fun moveToDate(date: CalendarDate): Boolean {
+    fun moveToDate(date: CalendarDate) {
         val (minDate, maxDate) = minMaxDatesRange
 
         if ((minDate != null && date < minDate.monthBeginning()) ||
             (maxDate != null && date > maxDate.monthEnd())) {
-            return false
+            return
         }
 
         val (displayDatesFrom, displayDatesTo) = displayDatesRange
@@ -508,8 +523,6 @@ class CalendarView @JvmOverloads constructor(
             gridLayoutManager.scrollToPositionWithOffset(dateMonthPosition, 0)
             recyclerView.stopScroll()
         }
-
-        return true
     }
 
     /**
@@ -675,10 +688,10 @@ class CalendarView @JvmOverloads constructor(
 
         return Bundle().apply {
             putString(BUNDLE_SELECTION_MODE, selectionMode.name)
-            putParcelable(BUNDLE_DISPLAYED_YEAR, yearSelectionView.displayedYear)
             putParcelable(BUNDLE_DISPLAY_DATE_RANGE, displayDatesRange)
             putParcelable(BUNDLE_LIMIT_DATE_RANGE, minMaxDatesRange)
             putParcelable(BUNDLE_SUPER_STATE, superState)
+            putParcelable(BUNDLE_DISPLAYED_DATE, yearSelectionView.displayedDate)
             dateSelectionStrategy.saveSelectedDates(this)
 
             val firstDayOfWeek = firstDayOfWeek
@@ -702,10 +715,15 @@ class CalendarView @JvmOverloads constructor(
             if (initializedWithSetup.not()) {
                 val modeName = state.getString(BUNDLE_SELECTION_MODE, SelectionMode.NON.name)
                 selectionMode = SelectionMode.valueOf(modeName)
-                yearSelectionView.displayedYear = state.getParcelable(BUNDLE_DISPLAYED_YEAR)
                 displayDatesRange = state.getParcelable(BUNDLE_DISPLAY_DATE_RANGE)
                 minMaxDatesRange = state.getParcelable(BUNDLE_LIMIT_DATE_RANGE)
                 dateSelectionStrategy.restoreSelectedDates(state)
+
+                val displayedDate: CalendarDate = state.getParcelable(BUNDLE_DISPLAYED_DATE)
+                yearSelectionView.setupYearSelectionView(
+                    displayedDate = displayedDate,
+                    minMaxDatesRange = minMaxDatesRange
+                )
 
                 firstDayOfWeek = if (state.containsKey(BUNDLE_FIRST_DAY_OF_WEEK)) {
                     state.getInt(BUNDLE_FIRST_DAY_OF_WEEK)
@@ -720,7 +738,7 @@ class CalendarView @JvmOverloads constructor(
         }
     }
 
-    private inner class CalendarItemsGenerationScrollListener : RecyclerView.OnScrollListener() {
+    private inner class CalendarItemsGenerationListener : RecyclerView.OnScrollListener() {
 
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
@@ -742,7 +760,7 @@ class CalendarView @JvmOverloads constructor(
         }
     }
 
-    private inner class DislpayedYearUpdateScrollListener : RecyclerView.OnScrollListener() {
+    private inner class DisplayedDateUpdateListener : RecyclerView.OnScrollListener() {
 
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
@@ -752,9 +770,9 @@ class CalendarView @JvmOverloads constructor(
 
             val calendarItem = calendarAdapter.getCalendarItemAt(firstChildAdapterPosition)
             if (calendarItem is DateItem) {
-                yearSelectionView.displayedYear = calendarItem.date
+                yearSelectionView.displayedDate = calendarItem.date
             } else if (calendarItem is MonthItem) {
-                yearSelectionView.displayedYear = calendarItem.date
+                yearSelectionView.displayedDate = calendarItem.date
             }
         }
     }

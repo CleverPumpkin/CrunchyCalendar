@@ -36,4 +36,8 @@ data class NullableDatesRange(
     }
 
     override fun describeContents() = 0
+
+    fun isDateOutOfRange(date: CalendarDate): Boolean {
+        return (dateFrom != null && date < dateFrom) || (dateTo != null && date > dateTo)
+    }
 }

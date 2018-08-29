@@ -30,17 +30,20 @@ class YearSelectionView @JvmOverloads constructor(
     private val yearTextView: TextView
 
     private val yearFormatter = SimpleDateFormat(YEAR_FORMAT, Locale.getDefault())
+    private var minMaxDatesRange = NullableDatesRange()
 
-    var displayedYear: CalendarDate = CalendarDate.today
-        set(value) {
-            if (field.year != value.year) {
-                yearTextView.text = yearFormatter.format(value.date)
+    var displayedDate: CalendarDate = CalendarDate.today
+        set(newDate) {
+            val currentDisplayedDate = field
+            field = newDate
+
+            if (currentDisplayedDate.year != newDate.year) {
+                yearTextView.text = yearFormatter.format(newDate.date)
+                updateArrowButtonsState()
             }
-
-            field = value
         }
 
-    var onYearChangeListener: ((CalendarDate) -> Boolean)? = null
+    var onYearChangeListener: ((CalendarDate) -> Unit)? = null
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_year_selection, this, true)
@@ -49,23 +52,59 @@ class YearSelectionView @JvmOverloads constructor(
         arrowNextView = findViewById(R.id.arrow_next)
         yearTextView = findViewById(R.id.year_text_view)
 
-        yearTextView.text = yearFormatter.format(displayedYear.date)
+        yearTextView.text = yearFormatter.format(displayedDate.date)
 
         val arrowClickListener = OnClickListener { v ->
-            val newDisplayedYear = if (v.id == R.id.arrow_prev) {
-                displayedYear.prevYear()
+            val (minDate, maxDate) = minMaxDatesRange
+
+            displayedDate = if (v.id == R.id.arrow_prev) {
+                val prevYear = displayedDate.minusMonths(CalendarDate.MONTHS_IN_YEAR)
+                if (minDate == null || minDate <= prevYear) {
+                    prevYear
+                } else {
+                    minDate
+                }
+
             } else {
-                displayedYear.nextYear()
+                val nextYear = displayedDate.plusMonths(CalendarDate.MONTHS_IN_YEAR)
+                if (maxDate == null || maxDate >= nextYear) {
+                    nextYear
+                } else {
+                    maxDate
+                }
             }
 
-            val updateDisplayedYear = onYearChangeListener?.invoke(newDisplayedYear) ?: true
-            if (updateDisplayedYear) {
-                displayedYear = newDisplayedYear
-            }
+            onYearChangeListener?.invoke(displayedDate)
         }
 
         arrowPrevView.setOnClickListener(arrowClickListener)
         arrowNextView.setOnClickListener(arrowClickListener)
+    }
+
+    fun setupYearSelectionView(displayedDate: CalendarDate, minMaxDatesRange: NullableDatesRange) {
+        this.minMaxDatesRange = minMaxDatesRange
+        this.displayedDate = displayedDate
+        updateArrowButtonsState()
+    }
+
+    private fun updateArrowButtonsState() {
+        val (minDate, maxDate) = minMaxDatesRange
+
+        if (minDate == null || minDate.year <= displayedDate.year.dec()) {
+            arrowPrevView.isClickable = true
+            arrowPrevView.alpha = 1.0f
+        } else {
+            arrowPrevView.isClickable = false
+            arrowPrevView.alpha = 0.2f
+        }
+
+        if (maxDate == null || maxDate.year >= displayedDate.year.inc()) {
+            arrowNextView.isClickable = true
+            arrowNextView.alpha = 1.0f
+        } else {
+            arrowNextView.isClickable = false
+            arrowNextView.alpha = 0.2f
+        }
     }
 
     fun applyStyle(style: YearSelectionStyle) {
