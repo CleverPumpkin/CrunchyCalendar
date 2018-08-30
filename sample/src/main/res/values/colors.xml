@@ -9,7 +9,7 @@
 
     <color name="custom_calendar_year_selection_background">#0f6c52</color>
     <color name="custom_calendar_year_selection_arrows_color">#f2e81a</color>
-    <color name="custom_calendar_year_selection_text_color">#FFFFFF</color>
+    <color name="custom_calendar_year_selection_text_color">#f2e81a</color>
 
     <color name="custom_calendar_days_bar_background">#0f6c52</color>
     <color name="custom_calendar_days_bar_text_color">#f2e81a</color>
