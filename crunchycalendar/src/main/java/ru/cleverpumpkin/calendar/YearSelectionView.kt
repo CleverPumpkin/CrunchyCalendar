@@ -56,6 +56,8 @@ class YearSelectionView @JvmOverloads constructor(
 
     var onYearChangeListener: ((CalendarDate) -> Unit)? = null
 
+    var onYearClickListener: ((Int) -> Unit)? = null
+
     init {
         LayoutInflater.from(context).inflate(R.layout.view_year_selection, this, true)
 
@@ -64,6 +66,9 @@ class YearSelectionView @JvmOverloads constructor(
         textSwitcher = findViewById(R.id.text_switcher)
 
         textSwitcher.setText(yearFormatter.format(displayedDate.date))
+        textSwitcher.setOnClickListener {
+            onYearClickListener?.invoke(displayedDate.year)
+        }
 
         val arrowClickListener = OnClickListener { v ->
             val (minDate, maxDate) = minMaxDatesRange
