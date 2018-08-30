@@ -45,7 +45,7 @@ class CalendarView @JvmOverloads constructor(
 
     /**
      * This interface represents a colored indicator for the specific date that will be displayed
-     * on the calendar.
+     * on the Calendar.
      */
     interface DateIndicator {
         val date: CalendarDate
@@ -53,7 +53,7 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Internal interface that provides required information for the specific calendar date.
+     * Internal interface that provides required information for the specific Calendar date.
      */
     internal interface DateInfoProvider {
 
@@ -180,12 +180,12 @@ class CalendarView @JvmOverloads constructor(
         }
 
     /**
-     * Grouped by date indicators that will be displayed on the calendar.
+     * Grouped by date indicators that will be displayed on the Calendar.
      */
     private val groupedDatesIndicators = ArrayMap<CalendarDate, MutableList<DateIndicator>>()
 
     /**
-     * List of indicators that will be displayed on the calendar.
+     * List of indicators that will be displayed on the Calendar.
      */
     var datesIndicators: List<DateIndicator> = emptyList()
         set(value) {
@@ -389,32 +389,33 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Method for initial calendar set up. All parameters have default values.
+     * Method for the initial calendar set up. All parameters have default values.
      *
      * [initialDate] the date that will be displayed initially.
      * Default value - today date
      *
-     * [minDate] minimum date for calendar grid, inclusive.
-     * If null, calendar will display all available dates before [initialDate]
+     * [minDate] minimum date for the Calendar grid, inclusive.
+     * If null, the Calendar will display all available dates before [initialDate]
      * Default value - null
      *
-     * [maxDate] maximum date for calendar grid, inclusive.
-     * If null, calendar will display all available dates after [initialDate]
+     * [maxDate] maximum date for the Calendar grid, inclusive.
+     * If null, the Calendar will display all available dates after [initialDate]
      * Default value - null
      *
      * [selectionMode] mode for dates selecting.
      * Default value - [SelectionMode.NON]
      *
      * When selection mode is:
-     * [SelectionMode.SINGLE], [selectedDates] should contains only one date.
+     * [SelectionMode.SINGLE], [selectedDates] should contains only single date.
      * [SelectionMode.MULTIPLE], [selectedDates] can contains multiple date.
-     * [SelectionMode.RANGE], [selectedDates] should contains two dates that represent selected range.
+     * [SelectionMode.RANGE], [selectedDates] must contains two dates that represent selected range.
      *
-     * [selectedDates] list of initially selected dates.
+     * [selectedDates] list of the initially selected dates.
      * Default value - empty list
      *
      * [firstDayOfWeek] the first day of week: [Calendar.SUNDAY], [Calendar.MONDAY], etc.
-     * Default value - null. If null, Calendar will be initialized with the `firstDayOfWeek` from the default Locale
+     * Default value - null. If null, the Calendar will be initialized with the `firstDayOfWeek`
+     * from the default Locale
      *
      * [showYearSelectionView] flag that indicates whether year selection view will be displayed or not.
      * Default value - true
@@ -450,21 +451,21 @@ class CalendarView @JvmOverloads constructor(
         if (selectedDates.isNotEmpty()) {
             when {
                 selectionMode == SelectionMode.NON -> {
-                    throw IllegalStateException("NON selection mode can't be used with selected dates")
+                    throw IllegalArgumentException("NON selection mode can't be used with selected dates")
                 }
 
                 selectionMode == SelectionMode.SINGLE && selectedDates.size > 1 -> {
-                    throw IllegalStateException("SINGLE selection mode can't be used with multiple selected dates")
+                    throw IllegalArgumentException("SINGLE selection mode can't be used with multiple selected dates")
                 }
 
                 selectionMode == SelectionMode.RANGE && selectedDates.size > 2 -> {
-                    throw IllegalStateException("RANGE selection mode only allows two selected dates")
+                    throw IllegalArgumentException("RANGE selection mode only allows two selected dates")
                 }
 
                 else -> {
                     selectedDates.forEach { date ->
                         if (minMaxDatesRange.isDateOutOfRange(date)) {
-                            throw IllegalStateException(
+                            throw IllegalArgumentException(
                                 "Selected date must be between minDate and maxDate. " +
                                         "Selected date: $date, minDate: $minDate, maxDate: $maxDate"
                             )
@@ -520,7 +521,7 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Add custom [RecyclerView.ItemDecoration] that will be used for the calendar view decoration.
+     * Add custom [RecyclerView.ItemDecoration] that will be used for the Calendar view decoration.
      */
     fun addCustomItemDecoration(itemDecoration: RecyclerView.ItemDecoration) {
         recyclerView.addItemDecoration(itemDecoration)
@@ -674,7 +675,7 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Save internal calendar state: displayed dates, min-max dates,
+     * Save internal Calendar state: displayed dates, min-max dates,
      * selection mode, selected dates, first day of week and view super state.
      */
     override fun onSaveInstanceState(): Parcelable {
