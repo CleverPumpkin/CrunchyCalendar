@@ -415,6 +415,9 @@ class CalendarView @JvmOverloads constructor(
      *
      * [firstDayOfWeek] the first day of week: [Calendar.SUNDAY], [Calendar.MONDAY], etc.
      * Default value - null. If null, Calendar will be initialized with the `firstDayOfWeek` from the default Locale
+     *
+     * [showYearSelectionView] flag that indicates whether year selection view will be displayed or not.
+     * Default value - true
      */
     fun setupCalendar(
         initialDate: CalendarDate = CalendarDate.today,
@@ -434,8 +437,8 @@ class CalendarView @JvmOverloads constructor(
             throw IllegalArgumentException("Incorrect value of firstDayOfWeek: $firstDayOfWeek")
         }
 
-        this.firstDayOfWeek = firstDayOfWeek
         this.selectionMode = selectionMode
+        this.firstDayOfWeek = firstDayOfWeek
         this.showYearSelectionView = showYearSelectionView
         minMaxDatesRange = NullableDatesRange(dateFrom = minDate, dateTo = maxDate)
 
