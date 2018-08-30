@@ -11,9 +11,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * This view class represents a bar with week days. It is used as a part of the Calendar Widget.
+ * This internal view class represents a bar with week days.
+ * It is used as a part of the Calendar Widget.
  */
-class DaysBarView @JvmOverloads constructor(
+internal class DaysBarView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     @AttrRes defStyleAttr: Int = 0

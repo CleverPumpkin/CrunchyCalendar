@@ -53,9 +53,9 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Interface for internal needs that provides required information for the specific calendar date.
+     * Internal interface that provides required information for the specific calendar date.
      */
-    interface DateInfoProvider {
+    internal interface DateInfoProvider {
 
         fun isToday(date: CalendarDate): Boolean
 
@@ -135,7 +135,7 @@ class CalendarView @JvmOverloads constructor(
     private var dateSelectionStrategy: DateSelectionStrategy = NoDateSelectionStrategy()
     private lateinit var calendarItemsGenerator: CalendarItemsGenerator
     private val displayedYearUpdateListener = DisplayedYearUpdateListener()
-    private val dateInfoProvider = DateInfoProviderImpl()
+    private val dateInfoProvider = DefaultDateInfoProvider()
 
     private var firstDayOfWeek: Int? = null
         set(value) {
@@ -206,7 +206,7 @@ class CalendarView @JvmOverloads constructor(
     var onDateLongClickListener: ((CalendarDate) -> Unit)? = null
 
     /**
-     * Listener that will be notified when a year top view is clicked.
+     * Listener that will be notified when a year view is clicked.
      */
     var onYearClickListener: ((Int) -> Unit)? = null
         set(value) {
@@ -731,7 +731,7 @@ class CalendarView @JvmOverloads constructor(
         }
     }
 
-    private inner class DateInfoProviderImpl : DateInfoProvider {
+    private inner class DefaultDateInfoProvider : DateInfoProvider {
         private val todayCalendarDate = CalendarDate.today
 
         override fun isToday(date: CalendarDate): Boolean {

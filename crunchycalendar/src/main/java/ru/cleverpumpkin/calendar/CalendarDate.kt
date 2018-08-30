@@ -8,11 +8,11 @@ import java.util.concurrent.TimeUnit
 /**
  * This is an immutable class that represents a date as year-month-day.
  *
- * This class overrides [equals] and [hashCode] methods so instances of this class can be used
- * as a key in [HashMap] or [HashSet].
+ * This class overrides [equals] and [hashCode] methods so instances of the class can be used
+ * as a key in a [HashMap] or [HashSet].
  *
- * This class implements [Parcelable] interface so instances of this class
- * can be stored in [Parcel] object.
+ * This class implements [Parcelable] interface so instances of the class
+ * can be stored in a [Parcel] object.
  */
 class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
 

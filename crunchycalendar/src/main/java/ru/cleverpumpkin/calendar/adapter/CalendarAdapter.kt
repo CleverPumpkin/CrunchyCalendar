@@ -26,14 +26,15 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * This class provides view items for calendar.
+ * This internal class provides view items for the Calendar.
  *
- * This adapter provides three types of elements:
+ * There are three types of items:
+ *
  * [DATE_VIEW_TYPE] - single date cell
  * [MONTH_VIEW_TYPE] - simple name of month
  * [EMPTY_VIEW_TYPE] - empty view that represents start and end offset for each month
  */
-class CalendarAdapter(
+internal class CalendarAdapter(
     private val style: AdapterItemsStyle,
     private val dateInfoProvider: CalendarView.DateInfoProvider,
     private val onDateClickListener: (CalendarDate, Boolean) -> Unit

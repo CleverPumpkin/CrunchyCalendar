@@ -4,9 +4,9 @@ import android.os.Bundle
 import ru.cleverpumpkin.calendar.CalendarDate
 
 /**
- * Basic interface for date selection strategy.
+ * Basic internal interface for date selection strategy.
  */
-interface DateSelectionStrategy {
+internal interface DateSelectionStrategy {
 
     /**
      * This method will be invoked when date selected

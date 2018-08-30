@@ -5,9 +5,10 @@ import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarView
 import ru.cleverpumpkin.calendar.adapter.CalendarAdapter
 
-class SingleDateSelectionStrategy(
+internal class SingleDateSelectionStrategy(
     private val adapter: CalendarAdapter,
     private val dateInfoProvider: CalendarView.DateInfoProvider
+
 ) : DateSelectionStrategy {
 
     companion object {

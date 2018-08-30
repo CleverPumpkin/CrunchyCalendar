@@ -13,12 +13,13 @@ import ru.cleverpumpkin.calendar.utils.getColorInt
 import ru.cleverpumpkin.calendar.utils.spToPix
 
 /**
- * This view class represents a single date cell of calendar with optional colored indicators.
+ * This internal view class represents a single date cell of the Calendar
+ * with optional colored indicators.
  *
  * This view class control its drawable state with [isToday], [isDateSelected], [isDateDisabled]
  * and [isWeekend] properties.
  */
-class CalendarDateView @JvmOverloads constructor(
+internal class CalendarDateView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     @AttrRes defStyleAttr: Int = 0

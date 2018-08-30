@@ -17,9 +17,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * This view class represents a year selection control. It is used as a part of the Calendar Widget.
+ * This internal view class represents a year selection control.
+ * It is used as a part of the Calendar Widget.
  */
-class YearSelectionView @JvmOverloads constructor(
+internal class YearSelectionView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     @AttrRes defStyleAttr: Int = 0
@@ -72,6 +73,7 @@ class YearSelectionView @JvmOverloads constructor(
 
         val arrowClickListener = OnClickListener { v ->
             val (minDate, maxDate) = minMaxDatesRange
+            val prevDisplayedDate = displayedDate
 
             displayedDate = if (v.id == R.id.arrow_prev) {
                 val prevYear = displayedDate.minusMonths(CalendarDate.MONTHS_IN_YEAR)
@@ -90,7 +92,9 @@ class YearSelectionView @JvmOverloads constructor(
                 }
             }
 
-            onYearChangeListener?.invoke(displayedDate)
+            if (prevDisplayedDate.year != displayedDate.year) {
+                onYearChangeListener?.invoke(displayedDate)
+            }
         }
 
         arrowPrevView.setOnClickListener(arrowClickListener)

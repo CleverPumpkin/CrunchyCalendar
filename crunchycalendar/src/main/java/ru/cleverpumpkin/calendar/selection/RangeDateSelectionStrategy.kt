@@ -7,9 +7,10 @@ import ru.cleverpumpkin.calendar.NullableDatesRange
 import ru.cleverpumpkin.calendar.adapter.CalendarAdapter
 import java.util.*
 
-class RangeDateSelectionStrategy(
+internal class RangeDateSelectionStrategy(
     private val adapter: CalendarAdapter,
     private val dateInfoProvider: CalendarView.DateInfoProvider
+
 ) : DateSelectionStrategy {
 
     companion object {
@@ -19,8 +20,7 @@ class RangeDateSelectionStrategy(
     private var datesRange = NullableDatesRange()
 
     override fun onDateSelected(date: CalendarDate) {
-        val dateFrom = datesRange.dateFrom
-        val dateTo = datesRange.dateTo
+        val (dateFrom, dateTo) = datesRange
 
         when {
             dateFrom == null && dateTo == null -> {
@@ -59,9 +59,12 @@ class RangeDateSelectionStrategy(
         val dateTo = datesRange.dateTo
 
         return if (dateFrom != null && dateTo != null) {
-            if (adapter.findDatePosition(dateFrom) != -1 && adapter.findDatePosition(dateTo) != -1) {
+
+            if (adapter.findDatePosition(dateFrom) != -1 &&
+                adapter.findDatePosition(dateTo) != -1) {
+
                 return adapter.getDateRange(dateFrom = dateFrom, dateTo = dateTo)
-                    .filter { dateInfoProvider.isDateSelectable(it) }
+                    .filter(dateInfoProvider::isDateSelectable)
             }
 
             val selectedDates = mutableListOf<CalendarDate>()
@@ -71,7 +74,7 @@ class RangeDateSelectionStrategy(
             repeat(daysBetween.inc()) {
                 val date = CalendarDate(calendar.time)
                 if (dateInfoProvider.isDateSelectable(date)) {
-                    selectedDates += CalendarDate(calendar.time)
+                    selectedDates += date
                 }
 
                 calendar.add(Calendar.DAY_OF_MONTH, 1)

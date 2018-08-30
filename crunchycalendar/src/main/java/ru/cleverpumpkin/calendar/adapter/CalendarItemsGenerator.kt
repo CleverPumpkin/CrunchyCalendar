@@ -8,9 +8,9 @@ import ru.cleverpumpkin.calendar.adapter.item.MonthItem
 import java.util.*
 
 /**
- * This class responsible for generation items for [CalendarAdapter]
+ * This internal class responsible for generation items for the [CalendarAdapter]
  */
-class CalendarItemsGenerator(firstDayOfWeek: Int) {
+internal class CalendarItemsGenerator(firstDayOfWeek: Int) {
 
     companion object {
         private const val DAYS_IN_WEEK = 7
