@@ -124,7 +124,8 @@ class DateIndicatorsSampleFragment : Fragment() {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val view = if (convertView == null) {
-                LayoutInflater.from(parent.context).inflate(R.layout.item_dialog_date_indicator, parent, false)
+                LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_dialog_date_indicator, parent, false)
             } else {
                 convertView
             }

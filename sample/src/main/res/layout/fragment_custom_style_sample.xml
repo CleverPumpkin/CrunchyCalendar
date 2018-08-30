@@ -23,6 +23,9 @@
         app:calendar_day_bar_text_color="@color/custom_calendar_days_bar_text_color"
         app:calendar_grid_color="@color/custom_calendar_grid_color"
         app:calendar_grid_on_selected_dates="false"
-        app:calendar_month_text_color="@color/custom_calendar_month_text_color" />
+        app:calendar_month_text_color="@color/custom_calendar_month_text_color"
+        app:calendar_year_selection_arrows_color="@color/custom_calendar_year_selection_arrows_color"
+        app:calendar_year_selection_background="@color/custom_calendar_year_selection_background"
+        app:calendar_year_selection_text_color="@color/custom_calendar_year_selection_text_color" />
 
 </FrameLayout>

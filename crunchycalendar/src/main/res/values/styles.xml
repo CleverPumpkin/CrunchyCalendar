@@ -15,4 +15,32 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center</item>
     </style>
+
+    <style name="TextStyleRegular">
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="TextStyleMedium">
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="ClickableView">
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+    <style name="YearSelectionText">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/calendar_year_selection_text_color</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="ClickableView.YearSelectionArrow">
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:padding">@dimen/margin_small</item>
+        <item name="android:rotationY">@integer/angle</item>
+        <item name="android:tint">@color/calendar_date_today_text_color</item>
+    </style>
+
 </resources>

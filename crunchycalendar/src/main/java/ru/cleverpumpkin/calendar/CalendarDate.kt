@@ -3,15 +3,16 @@ package ru.cleverpumpkin.calendar
 import android.os.Parcel
 import android.os.Parcelable
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 /**
  * This is an immutable class that represents a date as year-month-day.
  *
- * This class overrides [equals] and [hashCode] methods so instances of this class can be used
- * as a key in [HashMap] or [HashSet].
+ * This class overrides [equals] and [hashCode] methods so instances of the class can be used
+ * as a key in a [HashMap] or [HashSet].
  *
- * This class implements [Parcelable] interface so instances of this class
- * can be stored in [Parcel] object.
+ * This class implements [Parcelable] interface so instances of the class
+ * can be stored in a [Parcel] object.
  */
 class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
 
@@ -20,6 +21,7 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
     constructor(parcel: Parcel) : this(parcel.readLong())
 
     companion object {
+        const val MONTHS_IN_YEAR = 12
 
         @JvmField
         val CREATOR = object : Parcelable.Creator<CalendarDate> {
@@ -121,7 +123,16 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
             return 0
         }
         val diffYear = other.year - this.year
-        return diffYear * 12 + other.month - this.month
+        return diffYear * MONTHS_IN_YEAR + other.month - this.month
+    }
+
+    fun daysBetween(other: CalendarDate): Int {
+        if (other < this) {
+            return 0
+        }
+
+        val diff = other.timeInMillis - this.timeInMillis
+        return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS).toInt()
     }
 
     fun monthBeginning(): CalendarDate {

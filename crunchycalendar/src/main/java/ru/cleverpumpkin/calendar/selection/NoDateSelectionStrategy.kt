@@ -6,7 +6,7 @@ import ru.cleverpumpkin.calendar.CalendarDate
 /**
  * Empty date selection strategy implementation that do nothing.
  */
-class NoDateSelectionStrategy : DateSelectionStrategy {
+internal class NoDateSelectionStrategy : DateSelectionStrategy {
 
     override fun onDateSelected(date: CalendarDate) {
         // do nothing

@@ -26,15 +26,16 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * This class provides view items for calendar.
+ * This internal class provides view items for the Calendar.
  *
- * This adapter provides three types of elements:
+ * There are three types of items:
+ *
  * [DATE_VIEW_TYPE] - single date cell
  * [MONTH_VIEW_TYPE] - simple name of month
  * [EMPTY_VIEW_TYPE] - empty view that represents start and end offset for each month
  */
-class CalendarAdapter(
-    var itemsAttributes: ItemsAttributes,
+internal class CalendarAdapter(
+    private val style: AdapterItemsStyle,
     private val dateInfoProvider: CalendarView.DateInfoProvider,
     private val onDateClickListener: (CalendarDate, Boolean) -> Unit
 
@@ -80,8 +81,8 @@ class CalendarAdapter(
     }
 
     private fun createDateItemViewHolder(context: Context): DateItemViewHolder {
-        val dateViewBackgroundRes = itemsAttributes.calendarDateBackgroundResId
-        val dateTextColorResId = itemsAttributes.calendarDateTextColorResId
+        val dateViewBackgroundRes = style.dateBackgroundResId
+        val dateTextColorResId = style.dateTextColorResId
         val dateTextColorStateList = ContextCompat.getColorStateList(context, dateTextColorResId)
 
         val dateView = CalendarDateView(context)
@@ -161,7 +162,7 @@ class CalendarAdapter(
     private fun bindMonthItemViewHolder(holder: MonthItemViewHolder, monthItem: MonthItem) {
         val monthName = monthFormatter.format(monthItem.date.date)
         holder.textView.text = monthName.capitalize()
-        holder.textView.setTextColor(itemsAttributes.monthTextColor)
+        holder.textView.setTextColor(style.monthTextColor)
     }
 
     // endregion
@@ -229,10 +230,10 @@ class CalendarAdapter(
     }
 
 
-    data class ItemsAttributes(
+    class AdapterItemsStyle(
         @ColorInt val monthTextColor: Int,
-        @DrawableRes val calendarDateBackgroundResId: Int,
-        @ColorRes val calendarDateTextColorResId: Int
+        @DrawableRes val dateBackgroundResId: Int,
+        @ColorRes val dateTextColorResId: Int
     )
 
     class DateItemViewHolder(val dateView: CalendarDateView) : RecyclerView.ViewHolder(dateView)
