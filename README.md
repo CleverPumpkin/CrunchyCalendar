@@ -2,12 +2,12 @@
 
 # CrunchyCalendar
 
-**Light**, **powerful** and **easy to use** Calendar Widget with a number of features out of the box:
-* Endless vertical scrolling in both directions;
+A **light**, **powerful** and **easy to use** Calendar Widget with a number out of the box features:
+* Infinite vertical scrolling in both directions;
 * Setting date boundaries to restrict scrolling inside of a specific time period;
 * Single / multiple / range dates selection;
 * Pre-selecting dates;
-* Customizing colors;
+* Color customization;
 * Displaying color indicators;
 * Setting own custom ItemDecoration;
 * Presented as a View subclass which can be displayed everywhere: in Activity, Fragment or Dialog, 
@@ -111,10 +111,10 @@ calendarView.onDateLongClickListener = { date ->
 
 ## Saving and Restoring state  
 Calendar takes care of saving and restoring its internal state (selected dates, selection mode, etc.),
-so no need to save it manually and call setupCalendar() method every time, 
+so there's no need to save it manually and call setupCalendar() method every time, 
 when `Activity` or `Fragment` is recreated.
 
-If Calendar was set up with `setupCalendar()` method **before** restoring state, previous saved 
+If a Calendar was set up with `setupCalendar()` method **before** restoring state, previous saved 
 state will be ignored. 
 
 ## Dates Selection
@@ -178,7 +178,7 @@ calendarView.dateSelectionFilter = { date ->
 ```
 
 ## Color Indicators
-Calendar is able to display simple color indicators (dots) on the date cell.
+The Calendar is able to display simple color indicators (dots) on the date cell.
 
 Color indicator represents as simple interface, which you can implement in your classes.  
 
@@ -265,7 +265,8 @@ drawing logic for specific dates cells.
 
 ## Sketch file
 
-Wouldn’t it be a real pain for your designer to ignore Calendar View in your apps mockups? Or to try to explain you, what colors you should use by adding them to Jira task in plain text?
+Wouldn’t it be a real pain for your designer to ignore Calendar View in your apps mockups? Or for them to try and explain to you, which colors you should use by adding them to Jira task in _plain text_?
+
 That is lame. That’s why we’ve added a `.sketch`-file to this repository [here](Calendar%20for%20Android.sketch). Have fun!
 
 ## License
