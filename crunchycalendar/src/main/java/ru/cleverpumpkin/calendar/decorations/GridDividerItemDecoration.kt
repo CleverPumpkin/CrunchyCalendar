@@ -10,7 +10,7 @@ import ru.cleverpumpkin.calendar.R
 import ru.cleverpumpkin.calendar.utils.dpToPix
 import ru.cleverpumpkin.calendar.utils.getColorInt
 
-class GridDividerItemDecoration(
+internal class GridDividerItemDecoration(
     context: Context,
     @ColorInt dividerColor: Int = context.getColorInt(R.color.calendar_grid_color),
     private val drawGridOnSelectedDates: Boolean

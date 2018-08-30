@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Default CalendarView style -->
+    <declare-styleable name="CalendarViewTheme">
+        <attr name="calendarViewStyle" format="reference" />
+    </declare-styleable>
+
     <declare-styleable name="CalendarView">
         <attr name="calendar_grid_on_selected_dates" format="boolean" />
         <attr name="calendar_grid_color" format="color" />
         <attr name="calendar_day_bar_background" format="color" />
         <attr name="calendar_day_bar_text_color" format="color" />
-        <attr name="calendar_year_selection_background" format="color"/>
-        <attr name="calendar_year_selection_arrows_color" format="color"/>
-        <attr name="calendar_year_selection_text_color" format="color"/>
+        <attr name="calendar_year_selection_background" format="color" />
+        <attr name="calendar_year_selection_arrows_color" format="color" />
+        <attr name="calendar_year_selection_text_color" format="color" />
         <attr name="calendar_month_text_color" format="color" />
         <attr name="calendar_date_background" format="reference" />
         <attr name="calendar_date_text_color" format="color" />
