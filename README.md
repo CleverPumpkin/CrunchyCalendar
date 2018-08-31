@@ -36,9 +36,6 @@ implementation 'ru.cleverpumpkin:crunchycalendar:1.1.0'
 </dependency>
 ```
 
-## Sample app
-The Sapmle app is available for download from [Google Play](https://play.google.com/store/apps/details?id=ru.cleverpumpkin.calendar.sample).
-
 ## Usage
 
 Here's a basic example of Calendar usage.
@@ -295,6 +292,9 @@ calendarView.addCustomItemDecoration(customItemDecoration)
 
 There is an abstract helper class `AbsDateItemDecoration` that you can extend to implement custom 
 drawing logic for specific dates cells.
+
+## Sample app
+The Sapmle app is available for download from [Google Play](https://play.google.com/store/apps/details?id=ru.cleverpumpkin.calendar.sample).
 
 ## Sketch file
 
