@@ -22,7 +22,7 @@ This library is available on [jCenter](https://bintray.com/cleverpumpkin/maven/C
 #### Gradle
 
 ```
-implementation 'ru.cleverpumpkin:crunchycalendar:1.0.0'
+implementation 'ru.cleverpumpkin:crunchycalendar:1.1.0'
 ```
 
 #### Maven
@@ -31,7 +31,7 @@ implementation 'ru.cleverpumpkin:crunchycalendar:1.0.0'
 <dependency>
   <groupId>ru.cleverpumpkin</groupId>
   <artifactId>crunchycalendar</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
   <type>pom</type>
 </dependency>
 ```
@@ -81,12 +81,13 @@ calendarView.setupCalendar(
     maxDate = maxDate,
     selectionMode = SelectionMode.NON,
     selectedDates = preselectedDates,
-    firstDayOfWeek = firstDayOfWeek
+    firstDayOfWeek = firstDayOfWeek,
+    showYearSelectionView = true
 )
                 
 ```
 
-**Note:** all parameters in `setupCalendar` method are optional and have default values. 
+**Note:** all parameters in `setupCalendar()` method are optional and have default values. 
 
 To handle date click / long click with custom action, you can do this:
 
@@ -119,6 +120,16 @@ state will be ignored.
 
 ## Dates Selection
 Calendar supports several selection modes: **single**, **multiple** and **range**.
+
+**Note:** You can restrict selection of some dates by implementing your own filtration logic:
+
+```kotlin
+
+// Here we make weekends unavailable for selection
+calendarView.dateSelectionFilter = { date ->
+    date.dayOfWeek != Calendar.SATURDAY && date.dayOfWeek != Calendar.SUNDAY
+}
+```
 
 #### Single date selection 
 Only one date can be selected at a time.
@@ -166,16 +177,6 @@ calendarView.setupCalendar(selectionMode = SelectionMode.RANGE)
 val selectedDates: List<CalendarDate> = calendarView.selectedDates
 
 ```
----
-You can disable selection of the specific calendar dates by implementing your custom filtration logic:
-
-```kotlin
-
-// Weekends are unavailable for selection
-calendarView.dateSelectionFilter = { date ->
-    date.dayOfWeek != Calendar.SATURDAY && date.dayOfWeek != Calendar.SUNDAY
-}
-```
 
 ## Color Indicators
 The Calendar is able to display simple color indicators (dots) on the date cell.
@@ -214,7 +215,7 @@ To get all indicators for specific date, you can do this:
 // Set date click callback 
 calendarView.onDateClickListener = { date ->
 
-    // Get all indicators for date
+    // Get all indicators for the date
     val indicatorsForDate = calendarView.getDateIndicators(date)
     
     // do something ... 
@@ -224,26 +225,55 @@ calendarView.onDateClickListener = { date ->
 
 ## View Customization
 
-Calendar appearance can be customized with XML attributes.
+Calendar appearance can be customized with XML attributes. Here's an example of applying custom style for changing Calendar appearance.
 
+Define your custom style for the Calendar.
+```xml
+<style name="CalendarViewCustomStyle">
+    <item name="android:background">@android:color/white</item>
+    <item name="calendar_date_background">@drawable/custom_date_bg_selector</item>
+    <item name="calendar_date_text_color">@color/custom_date_text_selector</item>
+    <item name="calendar_day_bar_background">@color/custom_calendar_days_bar_background</item>
+    <item name="calendar_day_bar_text_color">@color/custom_calendar_days_bar_text_color</item>
+    <item name="calendar_grid_color">@color/custom_calendar_grid_color</item>
+    <item name="calendar_grid_on_selected_dates">false</item>
+    <item name="calendar_month_text_color">@color/custom_calendar_month_text_color</item>
+    <item name="calendar_year_selection_arrows_color">
+        @color/custom_calendar_year_selection_arrows_color
+    </item>
+    <item name="calendar_year_selection_background">
+        @color/custom_calendar_year_selection_background
+    </item>
+    <item name="calendar_year_selection_text_color">
+        @color/custom_calendar_year_selection_text_color
+    </item>
+</style>
+```
 
-Here's an example of applying custom attributes for changing Calendar appearance.
-
+Apply your custom style.
 ```xml
 
 <ru.cleverpumpkin.calendar.CalendarView
     android:id="@+id/calendar_view"
+    style="@style/CalendarViewCustomStyle"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:calendar_grid_on_selected_dates="false"
-    app:calendar_date_background="@drawable/custom_date_bg_selector"
-    app:calendar_date_text_color="@color/custom_date_text_selector"
-    app:calendar_day_bar_background="@color/custom_calendar_days_bar_background"
-    app:calendar_day_bar_text_color="@color/custom_calendar_days_bar_text_color"
-    app:calendar_grid_color="@color/custom_calendar_grid_color"
-    app:calendar_month_text_color="@color/custom_calendar_month_text_color" />
+    android:layout_height="match_parent" />
 
 ```
+
+You can also apply custom style for all Calendars in your app at once.
+```xml
+
+<style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+
+    <!-- ...snip... -->
+    
+    <item name="calendarViewStyle">@style/CalendarViewCustomStyle</item>
+    
+    <!-- ...etc... -->
+</style>
+```
+
 
 If you need to do some custom drawing logic for Calendar, you can implement standard 
 `RecyclerView.ItemDecoration` and add it for Calendar using `addCustomItemDecoration()` method.
