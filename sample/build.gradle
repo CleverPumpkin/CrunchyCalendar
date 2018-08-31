@@ -2,6 +2,11 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
     compileSdkVersion app.compile_sdk_version
 
@@ -13,10 +18,25 @@ android {
         versionName app.version_name
 
     }
+
+    signingConfigs {
+        upload {
+            keyAlias keystoreProperties['uploadKeyAlias']
+            keyPassword keystoreProperties['uploadKeyPassword']
+            storeFile file(keystoreProperties['uploadStoreFile'])
+            storePassword keystoreProperties['uploadStorePassword']
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.upload
+        }
+
+        debug {
+            applicationIdSuffix '.debug'
         }
     }
 }
@@ -33,4 +53,3 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$libs.support_lib_version"
     implementation "com.android.support:recyclerview-v7:$libs.support_lib_version"
 }
-
