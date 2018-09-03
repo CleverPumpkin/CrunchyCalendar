@@ -9,10 +9,11 @@ class CalendarDateTest {
     @Test
     fun `Test months between two nearest months`() {
         val calendar = Calendar.getInstance()
-        calendar.set(2018, Calendar.MAY, 10)
+
+        calendar.set(2018, Calendar.MAY, 1)
         val startDate = CalendarDate(calendar.time)
 
-        calendar.set(2018, Calendar.JUNE, 10)
+        calendar.set(2018, Calendar.JUNE, 1)
         val endDate = CalendarDate(calendar.time)
 
         assertEquals(1, startDate.monthsBetween(endDate))
@@ -21,18 +22,20 @@ class CalendarDateTest {
     @Test
     fun `Test months between two months with one year difference`() {
         val calendar = Calendar.getInstance()
-        calendar.set(2018, Calendar.MAY, 10)
+
+        calendar.set(2018, Calendar.MAY, 1)
         val startDate = CalendarDate(calendar.time)
 
-        calendar.set(2019, Calendar.MAY, 10)
+        calendar.set(2019, Calendar.MAY, 1)
         val endDate = CalendarDate(calendar.time)
 
         assertEquals(12, startDate.monthsBetween(endDate))
     }
 
     @Test
-    fun `Test months between when end date before start date`() {
+    fun `Test months between when endDate before startDate`() {
         val calendar = Calendar.getInstance()
+
         calendar.set(2018, Calendar.MAY, 10)
         val startDate = CalendarDate(calendar.time)
 
@@ -43,8 +46,9 @@ class CalendarDateTest {
     }
 
     @Test
-    fun `Test months between when start month - 31 December and end month - 1 January of next year`() {
+    fun `Test months between when start date - 31 December of 2018 and end date - 1 January of 2019`() {
         val calendar = Calendar.getInstance()
+
         calendar.set(2018, Calendar.DECEMBER, 31)
         val startDate = CalendarDate(calendar.time)
 
@@ -55,12 +59,13 @@ class CalendarDateTest {
     }
 
     @Test
-    fun `Test days between when end date before start date`() {
+    fun `Test days between when endDate before startDate`() {
         val calendar = Calendar.getInstance()
-        calendar.set(2018, Calendar.MAY, 10)
+
+        calendar.set(2018, Calendar.MAY, 1)
         val startDate = CalendarDate(calendar.time)
 
-        calendar.set(2018, Calendar.MARCH, 10)
+        calendar.set(2018, Calendar.MARCH, 1)
         val endDate = CalendarDate(calendar.time)
 
         assertEquals(0, startDate.daysBetween(endDate))
@@ -69,6 +74,7 @@ class CalendarDateTest {
     @Test
     fun `Test days between two nearest months`() {
         val calendar = Calendar.getInstance()
+
         calendar.set(2018, Calendar.FEBRUARY, 1)
         val startDate = CalendarDate(calendar.time)
 
@@ -81,6 +87,7 @@ class CalendarDateTest {
     @Test
     fun `Test days between with one year difference`() {
         val calendar = Calendar.getInstance()
+
         calendar.set(2018, Calendar.JANUARY, 1)
         val startDate = CalendarDate(calendar.time)
 
@@ -91,8 +98,9 @@ class CalendarDateTest {
     }
 
     @Test
-    fun `Test days between with one year difference for leap year`() {
+    fun `Test days between with one year difference for a leap year`() {
         val calendar = Calendar.getInstance()
+
         calendar.set(2016, Calendar.JANUARY, 1)
         val startDate = CalendarDate(calendar.time)
 
