@@ -294,7 +294,7 @@ There is an abstract helper class `AbsDateItemDecoration` that you can extend to
 drawing logic for specific dates cells.
 
 ## Sample app
-The Sapmle app is available for download from [Google Play](https://play.google.com/store/apps/details?id=ru.cleverpumpkin.calendar.sample).
+The Sample app is available for download from [Google Play](https://play.google.com/store/apps/details?id=ru.cleverpumpkin.calendar.sample).
 
 ## Sketch file
 
