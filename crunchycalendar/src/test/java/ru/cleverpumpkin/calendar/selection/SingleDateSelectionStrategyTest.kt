@@ -4,13 +4,11 @@ import junit.framework.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
-import org.mockito.Mockito.*
+import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
-import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarView
 import ru.cleverpumpkin.calendar.adapter.manager.AdapterDataManager
 import ru.cleverpumpkin.calendar.anyNotNullObject
-import java.util.*
 
 /**
  * Set of unit tests for a [SingleDateSelectionStrategy] class
@@ -27,13 +25,6 @@ class SingleDateSelectionStrategyTest {
 
     private lateinit var dateSelectionStrategy: DateSelectionStrategy
 
-    private val testDate: CalendarDate
-        get() {
-            val calendar = Calendar.getInstance()
-            calendar.set(2018, Calendar.JUNE, 1)
-            return CalendarDate(calendar.time)
-        }
-
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
@@ -43,7 +34,7 @@ class SingleDateSelectionStrategyTest {
     @Test
     fun `Select a date that is selectable, as a result - date is selected`() {
         // Given
-        val date = testDate
+        val date = TestData.date
 
         `when`(dateInfoProvider.isDateSelectable(date))
             .thenReturn(true)
@@ -55,15 +46,12 @@ class SingleDateSelectionStrategyTest {
         assertEquals(true, dateSelectionStrategy.isDateSelected(date))
         assertEquals(1, dateSelectionStrategy.getSelectedDates().size)
         assertEquals(date, dateSelectionStrategy.getSelectedDates().firstOrNull())
-
-        verify(dateInfoProvider, times(1))
-            .isDateSelectable(date)
     }
 
     @Test
     fun `Select a date that isn't selectable, as a result - date isn't selected`() {
         // Given
-        val date = testDate
+        val date = TestData.date
 
         `when`(dateInfoProvider.isDateSelectable(date))
             .thenReturn(false)
@@ -74,15 +62,12 @@ class SingleDateSelectionStrategyTest {
         // Then
         assertEquals(false, dateSelectionStrategy.isDateSelected(date))
         assertEquals(true, dateSelectionStrategy.getSelectedDates().isEmpty())
-
-        verify(dateInfoProvider, times(1))
-            .isDateSelectable(date)
     }
 
     @Test
     fun `Select a new date when there is already selected the same date, as a result - a new date is not selected`() {
         // Given
-        val date = testDate
+        val date = TestData.date
 
         `when`(dateInfoProvider.isDateSelectable(date))
             .thenReturn(true)
@@ -94,15 +79,12 @@ class SingleDateSelectionStrategyTest {
         // Then
         assertEquals(false, dateSelectionStrategy.isDateSelected(date))
         assertEquals(true, dateSelectionStrategy.getSelectedDates().isEmpty())
-
-        verify(dateInfoProvider, times(2))
-            .isDateSelectable(date)
     }
 
     @Test
     fun `Select a new date when there is already selected date, as a result - new date is selected and the old one - no`() {
         // Given
-        val oldDate = testDate
+        val oldDate = TestData.date
         val newDate = oldDate.plusMonths(1)
 
         `when`(dateInfoProvider.isDateSelectable(anyNotNullObject()))
@@ -117,8 +99,5 @@ class SingleDateSelectionStrategyTest {
         assertEquals(true, dateSelectionStrategy.isDateSelected(newDate))
         assertEquals(1, dateSelectionStrategy.getSelectedDates().size)
         assertEquals(newDate, dateSelectionStrategy.getSelectedDates().firstOrNull())
-
-        verify(dateInfoProvider, times(2))
-            .isDateSelectable(anyNotNullObject())
     }
 }
