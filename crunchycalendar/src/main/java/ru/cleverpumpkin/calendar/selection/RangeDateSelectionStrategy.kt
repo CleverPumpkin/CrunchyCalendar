@@ -4,11 +4,11 @@ import android.os.Bundle
 import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarView
 import ru.cleverpumpkin.calendar.NullableDatesRange
-import ru.cleverpumpkin.calendar.adapter.CalendarAdapter
+import ru.cleverpumpkin.calendar.adapter.manager.AdapterDataManager
 import java.util.*
 
 internal class RangeDateSelectionStrategy(
-    private val adapter: CalendarAdapter,
+    private val adapterDataManager: AdapterDataManager,
     private val dateInfoProvider: CalendarView.DateInfoProvider
 
 ) : DateSelectionStrategy {
@@ -26,9 +26,9 @@ internal class RangeDateSelectionStrategy(
             dateFrom == null && dateTo == null -> {
                 datesRange = datesRange.copy(dateFrom = date)
 
-                val position = adapter.findDatePosition(date)
+                val position = adapterDataManager.findDatePosition(date)
                 if (position != -1) {
-                    adapter.notifyItemChanged(position)
+                    adapterDataManager.notifyDateItemChanged(position)
                 }
             }
 
@@ -44,12 +44,12 @@ internal class RangeDateSelectionStrategy(
                     datesRange.copy(dateTo = date)
                 }
 
-                adapter.notifyDataSetChanged()
+                adapterDataManager.notifyDateItemsChanged()
             }
 
             dateFrom != null && dateTo != null -> {
                 datesRange = datesRange.copy(dateFrom = date, dateTo = null)
-                adapter.notifyDataSetChanged()
+                adapterDataManager.notifyDateItemsChanged()
             }
         }
     }
@@ -60,10 +60,10 @@ internal class RangeDateSelectionStrategy(
 
         return if (dateFrom != null && dateTo != null) {
 
-            if (adapter.findDatePosition(dateFrom) != -1 &&
-                adapter.findDatePosition(dateTo) != -1) {
+            if (adapterDataManager.findDatePosition(dateFrom) != -1 &&
+                adapterDataManager.findDatePosition(dateTo) != -1) {
 
-                return adapter.getDateRange(dateFrom = dateFrom, dateTo = dateTo)
+                return adapterDataManager.getDatesRange(dateFrom = dateFrom, dateTo = dateTo)
                     .filter(dateInfoProvider::isDateSelectable)
             }
 
