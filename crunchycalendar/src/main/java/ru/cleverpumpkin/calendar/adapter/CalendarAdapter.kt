@@ -199,7 +199,7 @@ internal class CalendarAdapter(
         return calendarItems[position]
     }
 
-    fun getDateRange(dateFrom: CalendarDate, dateTo: CalendarDate): List<CalendarDate> {
+    fun getDatesRange(dateFrom: CalendarDate, dateTo: CalendarDate): List<CalendarDate> {
         return calendarItems
             .mapNotNull { item ->
                 if (item !is DateItem) {
