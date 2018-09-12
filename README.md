@@ -293,6 +293,9 @@ calendarView.addCustomItemDecoration(customItemDecoration)
 There is an abstract helper class `AbsDateItemDecoration` that you can extend to implement custom 
 drawing logic for specific dates cells.
 
+## Sample app
+The Sample app is available for download from [Google Play](https://play.google.com/store/apps/details?id=ru.cleverpumpkin.calendar.sample).
+
 ## Sketch file
 
 Wouldn’t it be a real pain for your designer to ignore Calendar View in your apps mockups? Or for them to try and explain to you, which colors you should use by adding them to Jira task in _plain text_?
