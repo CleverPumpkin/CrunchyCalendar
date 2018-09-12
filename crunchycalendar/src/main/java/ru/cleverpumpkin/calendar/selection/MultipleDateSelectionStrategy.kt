@@ -3,10 +3,10 @@ package ru.cleverpumpkin.calendar.selection
 import android.os.Bundle
 import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarView
-import ru.cleverpumpkin.calendar.adapter.CalendarAdapter
+import ru.cleverpumpkin.calendar.adapter.manager.AdapterDataManager
 
 internal class MultipleDateSelectionStrategy(
-    private val adapter: CalendarAdapter,
+    private val adapterDataManager: AdapterDataManager,
     private val dateInfoProvider: CalendarView.DateInfoProvider
 
 ) : DateSelectionStrategy {
@@ -27,9 +27,9 @@ internal class MultipleDateSelectionStrategy(
             selectedDates.add(date)
         }
 
-        val datePosition = adapter.findDatePosition(date)
+        val datePosition = adapterDataManager.findDatePosition(date)
         if (datePosition != -1) {
-            adapter.notifyItemChanged(datePosition)
+            adapterDataManager.notifyDateItemChanged(datePosition)
         }
     }
 

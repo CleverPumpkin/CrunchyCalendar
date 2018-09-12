@@ -15,8 +15,10 @@ import ru.cleverpumpkin.calendar.adapter.CalendarAdapter
 import ru.cleverpumpkin.calendar.adapter.CalendarItemsGenerator
 import ru.cleverpumpkin.calendar.adapter.item.DateItem
 import ru.cleverpumpkin.calendar.adapter.item.MonthItem
-import ru.cleverpumpkin.calendar.decorations.GridDividerItemDecoration
+import ru.cleverpumpkin.calendar.adapter.manager.AdapterDataManager
+import ru.cleverpumpkin.calendar.adapter.manager.CalendarAdapterDataManager
 import ru.cleverpumpkin.calendar.selection.*
+import ru.cleverpumpkin.calendar.decorations.GridDividerItemDecoration
 import ru.cleverpumpkin.calendar.utils.getColorInt
 import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
@@ -135,7 +137,8 @@ class CalendarView @JvmOverloads constructor(
     private var dateSelectionStrategy: DateSelectionStrategy = NoDateSelectionStrategy()
     private lateinit var calendarItemsGenerator: CalendarItemsGenerator
     private val displayedYearUpdateListener = DisplayedYearUpdateListener()
-    private val dateInfoProvider = DefaultDateInfoProvider()
+    private val dateInfoProvider: DateInfoProvider = DefaultDateInfoProvider()
+    private val adapterDataManager: AdapterDataManager
 
     private var firstDayOfWeek: Int? = null
         set(value) {
@@ -155,13 +158,13 @@ class CalendarView @JvmOverloads constructor(
                     NoDateSelectionStrategy()
                 }
                 SelectionMode.SINGLE -> {
-                    SingleDateSelectionStrategy(calendarAdapter, dateInfoProvider)
+                    SingleDateSelectionStrategy(adapterDataManager, dateInfoProvider)
                 }
                 SelectionMode.MULTIPLE -> {
-                    MultipleDateSelectionStrategy(calendarAdapter, dateInfoProvider)
+                    MultipleDateSelectionStrategy(adapterDataManager, dateInfoProvider)
                 }
                 SelectionMode.RANGE -> {
-                    RangeDateSelectionStrategy(calendarAdapter, dateInfoProvider)
+                    RangeDateSelectionStrategy(adapterDataManager, dateInfoProvider)
                 }
             }
         }
@@ -322,6 +325,8 @@ class CalendarView @JvmOverloads constructor(
                 }
             }
         )
+
+        adapterDataManager = CalendarAdapterDataManager(calendarAdapter)
 
         daysBarView.applyStyle(
             style = DaysBarView.DaysBarStyle(
