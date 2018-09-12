@@ -4,6 +4,9 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.util.*
 
+/**
+ * Set of unit tests for a [CalendarDate] class
+ */
 class CalendarDateTest {
 
     @Test
