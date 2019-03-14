@@ -108,7 +108,12 @@ class CalendarView @JvmOverloads constructor(
         /**
          * Allows you to select a date range. Previous selected range is cleared when you select another one.
          */
-        RANGE
+        RANGE,
+
+        /**
+         * A week can be selected when a date is clicked (depending of the [firstDayOfWeek])
+         */
+        WEEK
     }
 
     /** Custom attrs with default values */
@@ -162,6 +167,9 @@ class CalendarView @JvmOverloads constructor(
                 }
                 SelectionMode.RANGE -> {
                     RangeDateSelectionStrategy(calendarAdapter, dateInfoProvider)
+                }
+                SelectionMode.WEEK -> {
+                    WeekDateSelectionStrategy(calendarAdapter, dateInfoProvider, firstDayOfWeek)
                 }
             }
         }
@@ -226,6 +234,7 @@ class CalendarView @JvmOverloads constructor(
      * [SelectionMode.SINGLE] returns list with a single selected date
      * [SelectionMode.MULTIPLE] returns all selected dates in order they were added
      * [SelectionMode.RANGE] returns all dates in selected range
+     * [SelectionMode.WEEK] returns a week depending of a date selected
      */
     val selectedDates: List<CalendarDate>
         get() = dateSelectionStrategy.getSelectedDates()

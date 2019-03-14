@@ -2,6 +2,7 @@ package ru.cleverpumpkin.calendar
 
 import android.os.Parcel
 import android.os.Parcelable
+import android.util.Log
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -22,6 +23,7 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
 
     companion object {
         const val MONTHS_IN_YEAR = 12
+        const val DAYS_IN_WEEK = 7
 
         @JvmField
         val CREATOR = object : Parcelable.Creator<CalendarDate> {
@@ -110,6 +112,14 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
         return CalendarDate(tmpCalendar.time)
     }
 
+    fun plusDays(daysCount: Int): CalendarDate {
+        val tmpCalendar = Calendar.getInstance()
+        tmpCalendar.time = _calendar.time
+        tmpCalendar.add(Calendar.DAY_OF_MONTH, daysCount)
+
+        return CalendarDate(tmpCalendar.time)
+    }
+
     fun plusMonths(monthsCount: Int): CalendarDate {
         val tmpCalendar = Calendar.getInstance()
         tmpCalendar.time = _calendar.time
@@ -152,5 +162,18 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
     @Suppress("ConvertTwoComparisonsToRangeCheck")
     fun isBetween(dateFrom: CalendarDate, dateTo: CalendarDate): Boolean {
         return this >= dateFrom && this <= dateTo
+    }
+
+    /**
+     * Check if current date in week contains another date in the same week
+     */
+    fun isInWeek(date: CalendarDate, firstDayOfWeek: Int): Boolean {
+        val diffStart = if (this.dayOfWeek >= firstDayOfWeek) {
+            (this.dayOfWeek - firstDayOfWeek).takeIf { it >= 0 } ?: 0
+        } else {
+            (DAYS_IN_WEEK - this.dayOfWeek).takeIf { it >= 0 } ?: 0
+        }
+        val dateFirstDayOfWeek = this.plusDays(diffStart * -1)
+        return date.isBetween(dateFirstDayOfWeek, dateFirstDayOfWeek.plusDays(DAYS_IN_WEEK - 1))
     }
 }

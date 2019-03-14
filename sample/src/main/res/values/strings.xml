@@ -11,6 +11,7 @@
     <string name="range">Range</string>
     <string name="boundaries">Date boundaries</string>
     <string name="selection_filter">Date selection filter</string>
+    <string name="week">Week</string>
 
     <string name="move_to_date">Move to today</string>
 

@@ -75,6 +75,7 @@ class SelectionSampleFragment : Fragment() {
                 R.id.range_mode -> setupCalendarWithSelectionMode(SelectionMode.RANGE)
                 R.id.boundaries_mode -> setupCalendarWithBoundaries()
                 R.id.selection_filter_mode -> setupCalendarWithDateSelectionFilter()
+                R.id.week_mode -> setupCalendarWithSelectionMode(SelectionMode.WEEK)
             }
 
             updateSelectedDatesView()
@@ -107,6 +108,7 @@ class SelectionSampleFragment : Fragment() {
             SelectionMode.SINGLE -> preselectedSingleDate()
             SelectionMode.MULTIPLE -> preselectedMultipleDates()
             SelectionMode.RANGE -> preselectedDatesRange()
+            SelectionMode.WEEK -> emptyList()
         }
 
         calendarView.dateSelectionFilter = null
@@ -114,6 +116,7 @@ class SelectionSampleFragment : Fragment() {
         calendarView.setupCalendar(
             initialDate = initialDate,
             selectionMode = selectionMode,
+            firstDayOfWeek = Calendar.MONDAY,
             selectedDates = preselectedDates
         )
     }
