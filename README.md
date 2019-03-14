@@ -5,12 +5,12 @@
 A **light**, **powerful** and **easy to use** Calendar Widget with a number out of the box features:
 * Infinite vertical scrolling in both directions;
 * Setting date boundaries to restrict scrolling inside of a specific time period;
-* Single / multiple / range dates selection;
+* Single / multiple / range dates selection / week selection;
 * Pre-selecting dates;
 * Color customization;
 * Displaying color indicators;
 * Setting own custom ItemDecoration;
-* Presented as a View subclass which can be displayed everywhere: in Activity, Fragment or Dialog, 
+* Presented as a View subclass which can be displayed everywhere: in Activity, Fragment or Dialog,
 or can be integrated into another custom View.
 
 ![alt text](images/calendar.jpg)
@@ -39,11 +39,11 @@ implementation 'ru.cleverpumpkin:crunchycalendar:1.1.0'
 ## Usage
 
 Here's a basic example of Calendar usage.
- 
+
 First of all, you should declare `CalendarView` in your layout XML file.
 
 ```xml
-  <ru.cleverpumpkin.calendar.CalendarView 
+  <ru.cleverpumpkin.calendar.CalendarView
         android:id="@+id/calendar_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
@@ -76,7 +76,7 @@ val firstDayOfWeek = java.util.Calendar.MONDAY
 
 // Set up calendar with all available parameters
 calendarView.setupCalendar(
-    initialDate = initialDate, 
+    initialDate = initialDate,
     minDate = minDate,
     maxDate = maxDate,
     selectionMode = SelectionMode.NON,
@@ -84,39 +84,39 @@ calendarView.setupCalendar(
     firstDayOfWeek = firstDayOfWeek,
     showYearSelectionView = true
 )
-                
+
 ```
 
-**Note:** all parameters in `setupCalendar()` method are optional and have default values. 
+**Note:** all parameters in `setupCalendar()` method are optional and have default values.
 
 To handle date click / long click with custom action, you can do this:
 
 ```kotlin
 
-// Set date click callback 
+// Set date click callback
 calendarView.onDateClickListener = { date ->
 
-    // Do something ... 
+    // Do something ...
     // for example get list of selected dates
-    val selectedDates = calendarView.selectedDates 
+    val selectedDates = calendarView.selectedDates
 }
 
-// Set date long click callback 
+// Set date long click callback
 calendarView.onDateLongClickListener = { date ->
 
-    // Do something ... 
+    // Do something ...
 }
 
 ```
 
 
-## Saving and Restoring state  
+## Saving and Restoring state
 Calendar takes care of saving and restoring its internal state (selected dates, selection mode, etc.),
-so there's no need to save it manually and call setupCalendar() method every time, 
+so there's no need to save it manually and call setupCalendar() method every time,
 when `Activity` or `Fragment` is recreated.
 
-If a Calendar was set up with `setupCalendar()` method **before** restoring state, previous saved 
-state will be ignored. 
+If a Calendar was set up with `setupCalendar()` method **before** restoring state, previous saved
+state will be ignored.
 
 ## Dates Selection
 Calendar supports several selection modes: **single**, **multiple** and **range**.
@@ -131,7 +131,7 @@ calendarView.dateSelectionFilter = { date ->
 }
 ```
 
-#### Single date selection 
+#### Single date selection
 Only one date can be selected at a time.
 
 ```kotlin
@@ -148,7 +148,7 @@ val selectedDate: CalendarDate? = calendarView.selectedDate
 val selectedDates: List<CalendarDate> = calendarView.selectedDates
 ```
 
-#### Multiple dates selection 
+#### Multiple dates selection
 A number of dates can be selected. Pressing an already selected date will unselect it.
 
 ```kotlin
@@ -163,7 +163,7 @@ val selectedDates: List<CalendarDate> = calendarView.selectedDates
 
 ```
 
-#### Range date selection 
+#### Range date selection
 Allows you to select a date range. Previous selected range is cleared when you select another one.
 
 ```kotlin
@@ -171,9 +171,26 @@ Allows you to select a date range. Previous selected range is cleared when you s
 // Set up calendar with SelectionMode.RANGE
 calendarView.setupCalendar(selectionMode = SelectionMode.RANGE)
 
-... 
+...
 
 // Get all selected dates in range (includes start and end date) or empty list
+val selectedDates: List<CalendarDate> = calendarView.selectedDates
+
+```
+
+#### Week selection
+Allows you to select a week (7 days that follow). Previous selected week is cleared when you select a day of the week.
+
+Use `firstDayOfWeek` to define the first day of the week.
+
+```kotlin
+
+// Set up calendar with SelectionMode.WEEK
+calendarView.setupCalendar(selectionMode = SelectionMode.WEEK)
+
+...
+
+// Get all selected dates of the week or empty list
 val selectedDates: List<CalendarDate> = calendarView.selectedDates
 
 ```
