@@ -2,7 +2,6 @@ package ru.cleverpumpkin.calendar
 
 import android.os.Parcel
 import android.os.Parcelable
-import android.util.Log
 import java.util.*
 import java.util.concurrent.TimeUnit
 
