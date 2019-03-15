@@ -1,6 +1,7 @@
 package ru.cleverpumpkin.calendar.selection
 
 import android.os.Bundle
+import android.util.Log
 import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarDate.Companion.DAYS_IN_WEEK
 import ru.cleverpumpkin.calendar.CalendarView
@@ -10,7 +11,7 @@ import ru.cleverpumpkin.calendar.utils.safeLet
 internal class WeekDateSelectionStrategy(
     private val adapter: CalendarAdapter,
     private val dateInfoProvider: CalendarView.DateInfoProvider,
-    private val firstDayOfWeek: Int?
+    private val firstDayWeekSelectionMode: Int?
 
 ) : DateSelectionStrategy {
 
@@ -18,37 +19,35 @@ internal class WeekDateSelectionStrategy(
         private const val BUNDLE_WEEK_DATE = "ru.cleverpumpkin.calendar.week_date"
     }
 
-    private var selectedWeekDate: CalendarDate? = null
+    private var selectedDate: CalendarDate? = null
 
     override fun onDateSelected(date: CalendarDate) {
         if (dateInfoProvider.isDateSelectable(date).not()) {
             return
         }
 
-        if (firstDayOfWeek != null) {
-            if (selectedWeekDate?.isInWeek(date, firstDayOfWeek) == true) {
-                selectedWeekDate = null
+        if (firstDayWeekSelectionMode != null) {
+            if (selectedDate?.isInWeek(date, firstDayWeekSelectionMode) == true) {
+                selectedDate = null
                 adapter.notifyDataSetChanged()
             } else {
-                selectedWeekDate = date
+                selectedDate = date
                 adapter.notifyDataSetChanged()
             }
         }
     }
 
     override fun getSelectedDates(): List<CalendarDate> {
-        return safeLet(selectedWeekDate, firstDayOfWeek) { date, firstDayOfWeek ->
+        return safeLet(
+            selectedDate,
+            firstDayWeekSelectionMode
+        ) { selectedDate, firstDayWeekSelectionMode ->
             val selectedDates = mutableListOf<CalendarDate>()
-            val diffStart = if (date.dayOfWeek >= firstDayOfWeek) {
-                (date.dayOfWeek - firstDayOfWeek).takeIf { it >= 0 } ?: 0
-            } else {
-                (DAYS_IN_WEEK - date.dayOfWeek).takeIf { it >= 0 } ?: 0
-            }
-            val dateFirstDayOfWeek = selectedWeekDate?.plusDays(diffStart * -1)
+            val dateFirstDayOfWeek = selectedDate.getFirstDayOfWeek(firstDayWeekSelectionMode)
 
             repeat(DAYS_IN_WEEK) {
-                val tmpDate = dateFirstDayOfWeek?.plusDays(it)
-                tmpDate?.let {
+                val tmpDate = dateFirstDayOfWeek.plusDays(it)
+                tmpDate.let {
                     if (dateInfoProvider.isDateSelectable(tmpDate)) {
                         selectedDates += tmpDate
                     }
@@ -61,12 +60,12 @@ internal class WeekDateSelectionStrategy(
     }
 
     override fun isDateSelected(date: CalendarDate): Boolean {
-        return if (selectedWeekDate != null && firstDayOfWeek != null) {
+        return if (selectedDate != null && firstDayWeekSelectionMode != null) {
             when {
                 dateInfoProvider.isDateSelectable(date).not() -> {
                     false
                 }
-                selectedWeekDate?.isInWeek(date, firstDayOfWeek) ?: false -> {
+                selectedDate?.isInWeek(date, firstDayWeekSelectionMode) ?: false -> {
                     true
                 }
                 else -> {
@@ -79,10 +78,10 @@ internal class WeekDateSelectionStrategy(
     }
 
     override fun saveSelectedDates(bundle: Bundle) {
-        bundle.putParcelable(BUNDLE_WEEK_DATE, selectedWeekDate)
+        bundle.putParcelable(BUNDLE_WEEK_DATE, selectedDate)
     }
 
     override fun restoreSelectedDates(bundle: Bundle) {
-        selectedWeekDate = bundle.getParcelable(BUNDLE_WEEK_DATE)
+        selectedDate = bundle.getParcelable(BUNDLE_WEEK_DATE)
     }
 }

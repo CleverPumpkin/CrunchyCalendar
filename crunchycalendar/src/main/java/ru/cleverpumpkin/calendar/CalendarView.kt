@@ -153,6 +153,7 @@ class CalendarView @JvmOverloads constructor(
             daysBarView.setupDaysBarView(firstDayOfWeek)
             calendarItemsGenerator = CalendarItemsGenerator(firstDayOfWeek)
         }
+    private var firstDayWeekSelectionMode: Int? = null
 
     private var selectionMode: SelectionMode = SelectionMode.NON
         set(value) {
@@ -172,7 +173,7 @@ class CalendarView @JvmOverloads constructor(
                     RangeDateSelectionStrategy(adapterDataManager, dateInfoProvider)
                 }
                 SelectionMode.WEEK -> {
-                    WeekDateSelectionStrategy(calendarAdapter, dateInfoProvider, firstDayOfWeek)
+                    WeekDateSelectionStrategy(calendarAdapter, dateInfoProvider, firstDayWeekSelectionMode)
                 }
             }
         }
@@ -441,6 +442,7 @@ class CalendarView @JvmOverloads constructor(
         selectionMode: SelectionMode = SelectionMode.NON,
         selectedDates: List<CalendarDate> = emptyList(),
         firstDayOfWeek: Int? = null,
+        firstDayWeekSelectionMode: Int? = null,
         showYearSelectionView: Boolean = true
     ) {
         if (minDate != null && maxDate != null && minDate > maxDate) {
@@ -454,6 +456,7 @@ class CalendarView @JvmOverloads constructor(
 
         this.selectionMode = selectionMode
         this.firstDayOfWeek = firstDayOfWeek
+        this.firstDayWeekSelectionMode = firstDayWeekSelectionMode ?: firstDayOfWeek
         this.showYearSelectionView = showYearSelectionView
         minMaxDatesRange = NullableDatesRange(dateFrom = minDate, dateTo = maxDate)
 
