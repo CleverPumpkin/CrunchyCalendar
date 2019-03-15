@@ -63,7 +63,15 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$libs.support_lib_version"
     implementation "com.android.support:recyclerview-v7:$libs.support_lib_version"
 
-    testImplementation 'junit:junit:4.12'
+    // JUnit
+    testImplementation "junit:junit:$libs.junit_version"
+
+    // Mockito
+    testImplementation "org.mockito:mockito-all:$libs.mockito_version"
+
+    // PowerMock
+    testImplementation "org.powermock:powermock-api-mockito:$libs.powermock_version"
+    testImplementation "org.powermock:powermock-module-junit4:$libs.powermock_version"
 }
 
 tasks.withType(Javadoc).all {

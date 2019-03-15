@@ -3,10 +3,10 @@ package ru.cleverpumpkin.calendar.selection
 import android.os.Bundle
 import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarView
-import ru.cleverpumpkin.calendar.adapter.CalendarAdapter
+import ru.cleverpumpkin.calendar.adapter.manager.AdapterDataManager
 
 internal class SingleDateSelectionStrategy(
-    private val adapter: CalendarAdapter,
+    private val adapterDataManager: AdapterDataManager,
     private val dateInfoProvider: CalendarView.DateInfoProvider
 
 ) : DateSelectionStrategy {
@@ -29,16 +29,16 @@ internal class SingleDateSelectionStrategy(
             selectedDate = date
 
             if (previousSelectedDate != null) {
-                val previousSelectedPosition = adapter.findDatePosition(previousSelectedDate)
+                val previousSelectedPosition = adapterDataManager.findDatePosition(previousSelectedDate)
                 if (previousSelectedPosition != -1) {
-                    adapter.notifyItemChanged(previousSelectedPosition)
+                    adapterDataManager.notifyDateItemChanged(previousSelectedPosition)
                 }
             }
         }
 
-        val selectedDatePosition = adapter.findDatePosition(date)
+        val selectedDatePosition = adapterDataManager.findDatePosition(date)
         if (selectedDatePosition != -1) {
-            adapter.notifyItemChanged(selectedDatePosition)
+            adapterDataManager.notifyDateItemChanged(selectedDatePosition)
         }
     }
 

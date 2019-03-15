@@ -181,12 +181,15 @@ val selectedDates: List<CalendarDate> = calendarView.selectedDates
 #### Week selection
 Allows you to select a week (7 days that follow). Previous selected week is cleared when you select a day of the week.
 
-Use `firstDayOfWeek` to define the first day of the week.
+Use `firstDayWeekSelectionMode` to define the first day of week selection. If not define the parameter `firstDayOfWeek` will be used by default.
 
 ```kotlin
 
 // Set up calendar with SelectionMode.WEEK
-calendarView.setupCalendar(selectionMode = SelectionMode.WEEK)
+calendarView.setupCalendar(
+    selectionMode = SelectionMode.WEEK,
+    firstDayWeekSelectionMode = Calendar.WEDNESDAY
+)
 
 ...
 

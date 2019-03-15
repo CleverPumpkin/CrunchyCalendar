@@ -116,7 +116,8 @@ class SelectionSampleFragment : Fragment() {
         calendarView.setupCalendar(
             initialDate = initialDate,
             selectionMode = selectionMode,
-            firstDayOfWeek = Calendar.MONDAY,
+            firstDayOfWeek = Calendar.WEDNESDAY,
+            firstDayWeekSelectionMode = Calendar.WEDNESDAY,
             selectedDates = preselectedDates
         )
     }

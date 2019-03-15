@@ -164,15 +164,22 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
     }
 
     /**
-     * Check if current date in week contains another date in the same week
+     * Return first day of the week from a date
      */
-    fun isInWeek(date: CalendarDate, firstDayOfWeek: Int): Boolean {
+    fun getFirstDayOfWeek(firstDayOfWeek: Int): CalendarDate {
         val diffStart = if (this.dayOfWeek >= firstDayOfWeek) {
             (this.dayOfWeek - firstDayOfWeek).takeIf { it >= 0 } ?: 0
         } else {
-            (DAYS_IN_WEEK - this.dayOfWeek).takeIf { it >= 0 } ?: 0
+            ((DAYS_IN_WEEK + this.dayOfWeek) - firstDayOfWeek).takeIf { it >= 0 } ?: 0
         }
-        val dateFirstDayOfWeek = this.plusDays(diffStart * -1)
+        return this.plusDays(diffStart * -1)
+    }
+
+    /**
+     * Check if current date in week contains another date in the same week
+     */
+    fun isInWeek(date: CalendarDate, firstDayOfWeek: Int): Boolean {
+        val dateFirstDayOfWeek = this.getFirstDayOfWeek(firstDayOfWeek)
         return date.isBetween(dateFirstDayOfWeek, dateFirstDayOfWeek.plusDays(DAYS_IN_WEEK - 1))
     }
 }

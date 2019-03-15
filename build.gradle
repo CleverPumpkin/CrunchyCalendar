@@ -15,7 +15,12 @@ buildscript {
         // 3-rd party libraries versions
         libs = [
                 kotlin_version     : '1.2.61',
-                support_lib_version: '27.1.1'
+                support_lib_version: '27.1.1',
+
+                // libs for testing
+                junit_version            : '4.12',
+                mockito_version          : '1.10.19',
+                powermock_version        : '1.6.2'
         ]
 
         // Gradle plugins versions
