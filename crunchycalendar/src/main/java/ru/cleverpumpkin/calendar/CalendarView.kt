@@ -17,11 +17,9 @@ import ru.cleverpumpkin.calendar.adapter.item.DateItem
 import ru.cleverpumpkin.calendar.adapter.item.MonthItem
 import ru.cleverpumpkin.calendar.adapter.manager.AdapterDataManager
 import ru.cleverpumpkin.calendar.adapter.manager.CalendarAdapterDataManager
-import ru.cleverpumpkin.calendar.selection.*
 import ru.cleverpumpkin.calendar.decorations.GridDividerItemDecoration
+import ru.cleverpumpkin.calendar.selection.*
 import ru.cleverpumpkin.calendar.utils.getColorInt
-import java.lang.IllegalArgumentException
-import java.lang.IllegalStateException
 import java.util.*
 
 /**
@@ -453,33 +451,7 @@ class CalendarView @JvmOverloads constructor(
             minMaxDatesRange = minMaxDatesRange
         )
 
-        if (selectedDates.isNotEmpty()) {
-            when {
-                selectionMode == SelectionMode.NON -> {
-                    throw IllegalArgumentException("NON selection mode can't be used with selected dates")
-                }
-
-                selectionMode == SelectionMode.SINGLE && selectedDates.size > 1 -> {
-                    throw IllegalArgumentException("SINGLE selection mode can't be used with multiple selected dates")
-                }
-
-                selectionMode == SelectionMode.RANGE && selectedDates.size > 2 -> {
-                    throw IllegalArgumentException("RANGE selection mode only allows two selected dates")
-                }
-
-                else -> {
-                    selectedDates.forEach { date ->
-                        if (minMaxDatesRange.isDateOutOfRange(date)) {
-                            throw IllegalArgumentException(
-                                "Selected date must be between minDate and maxDate. " +
-                                        "Selected date: $date, minDate: $minDate, maxDate: $maxDate"
-                            )
-                        }
-                        dateSelectionStrategy.onDateSelected(date)
-                    }
-                }
-            }
-        }
+        internalUpdateSelectedDates(selectedDates)
 
         displayDatesRange = prepareDisplayDatesRange(
             initialDate = initialDate,
@@ -544,6 +516,49 @@ class CalendarView @JvmOverloads constructor(
      */
     fun getDateIndicators(date: CalendarDate): List<DateIndicator> {
         return groupedDatesIndicators[date] ?: emptyList()
+    }
+
+    /**
+     * Update currently selected dates.
+     */
+    fun updateSelectedDates(selectedDates: List<CalendarDate>) {
+        dateSelectionStrategy.clear()
+        internalUpdateSelectedDates(selectedDates)
+    }
+
+    private fun internalUpdateSelectedDates(selectedDates: List<CalendarDate>) {
+        if (selectedDates.isEmpty()) {
+            return
+        }
+
+        when {
+            selectionMode == SelectionMode.NON -> {
+                throw IllegalArgumentException(
+                    "You cannot define selected dates when the SelectionMode is NONE"
+                )
+            }
+
+            selectionMode == SelectionMode.SINGLE && selectedDates.size > 1 -> {
+                throw IllegalArgumentException(
+                    "You cannot define more than one selected dates when the SelectionMode is SINGLE"
+                )
+            }
+
+            selectionMode == SelectionMode.RANGE && selectedDates.size != 2 -> {
+                throw IllegalArgumentException(
+                    "You must define two selected dates (start and end) when the SelectionMode is RANGE"
+                )
+            }
+        }
+
+        selectedDates.forEach { date ->
+            if (dateInfoProvider.isDateOutOfRange(date).not() &&
+                dateInfoProvider.isDateSelectable(date)
+            ) {
+                dateSelectionStrategy.onDateSelected(date)
+            }
+        }
+
     }
 
     private fun prepareDisplayDatesRange(

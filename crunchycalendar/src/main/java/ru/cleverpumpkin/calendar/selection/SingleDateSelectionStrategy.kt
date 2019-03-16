@@ -29,7 +29,8 @@ internal class SingleDateSelectionStrategy(
             selectedDate = date
 
             if (previousSelectedDate != null) {
-                val previousSelectedPosition = adapterDataManager.findDatePosition(previousSelectedDate)
+                val previousSelectedPosition =
+                    adapterDataManager.findDatePosition(previousSelectedDate)
                 if (previousSelectedPosition != -1) {
                     adapterDataManager.notifyDateItemChanged(previousSelectedPosition)
                 }
@@ -63,4 +64,14 @@ internal class SingleDateSelectionStrategy(
     override fun restoreSelectedDates(bundle: Bundle) {
         selectedDate = bundle.getParcelable(BUNDLE_SELECTED_DATE)
     }
+
+    override fun clear() {
+        val date = selectedDate
+        if (date != null) {
+            selectedDate = null
+            val datePosition = adapterDataManager.findDatePosition(date)
+            adapterDataManager.notifyDateItemChanged(datePosition)
+        }
+    }
+
 }

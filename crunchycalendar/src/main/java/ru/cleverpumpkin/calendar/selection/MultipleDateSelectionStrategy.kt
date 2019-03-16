@@ -49,4 +49,10 @@ internal class MultipleDateSelectionStrategy(
         val selectedDatesArray = bundle.getParcelableArray(BUNDLE_SELECTED_DATES)
         selectedDatesArray.mapTo(selectedDates) { it as CalendarDate }
     }
+
+    override fun clear() {
+        selectedDates.clear()
+        adapterDataManager.notifyDateItemsChanged()
+    }
+
 }

@@ -9,27 +9,33 @@ import ru.cleverpumpkin.calendar.CalendarDate
 internal interface DateSelectionStrategy {
 
     /**
-     * This method will be invoked when date selected
+     * This method is invoked when date is selected.
      */
     fun onDateSelected(date: CalendarDate)
 
     /**
-     * Returns `true` if the [date] is selected
+     * Returns `true` if the [date] is selected.
      */
     fun isDateSelected(date: CalendarDate): Boolean
 
     /**
-     * Returns list of selected dates
+     * Returns list of selected dates.
      */
     fun getSelectedDates(): List<CalendarDate>
 
     /**
-     * This method will be invoked when CalendarView save its state
+     * This method is invoked when CalendarView save its state.
      */
     fun saveSelectedDates(bundle: Bundle)
 
     /**
-     * This method will be invoked when CalendarView restore its state
+     * This method is invoked when CalendarView restore its state.
      */
     fun restoreSelectedDates(bundle: Bundle)
+
+    /**
+     * This method is called to clear currently selected dates.
+     */
+    fun clear()
+
 }

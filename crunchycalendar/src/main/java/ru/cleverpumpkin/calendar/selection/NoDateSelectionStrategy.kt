@@ -9,7 +9,7 @@ import ru.cleverpumpkin.calendar.CalendarDate
 internal class NoDateSelectionStrategy : DateSelectionStrategy {
 
     override fun onDateSelected(date: CalendarDate) {
-        // do nothing
+        // Do nothing.
     }
 
     override fun getSelectedDates(): List<CalendarDate> {
@@ -21,10 +21,15 @@ internal class NoDateSelectionStrategy : DateSelectionStrategy {
     }
 
     override fun saveSelectedDates(bundle: Bundle) {
-        // do nothing
+        // Do nothing.
     }
 
     override fun restoreSelectedDates(bundle: Bundle) {
-        // do nothing
+        // Do nothing.
     }
+
+    override fun clear() {
+        // Do nothing.
+    }
+
 }

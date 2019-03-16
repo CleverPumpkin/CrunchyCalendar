@@ -115,4 +115,10 @@ internal class RangeDateSelectionStrategy(
     override fun restoreSelectedDates(bundle: Bundle) {
         datesRange = bundle.getParcelable(BUNDLE_DATES_RANGE)
     }
+
+    override fun clear() {
+        datesRange = NullableDatesRange()
+        adapterDataManager.notifyDateItemsChanged()
+    }
+
 }
