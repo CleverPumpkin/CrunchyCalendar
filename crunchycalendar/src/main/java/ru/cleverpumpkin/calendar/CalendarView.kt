@@ -128,8 +128,9 @@ class CalendarView @JvmOverloads constructor(
     private val recyclerView: RecyclerView
     private val calendarAdapter: CalendarAdapter
 
-    /** Internal flag, that indicates whether the [setupCalendar] method was called or not */
+    // Internal flag, that indicates whether the [setupCalendar] method was called or not.
     private var initializedWithSetup = false
+
     private var displayDatesRange = DatesRange.emptyRange()
     private var minMaxDatesRange = NullableDatesRange()
     private var dateSelectionStrategy: DateSelectionStrategy = NoDateSelectionStrategy()
@@ -137,15 +138,6 @@ class CalendarView @JvmOverloads constructor(
     private val displayedYearUpdateListener = DisplayedYearUpdateListener()
     private val dateInfoProvider: DateInfoProvider = DefaultDateInfoProvider()
     private val adapterDataManager: AdapterDataManager
-
-    private var firstDayOfWeek: Int? = null
-        set(value) {
-            field = value
-
-            val firstDayOfWeek = value ?: Calendar.getInstance().firstDayOfWeek
-            daysBarView.setupDaysBarView(firstDayOfWeek)
-            calendarItemsGenerator = CalendarItemsGenerator(firstDayOfWeek)
-        }
 
     private var selectionMode: SelectionMode = SelectionMode.NON
         set(value) {
@@ -172,7 +164,7 @@ class CalendarView @JvmOverloads constructor(
             field = value
             recyclerView.removeOnScrollListener(displayedYearUpdateListener)
 
-            if (value) {
+            if (showYearSelectionView) {
                 yearSelectionView.visibility = View.VISIBLE
                 recyclerView.addOnScrollListener(displayedYearUpdateListener)
             } else {
@@ -180,10 +172,24 @@ class CalendarView @JvmOverloads constructor(
             }
         }
 
+    private val defaultFirstDayOfWeek: Int
+        get() = Calendar.getInstance().firstDayOfWeek
+
+    /**
+     * The first day of the week, e.g [Calendar.SUNDAY], [Calendar.MONDAY], etc.
+     */
+    var firstDayOfWeek: Int = defaultFirstDayOfWeek
+        private set(value) {
+            field = value
+            daysBarView.setupDaysBarView(firstDayOfWeek)
+            calendarItemsGenerator = CalendarItemsGenerator(firstDayOfWeek)
+        }
+
     /**
      * Grouped by date indicators that will be displayed on the Calendar.
      */
     private val groupedDatesIndicators = ArrayMap<CalendarDate, MutableList<DateIndicator>>()
+
 
     /**
      * List of indicators that will be displayed on the Calendar.
@@ -211,6 +217,7 @@ class CalendarView @JvmOverloads constructor(
      */
     var onYearClickListener: ((Int) -> Unit)? = null
         set(value) {
+            field = value
             yearSelectionView.onYearClickListener = value
         }
 
@@ -416,7 +423,7 @@ class CalendarView @JvmOverloads constructor(
      * [selectedDates] list of the initially selected dates.
      * Default value - empty list
      *
-     * [firstDayOfWeek] the first day of week: [Calendar.SUNDAY], [Calendar.MONDAY], etc.
+     * [firstDayOfWeek] the first day of the week: [Calendar.SUNDAY], [Calendar.MONDAY], etc.
      * Default value - null. If null, the Calendar will be initialized with the `firstDayOfWeek`
      * from the default Locale
      *
@@ -429,15 +436,14 @@ class CalendarView @JvmOverloads constructor(
         maxDate: CalendarDate? = null,
         selectionMode: SelectionMode = SelectionMode.NON,
         selectedDates: List<CalendarDate> = emptyList(),
-        firstDayOfWeek: Int? = null,
+        firstDayOfWeek: Int = defaultFirstDayOfWeek,
         showYearSelectionView: Boolean = true
     ) {
         if (minDate != null && maxDate != null && minDate > maxDate) {
             throw IllegalArgumentException("minDate must be before maxDate: $minDate, maxDate: $maxDate")
         }
 
-        if (firstDayOfWeek != null &&
-            (firstDayOfWeek < Calendar.SUNDAY || firstDayOfWeek > Calendar.SATURDAY)) {
+        if (firstDayOfWeek < Calendar.SUNDAY || firstDayOfWeek > Calendar.SATURDAY) {
             throw IllegalArgumentException("Incorrect value of firstDayOfWeek: $firstDayOfWeek")
         }
 
@@ -708,12 +714,8 @@ class CalendarView @JvmOverloads constructor(
             putParcelable(BUNDLE_SUPER_STATE, superState)
             putParcelable(BUNDLE_DISPLAYED_DATE, yearSelectionView.displayedDate)
             putBoolean(BUNDLE_SHOW_YEAR_SELECTION_VIEW, showYearSelectionView)
+            putInt(BUNDLE_FIRST_DAY_OF_WEEK, firstDayOfWeek)
             dateSelectionStrategy.saveSelectedDates(this)
-
-            val firstDayOfWeek = firstDayOfWeek
-            if (firstDayOfWeek != null) {
-                putInt(BUNDLE_FIRST_DAY_OF_WEEK, firstDayOfWeek)
-            }
         }
     }
 
@@ -734,6 +736,7 @@ class CalendarView @JvmOverloads constructor(
                 displayDatesRange = state.getParcelable(BUNDLE_DISPLAY_DATE_RANGE)
                 minMaxDatesRange = state.getParcelable(BUNDLE_LIMIT_DATE_RANGE)
                 showYearSelectionView = state.getBoolean(BUNDLE_SHOW_YEAR_SELECTION_VIEW)
+                firstDayOfWeek = state.getInt(BUNDLE_FIRST_DAY_OF_WEEK)
                 dateSelectionStrategy.restoreSelectedDates(state)
 
                 val displayedDate: CalendarDate = state.getParcelable(BUNDLE_DISPLAYED_DATE)
@@ -741,12 +744,6 @@ class CalendarView @JvmOverloads constructor(
                     displayedDate = displayedDate,
                     minMaxDatesRange = minMaxDatesRange
                 )
-
-                firstDayOfWeek = if (state.containsKey(BUNDLE_FIRST_DAY_OF_WEEK)) {
-                    state.getInt(BUNDLE_FIRST_DAY_OF_WEEK)
-                } else {
-                    null
-                }
 
                 generateCalendarItems(displayDatesRange)
             }
