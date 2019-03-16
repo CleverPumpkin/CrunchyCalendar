@@ -24,7 +24,7 @@ class SelectionSampleFragment : Fragment() {
     private lateinit var selectedDatesView: TextView
     private lateinit var selectionModeGroupView: RadioGroup
 
-    private var selectedMode = R.id.single_mode
+    private var selectedMode = R.id.single_selection
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -70,11 +70,25 @@ class SelectionSampleFragment : Fragment() {
             this.selectedMode = selectedMode
 
             when (selectedMode) {
-                R.id.single_mode -> setupCalendarWithSelectionMode(SelectionMode.SINGLE)
-                R.id.multiple_mode -> setupCalendarWithSelectionMode(SelectionMode.MULTIPLE)
-                R.id.range_mode -> setupCalendarWithSelectionMode(SelectionMode.RANGE)
-                R.id.boundaries_mode -> setupCalendarWithBoundaries()
-                R.id.selection_filter_mode -> setupCalendarWithDateSelectionFilter()
+                R.id.single_selection -> {
+                    setupCalendar(SelectionMode.SINGLE, preselectedSingleDate())
+                }
+                R.id.multiple_selection -> {
+                    setupCalendar(SelectionMode.MULTIPLE, preselectedMultipleDates())
+                }
+                R.id.range_selection -> {
+                    setupCalendar(SelectionMode.RANGE, preselectedDatesRange())
+                }
+                R.id.week_custom_selection -> {
+
+                    setupCalendarWithWeekSelection()
+                }
+                R.id.boundaries_selection -> {
+                    setupCalendarWithBoundaries()
+                }
+                R.id.selection_filter -> {
+                    setupCalendarWithDateSelectionFilter()
+                }
             }
 
             updateSelectedDatesView()
@@ -84,7 +98,7 @@ class SelectionSampleFragment : Fragment() {
             selectionModeGroupView.check(selectedMode)
         } else {
             selectedMode = savedInstanceState.getInt(BUNDLE_SELECTED_MODE)
-            if (selectedMode == R.id.selection_filter_mode) {
+            if (selectedMode == R.id.selection_filter) {
                 setDateSelectionFilter()
             }
         }
@@ -97,17 +111,13 @@ class SelectionSampleFragment : Fragment() {
         outState.putInt(BUNDLE_SELECTED_MODE, selectedMode)
     }
 
-    private fun setupCalendarWithSelectionMode(selectionMode: CalendarView.SelectionMode) {
+    private fun setupCalendar(
+        selectionMode: CalendarView.SelectionMode,
+        preselectedDates: List<CalendarDate>
+    ) {
         val calendar = Calendar.getInstance()
         calendar.set(2018, Calendar.JUNE, 1)
         val initialDate = CalendarDate(calendar.time)
-
-        val preselectedDates = when (selectionMode) {
-            SelectionMode.NON -> emptyList()
-            SelectionMode.SINGLE -> preselectedSingleDate()
-            SelectionMode.MULTIPLE -> preselectedMultipleDates()
-            SelectionMode.RANGE -> preselectedDatesRange()
-        }
 
         calendarView.dateSelectionFilter = null
 
@@ -116,6 +126,34 @@ class SelectionSampleFragment : Fragment() {
             selectionMode = selectionMode,
             selectedDates = preselectedDates
         )
+    }
+
+    private fun setupCalendarWithWeekSelection() {
+        setupCalendar(SelectionMode.RANGE, emptyList())
+
+        calendarView.onDateClickListener = { date ->
+            val weekStart = getWeekStart(date)
+            val weekEnd = getWeekEnd(date)
+
+            calendarView.updateSelectedDates(listOf(weekStart, weekEnd))
+            updateSelectedDatesView()
+        }
+    }
+
+    private fun getWeekStart(date: CalendarDate): CalendarDate {
+        val tmpCalendar = Calendar.getInstance()
+        tmpCalendar.firstDayOfWeek = calendarView.firstDayOfWeek
+        tmpCalendar.time = date.date
+        tmpCalendar.set(Calendar.DAY_OF_WEEK, tmpCalendar.firstDayOfWeek)
+        return CalendarDate(tmpCalendar.time)
+    }
+
+    private fun getWeekEnd(date: CalendarDate): CalendarDate {
+        val tmpCalendar = Calendar.getInstance()
+        tmpCalendar.firstDayOfWeek = calendarView.firstDayOfWeek
+        tmpCalendar.time = date.date
+        tmpCalendar.set(Calendar.DAY_OF_WEEK, tmpCalendar.firstDayOfWeek + 6)
+        return CalendarDate(tmpCalendar.time)
     }
 
     private fun setupCalendarWithBoundaries() {
@@ -143,7 +181,7 @@ class SelectionSampleFragment : Fragment() {
     }
 
     private fun setupCalendarWithDateSelectionFilter() {
-        calendarView.setupCalendar(selectionMode = SelectionMode.RANGE)
+        setupCalendar(SelectionMode.RANGE, emptyList())
         setDateSelectionFilter()
     }
 

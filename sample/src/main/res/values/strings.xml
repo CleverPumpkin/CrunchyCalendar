@@ -9,6 +9,7 @@
     <string name="single">Single</string>
     <string name="multi">Multiple</string>
     <string name="range">Range</string>
+    <string name="week">Week</string>
     <string name="boundaries">Date boundaries</string>
     <string name="selection_filter">Date selection filter</string>
 

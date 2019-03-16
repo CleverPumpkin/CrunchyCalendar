@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -25,51 +26,60 @@
             android:layout_height="wrap_content"
             android:background="@android:color/white"
             android:orientation="horizontal"
-            android:paddingEnd="8dp"
+            android:paddingStart="8dp"
             android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingStart="8dp">
+            android:paddingEnd="8dp"
+            android:paddingRight="8dp">
 
             <RadioButton
-                android:id="@+id/single_mode"
+                android:id="@+id/single_selection"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/single"
                 android:textAllCaps="true" />
 
             <RadioButton
-                android:id="@+id/multiple_mode"
+                android:id="@+id/multiple_selection"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
                 android:text="@string/multi"
                 android:textAllCaps="true" />
 
             <RadioButton
-                android:id="@+id/range_mode"
+                android:id="@+id/range_selection"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
                 android:text="@string/range"
                 android:textAllCaps="true" />
 
             <RadioButton
-                android:id="@+id/boundaries_mode"
+                android:id="@+id/week_custom_selection"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:text="@string/week"
+                android:textAllCaps="true" />
+
+            <RadioButton
+                android:id="@+id/boundaries_selection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
                 android:text="@string/boundaries"
                 android:textAllCaps="true" />
 
             <RadioButton
-                android:id="@+id/selection_filter_mode"
+                android:id="@+id/selection_filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
                 android:text="@string/selection_filter"
                 android:textAllCaps="true" />
 
@@ -87,8 +97,8 @@
             android:layout_height="match_parent"
             android:background="@android:color/white"
             android:gravity="center_vertical"
-            android:paddingLeft="16dp"
             android:paddingStart="16dp"
+            android:paddingLeft="16dp"
             android:textColor="@android:color/black"
             tools:ignore="RtlSymmetry"
             tools:text="Selected dates = [1/01/1993 - 1/02/1993]" />
