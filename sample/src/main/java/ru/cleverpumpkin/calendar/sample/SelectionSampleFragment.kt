@@ -1,14 +1,14 @@
 package ru.cleverpumpkin.calendar.sample
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarView
 import ru.cleverpumpkin.calendar.CalendarView.SelectionMode
@@ -79,10 +79,6 @@ class SelectionSampleFragment : Fragment() {
                 R.id.range_selection -> {
                     setupCalendar(SelectionMode.RANGE, preselectedDatesRange())
                 }
-                R.id.week_custom_selection -> {
-
-                    setupCalendarWithWeekSelection()
-                }
                 R.id.boundaries_selection -> {
                     setupCalendarWithBoundaries()
                 }
@@ -126,34 +122,6 @@ class SelectionSampleFragment : Fragment() {
             selectionMode = selectionMode,
             selectedDates = preselectedDates
         )
-    }
-
-    private fun setupCalendarWithWeekSelection() {
-        setupCalendar(SelectionMode.RANGE, emptyList())
-
-        calendarView.onDateClickListener = { date ->
-            val weekStart = getWeekStart(date)
-            val weekEnd = getWeekEnd(date)
-
-            calendarView.updateSelectedDates(listOf(weekStart, weekEnd))
-            updateSelectedDatesView()
-        }
-    }
-
-    private fun getWeekStart(date: CalendarDate): CalendarDate {
-        val tmpCalendar = Calendar.getInstance()
-        tmpCalendar.firstDayOfWeek = calendarView.firstDayOfWeek
-        tmpCalendar.time = date.date
-        tmpCalendar.set(Calendar.DAY_OF_WEEK, tmpCalendar.firstDayOfWeek)
-        return CalendarDate(tmpCalendar.time)
-    }
-
-    private fun getWeekEnd(date: CalendarDate): CalendarDate {
-        val tmpCalendar = Calendar.getInstance()
-        tmpCalendar.firstDayOfWeek = calendarView.firstDayOfWeek
-        tmpCalendar.time = date.date
-        tmpCalendar.set(Calendar.DAY_OF_WEEK, tmpCalendar.firstDayOfWeek + 6)
-        return CalendarDate(tmpCalendar.time)
     }
 
     private fun setupCalendarWithBoundaries() {

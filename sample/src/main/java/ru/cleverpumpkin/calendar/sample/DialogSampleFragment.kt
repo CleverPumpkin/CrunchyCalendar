@@ -1,11 +1,11 @@
 package ru.cleverpumpkin.calendar.sample
 
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import androidx.fragment.app.DialogFragment
 import ru.cleverpumpkin.calendar.CalendarView
 
 class DialogSampleFragment : DialogFragment() {
@@ -21,7 +21,7 @@ class DialogSampleFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        dialog.window.requestFeature(Window.FEATURE_NO_TITLE)
+        dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)
 
         val calendarView = view.findViewById<CalendarView>(R.id.calendar_view)
         if (savedInstanceState == null) {

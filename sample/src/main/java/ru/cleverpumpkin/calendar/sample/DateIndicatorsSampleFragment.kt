@@ -2,14 +2,14 @@ package ru.cleverpumpkin.calendar.sample
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarView
 import ru.cleverpumpkin.calendar.utils.getColorInt
@@ -63,7 +63,7 @@ class DateIndicatorsSampleFragment : Fragment() {
         }
 
         if (savedInstanceState == null) {
-            calendarView.setupCalendar(selectionMode = CalendarView.SelectionMode.NON)
+            calendarView.setupCalendar(selectionMode = CalendarView.SelectionMode.NONE)
         }
     }
 
@@ -131,8 +131,11 @@ class DateIndicatorsSampleFragment : Fragment() {
             }
 
             val event = getItem(position)
-            view.findViewById<View>(R.id.color_view).setBackgroundColor(event.color)
-            view.findViewById<TextView>(R.id.event_name_view).text = event.eventName
+
+            if (event != null) {
+                view.findViewById<View>(R.id.color_view).setBackgroundColor(event.color)
+                view.findViewById<TextView>(R.id.event_name_view).text = event.eventName
+            }
 
             return view
         }
