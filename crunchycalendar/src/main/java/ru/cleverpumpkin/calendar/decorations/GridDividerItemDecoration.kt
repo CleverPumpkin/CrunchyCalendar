@@ -3,8 +3,8 @@ package ru.cleverpumpkin.calendar.decorations
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.support.annotation.ColorInt
-import android.support.v7.widget.RecyclerView
+import androidx.annotation.ColorInt
+import androidx.recyclerview.widget.RecyclerView
 import ru.cleverpumpkin.calendar.CalendarDateView
 import ru.cleverpumpkin.calendar.R
 import ru.cleverpumpkin.calendar.utils.dpToPix

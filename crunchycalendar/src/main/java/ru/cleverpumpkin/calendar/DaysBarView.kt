@@ -1,12 +1,12 @@
 package ru.cleverpumpkin.calendar
 
 import android.content.Context
-import android.support.annotation.AttrRes
-import android.support.annotation.ColorInt
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
 import java.text.SimpleDateFormat
 import java.util.*
 

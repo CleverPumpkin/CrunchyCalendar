@@ -4,10 +4,10 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.support.annotation.AttrRes
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
+import androidx.annotation.AttrRes
 import ru.cleverpumpkin.calendar.utils.dpToPix
 import ru.cleverpumpkin.calendar.utils.getColorInt
 import ru.cleverpumpkin.calendar.utils.spToPix

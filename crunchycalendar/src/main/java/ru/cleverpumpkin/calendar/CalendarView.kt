@@ -3,14 +3,14 @@ package ru.cleverpumpkin.calendar
 import android.content.Context
 import android.os.Bundle
 import android.os.Parcelable
-import android.support.annotation.AttrRes
-import android.support.v4.util.ArrayMap
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
+import androidx.annotation.AttrRes
+import androidx.collection.ArrayMap
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import ru.cleverpumpkin.calendar.adapter.CalendarAdapter
 import ru.cleverpumpkin.calendar.adapter.CalendarItemsGenerator
 import ru.cleverpumpkin.calendar.adapter.item.DateItem
@@ -93,7 +93,7 @@ class CalendarView @JvmOverloads constructor(
         /**
          * Selection is unavailable. No dates will be selectable.
          */
-        NON,
+        NONE,
 
         /**
          * Only one date can be selected at a time.
@@ -139,12 +139,12 @@ class CalendarView @JvmOverloads constructor(
     private val dateInfoProvider: DateInfoProvider = DefaultDateInfoProvider()
     private val adapterDataManager: AdapterDataManager
 
-    private var selectionMode: SelectionMode = SelectionMode.NON
+    private var selectionMode: SelectionMode = SelectionMode.NONE
         set(value) {
             field = value
 
             dateSelectionStrategy = when (value) {
-                SelectionMode.NON -> {
+                SelectionMode.NONE -> {
                     NoDateSelectionStrategy()
                 }
                 SelectionMode.SINGLE -> {
@@ -199,7 +199,7 @@ class CalendarView @JvmOverloads constructor(
             field = value
             groupedDatesIndicators.clear()
             value.groupByTo(groupedDatesIndicators) { it.date }
-            recyclerView.adapter.notifyDataSetChanged()
+            recyclerView.adapter?.notifyDataSetChanged()
         }
 
     /**
@@ -230,7 +230,7 @@ class CalendarView @JvmOverloads constructor(
      * Returns selected dates according to the [selectionMode].
      *
      * When selection mode is:
-     * [SelectionMode.NON] returns empty list
+     * [SelectionMode.NONE] returns empty list
      * [SelectionMode.SINGLE] returns list with a single selected date
      * [SelectionMode.MULTIPLE] returns all selected dates in order they were added
      * [SelectionMode.RANGE] returns all dates in selected range
@@ -367,7 +367,7 @@ class CalendarView @JvmOverloads constructor(
 
         gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
-                return when (recyclerView.adapter.getItemViewType(position)) {
+                return when (recyclerView.adapter?.getItemViewType(position)) {
                     CalendarAdapter.MONTH_VIEW_TYPE -> DAYS_IN_WEEK
                     else -> 1
                 }
@@ -413,7 +413,7 @@ class CalendarView @JvmOverloads constructor(
      * Default value - null
      *
      * [selectionMode] mode for dates selecting.
-     * Default value - [SelectionMode.NON]
+     * Default value - [SelectionMode.NONE]
      *
      * When selection mode is:
      * [SelectionMode.SINGLE], [selectedDates] should contains only single date.
@@ -434,7 +434,7 @@ class CalendarView @JvmOverloads constructor(
         initialDate: CalendarDate = CalendarDate.today,
         minDate: CalendarDate? = null,
         maxDate: CalendarDate? = null,
-        selectionMode: SelectionMode = SelectionMode.NON,
+        selectionMode: SelectionMode = SelectionMode.NONE,
         selectedDates: List<CalendarDate> = emptyList(),
         firstDayOfWeek: Int = defaultFirstDayOfWeek,
         showYearSelectionView: Boolean = true
@@ -538,7 +538,7 @@ class CalendarView @JvmOverloads constructor(
         }
 
         when {
-            selectionMode == SelectionMode.NON -> {
+            selectionMode == SelectionMode.NONE -> {
                 throw IllegalArgumentException(
                     "You cannot define selected dates when the SelectionMode is NONE"
                 )
@@ -731,19 +731,26 @@ class CalendarView @JvmOverloads constructor(
             super.onRestoreInstanceState(superState)
 
             if (initializedWithSetup.not()) {
-                val modeName = state.getString(BUNDLE_SELECTION_MODE, SelectionMode.NON.name)
+                val modeName = state.getString(BUNDLE_SELECTION_MODE, SelectionMode.NONE.name)
                 selectionMode = SelectionMode.valueOf(modeName)
+
                 displayDatesRange = state.getParcelable(BUNDLE_DISPLAY_DATE_RANGE)
+                        ?: displayDatesRange
+
                 minMaxDatesRange = state.getParcelable(BUNDLE_LIMIT_DATE_RANGE)
+                        ?:minMaxDatesRange
+
                 showYearSelectionView = state.getBoolean(BUNDLE_SHOW_YEAR_SELECTION_VIEW)
                 firstDayOfWeek = state.getInt(BUNDLE_FIRST_DAY_OF_WEEK)
                 dateSelectionStrategy.restoreSelectedDates(state)
 
-                val displayedDate: CalendarDate = state.getParcelable(BUNDLE_DISPLAYED_DATE)
-                yearSelectionView.setupYearSelectionView(
-                    displayedDate = displayedDate,
-                    minMaxDatesRange = minMaxDatesRange
-                )
+                val displayedDate: CalendarDate? = state.getParcelable(BUNDLE_DISPLAYED_DATE)
+                if (displayedDate != null) {
+                    yearSelectionView.setupYearSelectionView(
+                        displayedDate = displayedDate,
+                        minMaxDatesRange = minMaxDatesRange
+                    )
+                }
 
                 generateCalendarItems(displayDatesRange)
             }
@@ -785,15 +792,15 @@ class CalendarView @JvmOverloads constructor(
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
 
-            val lastChildIndex = recyclerView.layoutManager.childCount
-            val lastChild = recyclerView.layoutManager.getChildAt(lastChildIndex - 1)
+            val lastChildIndex = recyclerView.layoutManager?.childCount ?: return
+            val lastChild = recyclerView.layoutManager?.getChildAt(lastChildIndex - 1) ?: return
             val lastChildAdapterPosition = recyclerView.getChildAdapterPosition(lastChild) + 1
 
-            if (recyclerView.adapter.itemCount == lastChildAdapterPosition) {
+            if (recyclerView.adapter?.itemCount == lastChildAdapterPosition) {
                 recyclerView.post { generateNextCalendarItems() }
             }
 
-            val firstChild = recyclerView.layoutManager.getChildAt(0)
+            val firstChild = recyclerView.layoutManager?.getChildAt(0) ?: return
             val firstChildAdapterPosition = recyclerView.getChildAdapterPosition(firstChild)
 
             if (firstChildAdapterPosition == 0) {
@@ -807,7 +814,7 @@ class CalendarView @JvmOverloads constructor(
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
 
-            val firstChild = recyclerView.layoutManager.getChildAt(0)
+            val firstChild = recyclerView.layoutManager?.getChildAt(0) ?: return
             val firstChildAdapterPosition = recyclerView.getChildAdapterPosition(firstChild)
 
             val calendarItem = calendarAdapter.getCalendarItemAt(firstChildAdapterPosition)

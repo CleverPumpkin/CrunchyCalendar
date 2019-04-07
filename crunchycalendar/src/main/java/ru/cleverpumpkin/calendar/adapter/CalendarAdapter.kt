@@ -1,15 +1,15 @@
 package ru.cleverpumpkin.calendar.adapter
 
 import android.content.Context
-import android.support.annotation.ColorInt
-import android.support.annotation.ColorRes
-import android.support.annotation.DrawableRes
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarDateView
 import ru.cleverpumpkin.calendar.CalendarView
@@ -21,7 +21,6 @@ import ru.cleverpumpkin.calendar.adapter.item.CalendarItem
 import ru.cleverpumpkin.calendar.adapter.item.DateItem
 import ru.cleverpumpkin.calendar.adapter.item.EmptyItem
 import ru.cleverpumpkin.calendar.adapter.item.MonthItem
-import java.lang.IllegalStateException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -151,8 +150,7 @@ internal class CalendarAdapter(
         dateView.isDateSelected = dateInfoProvider.isDateSelected(date)
 
         dateView.isDateDisabled =
-                dateInfoProvider.isDateOutOfRange(date) ||
-                dateInfoProvider.isDateSelectable(date).not()
+            dateInfoProvider.isDateOutOfRange(date) || dateInfoProvider.isDateSelectable(date).not()
 
         dateView.isWeekend = dateInfoProvider.isWeekend(date)
         dateView.dateIndicators = dateInfoProvider.getDateIndicators(date)

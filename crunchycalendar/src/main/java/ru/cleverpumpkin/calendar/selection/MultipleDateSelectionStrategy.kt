@@ -47,7 +47,7 @@ internal class MultipleDateSelectionStrategy(
 
     override fun restoreSelectedDates(bundle: Bundle) {
         val selectedDatesArray = bundle.getParcelableArray(BUNDLE_SELECTED_DATES)
-        selectedDatesArray.mapTo(selectedDates) { it as CalendarDate }
+        selectedDatesArray?.mapTo(selectedDates) { it as CalendarDate }
     }
 
     override fun clear() {

@@ -2,9 +2,6 @@ package ru.cleverpumpkin.calendar
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.support.annotation.AttrRes
-import android.support.annotation.ColorInt
-import android.support.v4.widget.ImageViewCompat
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View.OnClickListener
@@ -13,6 +10,9 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextSwitcher
 import android.widget.TextView
+import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
+import androidx.core.widget.ImageViewCompat
 import java.text.SimpleDateFormat
 import java.util.*
 

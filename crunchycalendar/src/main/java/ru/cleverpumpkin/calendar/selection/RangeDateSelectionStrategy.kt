@@ -113,7 +113,7 @@ internal class RangeDateSelectionStrategy(
     }
 
     override fun restoreSelectedDates(bundle: Bundle) {
-        datesRange = bundle.getParcelable(BUNDLE_DATES_RANGE)
+        datesRange = bundle.getParcelable(BUNDLE_DATES_RANGE) ?: datesRange
     }
 
     override fun clear() {
