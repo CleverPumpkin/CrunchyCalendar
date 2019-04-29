@@ -14,9 +14,9 @@ buildscript {
 
         // 3-rd party libraries versions
         libs = [
-                kotlin_version     : '1.3.21',
-                supportX           : '1.0.0',
-                support_lib_version: '27.1.1',
+                kotlin_version     : '1.3.31',
+                appCompatX         : '1.0.2',
+                recyclerViewX      : '1.0.0',
 
                 // libs for testing
                 junit_version      : '4.12',

@@ -47,7 +47,7 @@ dependencies {
     // Kotlin language standard lib
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$libs.kotlin_version"
 
-    // Support libraries
-    implementation "androidx.appcompat:appcompat:$libs.supportX"
-    implementation "androidx.recyclerview:recyclerview:$libs.supportX"
+    // AndroidX: UI
+    implementation "androidx.appcompat:appcompat:$libs.appCompatX"
+    implementation "androidx.recyclerview:recyclerview:$libs.recyclerViewX"
 }

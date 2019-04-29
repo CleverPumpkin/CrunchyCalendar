@@ -60,15 +60,11 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$libs.kotlin_version"
 
     // AndroidX.
-    implementation "androidx.recyclerview:recyclerview:$libs.supportX"
+    implementation "androidx.recyclerview:recyclerview:$libs.recyclerViewX"
 
-    // JUnit
+    // Testing libs.
     testImplementation "junit:junit:$libs.junit_version"
-
-    // Mockito
     testImplementation "org.mockito:mockito-all:$libs.mockito_version"
-
-    // PowerMock
     testImplementation "org.powermock:powermock-api-mockito:$libs.powermock_version"
     testImplementation "org.powermock:powermock-module-junit4:$libs.powermock_version"
 }
