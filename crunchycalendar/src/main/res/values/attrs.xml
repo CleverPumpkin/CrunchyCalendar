@@ -16,7 +16,7 @@
         <attr name="calendar_year_selection_text_color" format="color" />
         <attr name="calendar_month_text_color" format="color" />
         <attr name="calendar_date_background" format="reference" />
-        <attr name="calendar_date_text_color" format="color" />
+        <attr name="calendar_date_text_color" format="reference" />
     </declare-styleable>
 
     <declare-styleable name="CalendarDateStates">

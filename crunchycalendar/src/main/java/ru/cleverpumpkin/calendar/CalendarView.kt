@@ -8,6 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
 import androidx.collection.ArrayMap
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,6 +23,8 @@ import ru.cleverpumpkin.calendar.adapter.manager.CalendarAdapterDataManager
 import ru.cleverpumpkin.calendar.decorations.GridDividerItemDecoration
 import ru.cleverpumpkin.calendar.extension.getColorInt
 import ru.cleverpumpkin.calendar.selection.*
+import ru.cleverpumpkin.calendar.utils.CalendarAttributesReader
+import ru.cleverpumpkin.calendar.utils.DateInfoProvider
 import ru.cleverpumpkin.calendar.utils.DisplayedDatesRangeProvider
 import java.util.*
 
@@ -51,24 +56,6 @@ class CalendarView @JvmOverloads constructor(
     interface DateIndicator {
         val date: CalendarDate
         val color: Int
-    }
-
-    /**
-     * Internal interface that provides required information for the specific Calendar date.
-     */
-    internal interface DateInfoProvider {
-
-        fun isToday(date: CalendarDate): Boolean
-
-        fun isDateSelected(date: CalendarDate): Boolean
-
-        fun isDateOutOfRange(date: CalendarDate): Boolean
-
-        fun isDateSelectable(date: CalendarDate): Boolean
-
-        fun isWeekend(date: CalendarDate): Boolean
-
-        fun getDateIndicators(date: CalendarDate): List<DateIndicator>
     }
 
     companion object {
@@ -112,33 +99,26 @@ class CalendarView @JvmOverloads constructor(
         RANGE
     }
 
-    /** Custom attrs with default values */
-    private var drawGridOnSelectedDates = true
-    private var gridColor = getColorInt(R.color.calendar_grid_color)
-    private var yearSelectionBackground = getColorInt(R.color.calendar_year_selection_background)
-    private var yearSelectionArrowsColor = getColorInt(R.color.calendar_year_selection_arrows_color)
-    private var yearSelectionTextColor = getColorInt(R.color.calendar_year_selection_text_color)
-    private var daysBarBackground = getColorInt(R.color.calendar_days_bar_background)
-    private var daysBarTextColor = getColorInt(R.color.calendar_days_bar_text_color)
-    private var monthTextColor = getColorInt(R.color.calendar_month_text_color)
-    private var calendarDateBackgroundResId = R.drawable.calendar_date_bg_selector
-    private var calendarDateTextColorResId = R.color.calendar_date_text_selector
+    private val calendarStyles = CalendarStyles(context)
 
     private val yearSelectionView: YearSelectionView
     private val daysBarView: DaysBarView
     private val recyclerView: RecyclerView
     private val calendarAdapter: CalendarAdapter
 
-    // Internal flag, that indicates whether the [setupCalendar] method was called or not.
-    private var initializedWithSetup = false
+    /**
+     * Internal flag, that indicates whether the Calendar has been initialized
+     * with [setupCalendar] method or not.
+     */
+    private var hasBeenInitializedWithSetup = false
 
     private var displayedDatesRange = DatesRange.emptyRange()
     private var minMaxDatesRange = NullableDatesRange()
     private var dateSelectionStrategy: DateSelectionStrategy = NoDateSelectionStrategy()
-    private lateinit var calendarItemsGenerator: CalendarItemsGenerator
     private val displayedYearUpdateListener = DisplayedYearUpdateListener()
     private val dateInfoProvider: DateInfoProvider = DefaultDateInfoProvider()
     private val adapterDataManager: AdapterDataManager
+    private lateinit var calendarItemsGenerator: CalendarItemsGenerator
 
     private var selectionMode: SelectionMode = SelectionMode.NONE
         set(value) {
@@ -148,12 +128,15 @@ class CalendarView @JvmOverloads constructor(
                 SelectionMode.NONE -> {
                     NoDateSelectionStrategy()
                 }
+
                 SelectionMode.SINGLE -> {
                     SingleDateSelectionStrategy(adapterDataManager, dateInfoProvider)
                 }
+
                 SelectionMode.MULTIPLE -> {
                     MultipleDateSelectionStrategy(adapterDataManager, dateInfoProvider)
                 }
+
                 SelectionMode.RANGE -> {
                     RangeDateSelectionStrategy(adapterDataManager, dateInfoProvider)
                 }
@@ -190,7 +173,6 @@ class CalendarView @JvmOverloads constructor(
      * Grouped by date indicators that will be displayed on the Calendar.
      */
     private val groupedDatesIndicators = ArrayMap<CalendarDate, MutableList<DateIndicator>>()
-
 
     /**
      * List of indicators that will be displayed on the Calendar.
@@ -247,6 +229,127 @@ class CalendarView @JvmOverloads constructor(
             .firstOrNull()
 
     /**
+     * Sets the grid color for this view.
+     */
+    fun setGridColor(@ColorInt color: Int) {
+        calendarStyles.gridColor = color
+        updateGridDividerItemDecoration()
+    }
+
+    /**
+     * Sets the grid color for this view.
+     */
+    fun setGridColorRes(@ColorRes colorRes: Int) {
+        setGridColor(getColorInt(colorRes))
+    }
+
+    /**
+     * Sets the year selection bar background color.
+     */
+    fun setYearSelectionBarBackgroundColor(@ColorInt color: Int) {
+        calendarStyles.yearSelectionBackground = color
+        yearSelectionView.applyStyle(calendarStyles)
+    }
+
+    /**
+     * Sets the year selection bar background color resource.
+     */
+    fun setYearSelectionBackgroundColorRes(@ColorRes colorRes: Int) {
+        setYearSelectionBarBackgroundColor(getColorInt(colorRes))
+    }
+
+    /**
+     * Sets the year selection bar arrows color.
+     */
+    fun setYearSelectionBarArrowsColor(@ColorInt color: Int) {
+        calendarStyles.yearSelectionArrowsColor = color
+        yearSelectionView.applyStyle(calendarStyles)
+    }
+
+    /**
+     * Sets the year selection bar arrows color resource.
+     */
+    fun setYearSelectionBarArrowsColorRes(@ColorRes colorRes: Int) {
+        setYearSelectionBarArrowsColor(getColorInt(colorRes))
+    }
+
+    /**
+     * Sets the year selection bar text color.
+     */
+    fun setYearSelectionBarTextColor(@ColorInt color: Int) {
+        calendarStyles.yearSelectionTextColor = color
+        yearSelectionView.applyStyle(calendarStyles)
+    }
+
+    /**
+     * Sets the year selection bar text color resource.
+     */
+    fun setYearSelectionBarTextColorRes(@ColorRes colorRes: Int) {
+        setYearSelectionBarTextColor(getColorInt(colorRes))
+    }
+
+    /**
+     * Sets the days of week bar background color.
+     */
+    fun setDaysBarBackgroundColor(@ColorInt color: Int) {
+        calendarStyles.daysBarBackground = color
+        daysBarView.applyStyle(calendarStyles)
+    }
+
+    /**
+     * Sets the days of week bar background color resource.
+     */
+    fun setDaysBarBackgroundColorRes(@ColorRes colorRes: Int) {
+        setDaysBarBackgroundColor(getColorInt(colorRes))
+    }
+
+    /**
+     * Sets the days of week bar text color.
+     */
+    fun setDaysBarTextColor(@ColorInt color: Int) {
+        calendarStyles.daysBarTextColor = color
+        daysBarView.applyStyle(calendarStyles)
+    }
+
+    /**
+     * Sets the days of week bar text color resources.
+     */
+    fun setDaysBarTextColorRes(@ColorRes colorRes: Int) {
+        setDaysBarTextColor(getColorInt(colorRes))
+    }
+
+    /**
+     * Sets the month name text color.
+     */
+    fun setMonthTextColor(@ColorInt color: Int) {
+        calendarStyles.monthTextColor = color
+        calendarAdapter.notifyDataSetChanged()
+    }
+
+    /**
+     * Sets the month name text color resource.
+     */
+    fun setMonthTextColorRes(@ColorRes colorRes: Int) {
+        setMonthTextColor(getColorInt(colorRes))
+    }
+
+    /**
+     * Sets a date cell background drawable resource.
+     */
+    fun setDateCellBackgroundDrawableRes(@DrawableRes drawableRes: Int) {
+        calendarStyles.dateCellBackgroundColorRes = drawableRes
+        calendarAdapter.notifyDataSetChanged()
+    }
+
+    /**
+     * Sets a date cell text color resource.
+     */
+    fun setDateCellTextColorRes(@ColorRes colorRes: Int) {
+        calendarStyles.dateTextColorRes = colorRes
+        calendarAdapter.notifyDataSetChanged()
+    }
+
+    /**
      * Init block where we read custom attributes and setting up internal views
      */
     init {
@@ -257,70 +360,16 @@ class CalendarView @JvmOverloads constructor(
         recyclerView = findViewById(R.id.recycler_view)
 
         if (attrs != null) {
-            val typedArray =
-                context.obtainStyledAttributes(attrs, R.styleable.CalendarView, defStyleAttr, 0)
-
-            try {
-                drawGridOnSelectedDates = typedArray.getBoolean(
-                    R.styleable.CalendarView_calendar_grid_on_selected_dates,
-                    drawGridOnSelectedDates
-                )
-
-                gridColor = typedArray.getColor(
-                    R.styleable.CalendarView_calendar_grid_color,
-                    gridColor
-                )
-
-                yearSelectionBackground = typedArray.getColor(
-                    R.styleable.CalendarView_calendar_year_selection_background,
-                    yearSelectionBackground
-                )
-
-                yearSelectionArrowsColor = typedArray.getColor(
-                    R.styleable.CalendarView_calendar_year_selection_arrows_color,
-                    yearSelectionArrowsColor
-                )
-
-                yearSelectionTextColor = typedArray.getColor(
-                    R.styleable.CalendarView_calendar_year_selection_text_color,
-                    yearSelectionTextColor
-                )
-
-                daysBarBackground = typedArray.getColor(
-                    R.styleable.CalendarView_calendar_day_bar_background,
-                    daysBarBackground
-                )
-
-                daysBarTextColor = typedArray.getColor(
-                    R.styleable.CalendarView_calendar_day_bar_text_color,
-                    daysBarTextColor
-                )
-
-                monthTextColor = typedArray.getColor(
-                    R.styleable.CalendarView_calendar_month_text_color,
-                    monthTextColor
-                )
-
-                calendarDateBackgroundResId = typedArray.getResourceId(
-                    R.styleable.CalendarView_calendar_date_background,
-                    calendarDateBackgroundResId
-                )
-
-                calendarDateTextColorResId = typedArray.getResourceId(
-                    R.styleable.CalendarView_calendar_date_text_color,
-                    calendarDateTextColorResId
-                )
-            } finally {
-                typedArray.recycle()
-            }
+            CalendarAttributesReader.readAttributes(
+                context = context,
+                attrs = attrs,
+                defStyleAttr = defStyleAttr,
+                destCalendarStyles = calendarStyles
+            )
         }
 
         calendarAdapter = CalendarAdapter(
-            style = CalendarAdapter.AdapterItemsStyle(
-                monthTextColor = monthTextColor,
-                dateBackgroundResId = calendarDateBackgroundResId,
-                dateTextColorResId = calendarDateTextColorResId
-            ),
+            style = calendarStyles,
             dateInfoProvider = dateInfoProvider,
             onDateClickListener = { date, longClick ->
                 if (longClick) {
@@ -334,20 +383,8 @@ class CalendarView @JvmOverloads constructor(
 
         adapterDataManager = CalendarAdapterDataManager(calendarAdapter)
 
-        daysBarView.applyStyle(
-            style = DaysBarView.DaysBarStyle(
-                background = daysBarBackground,
-                textColor = daysBarTextColor
-            )
-        )
-
-        yearSelectionView.applyStyle(
-            style = YearSelectionView.YearSelectionStyle(
-                background = yearSelectionBackground,
-                arrowsColor = yearSelectionArrowsColor,
-                yearTextColor = yearSelectionTextColor
-            )
-        )
+        daysBarView.applyStyle(calendarStyles)
+        yearSelectionView.applyStyle(calendarStyles)
 
         yearSelectionView.onYearChangeListener = { displayedDate ->
             moveToDate(displayedDate)
@@ -360,7 +397,7 @@ class CalendarView @JvmOverloads constructor(
 
         val gridLayoutManager = object : GridLayoutManager(context, DAYS_IN_WEEK) {
             override fun onRestoreInstanceState(state: Parcelable?) {
-                if (initializedWithSetup.not()) {
+                if (hasBeenInitializedWithSetup.not()) {
                     super.onRestoreInstanceState(state)
                 }
             }
@@ -391,9 +428,7 @@ class CalendarView @JvmOverloads constructor(
             )
 
             setHasFixedSize(true)
-
-            val divider = GridDividerItemDecoration(context, gridColor, drawGridOnSelectedDates)
-            addItemDecoration(divider)
+            updateGridDividerItemDecoration()
 
             addOnScrollListener(CalendarItemsGenerationListener())
         }
@@ -457,7 +492,7 @@ class CalendarView @JvmOverloads constructor(
             minMaxDatesRange = minMaxDatesRange
         )
 
-        internalUpdateSelectedDates(selectedDates)
+        updateSelectedDatesInternal(selectedDates)
 
         displayedDatesRange = DisplayedDatesRangeProvider.getDisplayedDatesRange(
             initialDate = initialDate,
@@ -468,7 +503,7 @@ class CalendarView @JvmOverloads constructor(
         generateCalendarItems(displayedDatesRange)
         moveToDate(initialDate)
 
-        initializedWithSetup = true
+        hasBeenInitializedWithSetup = true
     }
 
     /**
@@ -529,10 +564,10 @@ class CalendarView @JvmOverloads constructor(
      */
     fun updateSelectedDates(selectedDates: List<CalendarDate>) {
         dateSelectionStrategy.clear()
-        internalUpdateSelectedDates(selectedDates)
+        updateSelectedDatesInternal(selectedDates)
     }
 
-    private fun internalUpdateSelectedDates(selectedDates: List<CalendarDate>) {
+    private fun updateSelectedDatesInternal(selectedDates: List<CalendarDate>) {
         if (selectedDates.isEmpty()) {
             return
         }
@@ -564,6 +599,16 @@ class CalendarView @JvmOverloads constructor(
                 dateSelectionStrategy.onDateSelected(date)
             }
         }
+    }
+
+    private fun updateGridDividerItemDecoration() {
+        val divider = GridDividerItemDecoration(context, calendarStyles)
+
+        if (recyclerView.itemDecorationCount > 0) {
+            recyclerView.removeItemDecorationAt(0)
+        }
+
+        recyclerView.addItemDecoration(divider, 0)
     }
 
     private fun generateCalendarItems(datesRange: DatesRange) {
@@ -670,7 +715,7 @@ class CalendarView @JvmOverloads constructor(
             val superState: Parcelable? = state.getParcelable(BUNDLE_SUPER_STATE)
             super.onRestoreInstanceState(superState)
 
-            if (initializedWithSetup.not()) {
+            if (hasBeenInitializedWithSetup.not()) {
                 val modeName = state.getString(BUNDLE_SELECTION_MODE, SelectionMode.NONE.name)
                 selectionMode = SelectionMode.valueOf(modeName)
 
@@ -765,4 +810,5 @@ class CalendarView @JvmOverloads constructor(
             }
         }
     }
+
 }

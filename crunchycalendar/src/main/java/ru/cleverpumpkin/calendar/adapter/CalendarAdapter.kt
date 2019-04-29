@@ -5,14 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.annotation.ColorInt
-import androidx.annotation.ColorRes
-import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarDateView
-import ru.cleverpumpkin.calendar.CalendarView
+import ru.cleverpumpkin.calendar.CalendarStyles
 import ru.cleverpumpkin.calendar.R
 import ru.cleverpumpkin.calendar.adapter.CalendarAdapter.Companion.DATE_VIEW_TYPE
 import ru.cleverpumpkin.calendar.adapter.CalendarAdapter.Companion.EMPTY_VIEW_TYPE
@@ -21,6 +18,7 @@ import ru.cleverpumpkin.calendar.adapter.item.CalendarItem
 import ru.cleverpumpkin.calendar.adapter.item.DateItem
 import ru.cleverpumpkin.calendar.adapter.item.EmptyItem
 import ru.cleverpumpkin.calendar.adapter.item.MonthItem
+import ru.cleverpumpkin.calendar.utils.DateInfoProvider
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -34,8 +32,8 @@ import java.util.*
  * [EMPTY_VIEW_TYPE] - empty view that represents start and end offset for each month
  */
 internal class CalendarAdapter(
-    private val style: AdapterItemsStyle,
-    private val dateInfoProvider: CalendarView.DateInfoProvider,
+    private val style: CalendarStyles,
+    private val dateInfoProvider: DateInfoProvider,
     private val onDateClickListener: (CalendarDate, Boolean) -> Unit
 
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -80,8 +78,8 @@ internal class CalendarAdapter(
     }
 
     private fun createDateItemViewHolder(context: Context): DateItemViewHolder {
-        val dateViewBackgroundRes = style.dateBackgroundResId
-        val dateTextColorResId = style.dateTextColorResId
+        val dateViewBackgroundRes = style.dateCellBackgroundColorRes
+        val dateTextColorResId = style.dateTextColorRes
         val dateTextColorStateList = ContextCompat.getColorStateList(context, dateTextColorResId)
 
         val dateView = CalendarDateView(context)
@@ -226,13 +224,6 @@ internal class CalendarAdapter(
         calendarItems.addAll(0, prevCalendarItems)
         notifyItemRangeInserted(0, prevCalendarItems.size)
     }
-
-
-    class AdapterItemsStyle(
-        @ColorInt val monthTextColor: Int,
-        @DrawableRes val dateBackgroundResId: Int,
-        @ColorRes val dateTextColorResId: Int
-    )
 
     class DateItemViewHolder(val dateView: CalendarDateView) : RecyclerView.ViewHolder(dateView)
 

@@ -3,22 +3,19 @@ package ru.cleverpumpkin.calendar.decorations
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
-import androidx.annotation.ColorInt
 import androidx.recyclerview.widget.RecyclerView
 import ru.cleverpumpkin.calendar.CalendarDateView
-import ru.cleverpumpkin.calendar.R
+import ru.cleverpumpkin.calendar.CalendarStyles
 import ru.cleverpumpkin.calendar.extension.dpToPix
-import ru.cleverpumpkin.calendar.extension.getColorInt
 
 internal class GridDividerItemDecoration(
     context: Context,
-    @ColorInt dividerColor: Int = context.getColorInt(R.color.calendar_grid_color),
-    private val drawGridOnSelectedDates: Boolean
+    private val styles: CalendarStyles
 ) : RecyclerView.ItemDecoration() {
 
     private val linePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
-        color = dividerColor
+        color = styles.gridColor
         strokeWidth = context.dpToPix(1.0f)
     }
 
@@ -27,7 +24,7 @@ internal class GridDividerItemDecoration(
             val child = parent.getChildAt(i)
 
             if (child is CalendarDateView) {
-                if (child.isDateSelected && drawGridOnSelectedDates.not()) {
+                if (child.isDateSelected && styles.drawGridOnSelectedDates.not()) {
                     continue
                 }
 

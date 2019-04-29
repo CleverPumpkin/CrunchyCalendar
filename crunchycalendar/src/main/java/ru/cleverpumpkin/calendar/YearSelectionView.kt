@@ -11,7 +11,6 @@ import android.widget.LinearLayout
 import android.widget.TextSwitcher
 import android.widget.TextView
 import androidx.annotation.AttrRes
-import androidx.annotation.ColorInt
 import androidx.core.widget.ImageViewCompat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -137,20 +136,23 @@ internal class YearSelectionView @JvmOverloads constructor(
         }
     }
 
-    fun applyStyle(style: YearSelectionStyle) {
-        setBackgroundColor(style.background)
-        ImageViewCompat.setImageTintList(arrowPrevView, ColorStateList.valueOf(style.arrowsColor))
-        ImageViewCompat.setImageTintList(arrowNextView, ColorStateList.valueOf(style.arrowsColor))
+    fun applyStyle(style: CalendarStyles) {
+        setBackgroundColor(style.yearSelectionBackground)
+
+        ImageViewCompat.setImageTintList(
+            arrowPrevView,
+            ColorStateList.valueOf(style.yearSelectionArrowsColor)
+        )
+
+        ImageViewCompat.setImageTintList(
+            arrowNextView,
+            ColorStateList.valueOf(style.yearSelectionArrowsColor)
+        )
 
         for (i in 0..textSwitcher.childCount) {
             val textView = textSwitcher.getChildAt(i) as? TextView
-            textView?.setTextColor(style.yearTextColor)
+            textView?.setTextColor(style.yearSelectionTextColor)
         }
     }
 
-    class YearSelectionStyle(
-        @ColorInt val background: Int,
-        @ColorInt val arrowsColor: Int,
-        @ColorInt val yearTextColor: Int
-    )
 }

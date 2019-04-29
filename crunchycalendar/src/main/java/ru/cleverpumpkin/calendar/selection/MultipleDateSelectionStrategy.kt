@@ -2,12 +2,12 @@ package ru.cleverpumpkin.calendar.selection
 
 import android.os.Bundle
 import ru.cleverpumpkin.calendar.CalendarDate
-import ru.cleverpumpkin.calendar.CalendarView
 import ru.cleverpumpkin.calendar.adapter.manager.AdapterDataManager
+import ru.cleverpumpkin.calendar.utils.DateInfoProvider
 
 internal class MultipleDateSelectionStrategy(
     private val adapterDataManager: AdapterDataManager,
-    private val dateInfoProvider: CalendarView.DateInfoProvider
+    private val dateInfoProvider: DateInfoProvider
 
 ) : DateSelectionStrategy {
 

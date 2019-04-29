@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.AttrRes
-import androidx.annotation.ColorInt
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -29,12 +28,12 @@ internal class DaysBarView @JvmOverloads constructor(
         LayoutInflater.from(context).inflate(R.layout.view_days_bar, this, true)
     }
 
-    fun applyStyle(style: DaysBarStyle) {
-        setBackgroundColor(style.background)
+    fun applyStyle(style: CalendarStyles) {
+        setBackgroundColor(style.daysBarBackground)
 
         for (i in 0..childCount) {
             val dayView = getChildAt(i) as? TextView
-            dayView?.setTextColor(style.textColor)
+            dayView?.setTextColor(style.daysBarTextColor)
         }
     }
 
@@ -51,8 +50,4 @@ internal class DaysBarView @JvmOverloads constructor(
         }
     }
 
-    class DaysBarStyle(
-        @ColorInt val background: Int,
-        @ColorInt val textColor: Int
-    )
 }
