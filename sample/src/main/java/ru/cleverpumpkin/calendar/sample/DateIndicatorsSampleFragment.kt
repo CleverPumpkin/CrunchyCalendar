@@ -12,7 +12,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarView
-import ru.cleverpumpkin.calendar.utils.getColorInt
+import ru.cleverpumpkin.calendar.extension.getColorInt
 import java.util.*
 
 class DateIndicatorsSampleFragment : Fragment() {

@@ -7,8 +7,8 @@ import androidx.annotation.ColorInt
 import androidx.recyclerview.widget.RecyclerView
 import ru.cleverpumpkin.calendar.CalendarDateView
 import ru.cleverpumpkin.calendar.R
-import ru.cleverpumpkin.calendar.utils.dpToPix
-import ru.cleverpumpkin.calendar.utils.getColorInt
+import ru.cleverpumpkin.calendar.extension.dpToPix
+import ru.cleverpumpkin.calendar.extension.getColorInt
 
 internal class GridDividerItemDecoration(
     context: Context,

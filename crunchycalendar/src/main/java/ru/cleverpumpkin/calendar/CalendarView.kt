@@ -18,8 +18,9 @@ import ru.cleverpumpkin.calendar.adapter.item.MonthItem
 import ru.cleverpumpkin.calendar.adapter.manager.AdapterDataManager
 import ru.cleverpumpkin.calendar.adapter.manager.CalendarAdapterDataManager
 import ru.cleverpumpkin.calendar.decorations.GridDividerItemDecoration
+import ru.cleverpumpkin.calendar.extension.getColorInt
 import ru.cleverpumpkin.calendar.selection.*
-import ru.cleverpumpkin.calendar.utils.getColorInt
+import ru.cleverpumpkin.calendar.utils.DisplayedDatesRangeProvider
 import java.util.*
 
 /**
@@ -131,7 +132,7 @@ class CalendarView @JvmOverloads constructor(
     // Internal flag, that indicates whether the [setupCalendar] method was called or not.
     private var initializedWithSetup = false
 
-    private var displayDatesRange = DatesRange.emptyRange()
+    private var displayedDatesRange = DatesRange.emptyRange()
     private var minMaxDatesRange = NullableDatesRange()
     private var dateSelectionStrategy: DateSelectionStrategy = NoDateSelectionStrategy()
     private lateinit var calendarItemsGenerator: CalendarItemsGenerator
@@ -402,33 +403,32 @@ class CalendarView @JvmOverloads constructor(
      * Method for the initial calendar set up. All parameters have default values.
      *
      * [initialDate] the date that will be displayed initially.
-     * Default value - today date
+     * Default value - today date.
      *
      * [minDate] minimum date for the Calendar grid, inclusive.
      * If null, the Calendar will display all available dates before [initialDate]
-     * Default value - null
+     * Default value - null.
      *
      * [maxDate] maximum date for the Calendar grid, inclusive.
      * If null, the Calendar will display all available dates after [initialDate]
-     * Default value - null
+     * Default value - null.
      *
      * [selectionMode] mode for dates selecting.
-     * Default value - [SelectionMode.NONE]
+     * Default value - [SelectionMode.NONE].
      *
      * When selection mode is:
-     * [SelectionMode.SINGLE], [selectedDates] should contains only single date.
+     * [SelectionMode.SINGLE], [selectedDates] can contains only single date.
      * [SelectionMode.MULTIPLE], [selectedDates] can contains multiple date.
-     * [SelectionMode.RANGE], [selectedDates] must contains two dates that represent selected range.
+     * [SelectionMode.RANGE], [selectedDates] can contains two dates that represent selected range.
      *
      * [selectedDates] list of the initially selected dates.
-     * Default value - empty list
+     * Default value - empty list.
      *
      * [firstDayOfWeek] the first day of the week: [Calendar.SUNDAY], [Calendar.MONDAY], etc.
-     * Default value - null. If null, the Calendar will be initialized with the `firstDayOfWeek`
-     * from the default Locale
+     * Default value - null. If null, the Calendar will be initialized with the [defaultFirstDayOfWeek].
      *
      * [showYearSelectionView] flag that indicates whether year selection view will be displayed or not.
-     * Default value - true
+     * Default value - true.
      */
     fun setupCalendar(
         initialDate: CalendarDate = CalendarDate.today,
@@ -459,13 +459,13 @@ class CalendarView @JvmOverloads constructor(
 
         internalUpdateSelectedDates(selectedDates)
 
-        displayDatesRange = prepareDisplayDatesRange(
+        displayedDatesRange = DisplayedDatesRangeProvider.getDisplayedDatesRange(
             initialDate = initialDate,
             minDate = minDate,
             maxDate = maxDate
         )
 
-        generateCalendarItems(displayDatesRange)
+        generateCalendarItems(displayedDatesRange)
         moveToDate(initialDate)
 
         initializedWithSetup = true
@@ -483,16 +483,16 @@ class CalendarView @JvmOverloads constructor(
             return
         }
 
-        val (displayDatesFrom, displayDatesTo) = displayDatesRange
+        val (displayDatesFrom, displayDatesTo) = displayedDatesRange
 
         if (date.isBetween(dateFrom = displayDatesFrom, dateTo = displayDatesTo).not()) {
-            displayDatesRange = prepareDisplayDatesRange(
+            displayedDatesRange = DisplayedDatesRangeProvider.getDisplayedDatesRange(
                 initialDate = date,
                 minDate = minDate,
                 maxDate = maxDate
             )
 
-            generateCalendarItems(displayDatesRange)
+            generateCalendarItems(displayedDatesRange)
         }
 
         val dateMonthPosition = calendarAdapter.findMonthPosition(date)
@@ -564,66 +564,6 @@ class CalendarView @JvmOverloads constructor(
                 dateSelectionStrategy.onDateSelected(date)
             }
         }
-
-    }
-
-    private fun prepareDisplayDatesRange(
-        initialDate: CalendarDate,
-        minDate: CalendarDate? = null,
-        maxDate: CalendarDate? = null
-
-    ): DatesRange {
-
-        val displayDatesFrom: CalendarDate
-        val displayDatesTo: CalendarDate
-
-        when {
-            minDate == null && maxDate == null -> {
-                displayDatesFrom = initialDate.minusMonths(MONTHS_PER_PAGE)
-                displayDatesTo = initialDate.plusMonths(MONTHS_PER_PAGE)
-            }
-
-            minDate != null && maxDate == null -> {
-                displayDatesFrom = minDate
-                displayDatesTo = displayDatesFrom.plusMonths(MONTHS_PER_PAGE)
-            }
-
-            minDate == null && maxDate != null -> {
-                displayDatesFrom = maxDate.minusMonths(MONTHS_PER_PAGE)
-                displayDatesTo = maxDate
-            }
-
-            minDate != null && maxDate != null -> {
-                if (initialDate.isBetween(minDate, maxDate)) {
-                    var monthsBetween = minDate.monthsBetween(initialDate)
-                    displayDatesFrom = if (monthsBetween > MONTHS_PER_PAGE) {
-                        initialDate.minusMonths(MONTHS_PER_PAGE)
-                    } else {
-                        minDate
-                    }
-
-                    monthsBetween = initialDate.monthsBetween(maxDate)
-                    displayDatesTo = if (monthsBetween > MONTHS_PER_PAGE) {
-                        initialDate.plusMonths(MONTHS_PER_PAGE)
-                    } else {
-                        maxDate
-                    }
-                } else {
-                    displayDatesFrom = minDate
-
-                    val monthBetween = minDate.monthsBetween(maxDate)
-                    displayDatesTo = if (monthBetween > MONTHS_PER_PAGE) {
-                        minDate.plusMonths(MONTHS_PER_PAGE)
-                    } else {
-                        maxDate
-                    }
-                }
-            }
-
-            else -> throw IllegalStateException() // unreachable branch
-        }
-
-        return DatesRange(dateFrom = displayDatesFrom, dateTo = displayDatesTo)
     }
 
     private fun generateCalendarItems(datesRange: DatesRange) {
@@ -641,12 +581,12 @@ class CalendarView @JvmOverloads constructor(
 
     private fun generatePrevCalendarItems() {
         val minDate = minMaxDatesRange.dateFrom
-        if (minDate != null && minDate.monthsBetween(displayDatesRange.dateFrom) == 0) {
+        if (minDate != null && minDate.monthsBetween(displayedDatesRange.dateFrom) == 0) {
             return
         }
 
         val generateDatesFrom: CalendarDate
-        val generateDatesTo = displayDatesRange.dateFrom.minusMonths(1)
+        val generateDatesTo = displayedDatesRange.dateFrom.minusMonths(1)
 
         generateDatesFrom = if (minDate != null) {
             val monthBetween = minDate.monthsBetween(generateDatesTo)
@@ -667,16 +607,16 @@ class CalendarView @JvmOverloads constructor(
         )
 
         calendarAdapter.addPrevCalendarItems(calendarItems)
-        displayDatesRange = displayDatesRange.copy(dateFrom = generateDatesFrom)
+        displayedDatesRange = displayedDatesRange.copy(dateFrom = generateDatesFrom)
     }
 
     private fun generateNextCalendarItems() {
         val maxDate = minMaxDatesRange.dateTo
-        if (maxDate != null && displayDatesRange.dateTo.monthsBetween(maxDate) == 0) {
+        if (maxDate != null && displayedDatesRange.dateTo.monthsBetween(maxDate) == 0) {
             return
         }
 
-        val generateDatesFrom = displayDatesRange.dateTo.plusMonths(1)
+        val generateDatesFrom = displayedDatesRange.dateTo.plusMonths(1)
         val generateDatesTo: CalendarDate
 
         generateDatesTo = if (maxDate != null) {
@@ -697,7 +637,7 @@ class CalendarView @JvmOverloads constructor(
         )
 
         calendarAdapter.addNextCalendarItems(calendarItems)
-        displayDatesRange = displayDatesRange.copy(dateTo = generateDatesTo)
+        displayedDatesRange = displayedDatesRange.copy(dateTo = generateDatesTo)
     }
 
     /**
@@ -709,7 +649,7 @@ class CalendarView @JvmOverloads constructor(
 
         return Bundle().apply {
             putString(BUNDLE_SELECTION_MODE, selectionMode.name)
-            putParcelable(BUNDLE_DISPLAY_DATE_RANGE, displayDatesRange)
+            putParcelable(BUNDLE_DISPLAY_DATE_RANGE, displayedDatesRange)
             putParcelable(BUNDLE_LIMIT_DATE_RANGE, minMaxDatesRange)
             putParcelable(BUNDLE_SUPER_STATE, superState)
             putParcelable(BUNDLE_DISPLAYED_DATE, yearSelectionView.displayedDate)
@@ -734,11 +674,11 @@ class CalendarView @JvmOverloads constructor(
                 val modeName = state.getString(BUNDLE_SELECTION_MODE, SelectionMode.NONE.name)
                 selectionMode = SelectionMode.valueOf(modeName)
 
-                displayDatesRange = state.getParcelable(BUNDLE_DISPLAY_DATE_RANGE)
-                        ?: displayDatesRange
+                displayedDatesRange = state.getParcelable(BUNDLE_DISPLAY_DATE_RANGE)
+                        ?: displayedDatesRange
 
                 minMaxDatesRange = state.getParcelable(BUNDLE_LIMIT_DATE_RANGE)
-                        ?:minMaxDatesRange
+                        ?: minMaxDatesRange
 
                 showYearSelectionView = state.getBoolean(BUNDLE_SHOW_YEAR_SELECTION_VIEW)
                 firstDayOfWeek = state.getInt(BUNDLE_FIRST_DAY_OF_WEEK)
@@ -752,7 +692,7 @@ class CalendarView @JvmOverloads constructor(
                     )
                 }
 
-                generateCalendarItems(displayDatesRange)
+                generateCalendarItems(displayedDatesRange)
             }
         } else {
             super.onRestoreInstanceState(state)

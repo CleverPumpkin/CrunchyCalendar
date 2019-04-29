@@ -37,7 +37,7 @@
     </style>
 
     <style name="ClickableView.YearSelectionArrow">
-        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
         <item name="android:padding">@dimen/margin_small</item>
         <item name="android:rotationY">@integer/angle</item>
         <item name="android:tint">@color/calendar_date_today_text_color</item>

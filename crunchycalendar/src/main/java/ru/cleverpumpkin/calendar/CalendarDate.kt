@@ -73,16 +73,15 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
     }
 
     override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
+        if (this === other) {
+            return true
+        }
 
-        other as CalendarDate
+        if (other !is CalendarDate) {
+            return false
+        }
 
-        if (year != other.year) return false
-        if (month != other.month) return false
-        if (dayOfMonth != other.dayOfMonth) return false
-
-        return true
+        return year == other.year && month == other.month && dayOfMonth == other.dayOfMonth
     }
 
     override fun hashCode(): Int {

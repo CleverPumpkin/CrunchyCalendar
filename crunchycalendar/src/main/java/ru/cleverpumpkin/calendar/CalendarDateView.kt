@@ -8,9 +8,9 @@ import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.AttrRes
-import ru.cleverpumpkin.calendar.utils.dpToPix
-import ru.cleverpumpkin.calendar.utils.getColorInt
-import ru.cleverpumpkin.calendar.utils.spToPix
+import ru.cleverpumpkin.calendar.extension.dpToPix
+import ru.cleverpumpkin.calendar.extension.getColorInt
+import ru.cleverpumpkin.calendar.extension.spToPix
 
 /**
  * This internal view class represents a single date cell of the Calendar
