@@ -5,11 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarDateView
-import ru.cleverpumpkin.calendar.CalendarStyles
+import ru.cleverpumpkin.calendar.CalendarStyleAttributes
 import ru.cleverpumpkin.calendar.R
 import ru.cleverpumpkin.calendar.adapter.CalendarAdapter.Companion.DATE_VIEW_TYPE
 import ru.cleverpumpkin.calendar.adapter.CalendarAdapter.Companion.EMPTY_VIEW_TYPE
@@ -32,7 +31,7 @@ import java.util.*
  * [EMPTY_VIEW_TYPE] - empty view that represents start and end offset for each month
  */
 internal class CalendarAdapter(
-    private val style: CalendarStyles,
+    private val styleAttributes: CalendarStyleAttributes,
     private val dateInfoProvider: DateInfoProvider,
     private val onDateClickListener: (CalendarDate, Boolean) -> Unit
 
@@ -78,13 +77,10 @@ internal class CalendarAdapter(
     }
 
     private fun createDateItemViewHolder(context: Context): DateItemViewHolder {
-        val dateViewBackgroundRes = style.dateCellBackgroundColorRes
-        val dateTextColorResId = style.dateTextColorRes
-        val dateTextColorStateList = ContextCompat.getColorStateList(context, dateTextColorResId)
-
         val dateView = CalendarDateView(context)
-        dateView.setBackgroundResource(dateViewBackgroundRes)
-        dateView.textColorStateList = dateTextColorStateList
+
+        dateView.setBackgroundResource(styleAttributes.dateCellBackgroundColorRes)
+        dateView.textColorStateList = styleAttributes.dateTextColorStateList
 
         val dayItemViewHolder = DateItemViewHolder(dateView)
 
@@ -158,7 +154,7 @@ internal class CalendarAdapter(
     private fun bindMonthItemViewHolder(holder: MonthItemViewHolder, monthItem: MonthItem) {
         val monthName = monthFormatter.format(monthItem.date.date)
         holder.textView.text = monthName.capitalize()
-        holder.textView.setTextColor(style.monthTextColor)
+        holder.textView.setTextColor(styleAttributes.monthTextColor)
     }
 
     // endregion

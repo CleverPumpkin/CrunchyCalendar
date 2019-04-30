@@ -3,22 +3,22 @@ package ru.cleverpumpkin.calendar.utils
 import android.content.Context
 import android.util.AttributeSet
 import androidx.annotation.AttrRes
-import ru.cleverpumpkin.calendar.CalendarStyles
+import ru.cleverpumpkin.calendar.CalendarStyleAttributes
 import ru.cleverpumpkin.calendar.R
 
-internal object CalendarAttributesReader {
+internal object CalendarStyleAttributesReader {
 
-    fun readAttributes(
+    fun readStyleAttributes(
         context: Context,
         attrs: AttributeSet,
         @AttrRes defStyleAttr: Int,
-        destCalendarStyles: CalendarStyles
+        styleAttributes: CalendarStyleAttributes
     ) {
         val typedArray =
             context.obtainStyledAttributes(attrs, R.styleable.CalendarView, defStyleAttr, 0)
 
         try {
-            with(destCalendarStyles) {
+            with(styleAttributes) {
                 drawGridOnSelectedDates = typedArray.getBoolean(
                     R.styleable.CalendarView_calendar_grid_on_selected_dates,
                     drawGridOnSelectedDates
@@ -64,10 +64,9 @@ internal object CalendarAttributesReader {
                     dateCellBackgroundColorRes
                 )
 
-                dateTextColorRes = typedArray.getResourceId(
-                    R.styleable.CalendarView_calendar_date_text_color,
-                    dateTextColorRes
-                )
+                dateTextColorStateList = typedArray.getColorStateList(
+                    R.styleable.CalendarView_calendar_date_text_color
+                ) ?: dateTextColorStateList
             }
         } finally {
             typedArray.recycle()

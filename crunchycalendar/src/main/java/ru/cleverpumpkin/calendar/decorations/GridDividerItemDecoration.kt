@@ -5,12 +5,12 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import androidx.recyclerview.widget.RecyclerView
 import ru.cleverpumpkin.calendar.CalendarDateView
-import ru.cleverpumpkin.calendar.CalendarStyles
+import ru.cleverpumpkin.calendar.CalendarStyleAttributes
 import ru.cleverpumpkin.calendar.extension.dpToPix
 
 internal class GridDividerItemDecoration(
     context: Context,
-    private val styles: CalendarStyles
+    private val styles: CalendarStyleAttributes
 ) : RecyclerView.ItemDecoration() {
 
     private val linePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {

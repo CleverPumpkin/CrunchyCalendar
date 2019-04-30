@@ -163,8 +163,9 @@ internal class CalendarDateView @JvmOverloads constructor(
         super.drawableStateChanged()
 
         val stateList = textColorStateList
-        if (stateList != null && stateList.isStateful) {
+        if (stateList != null) {
             textColor = stateList.getColorForState(drawableState, textColor)
         }
     }
+
 }

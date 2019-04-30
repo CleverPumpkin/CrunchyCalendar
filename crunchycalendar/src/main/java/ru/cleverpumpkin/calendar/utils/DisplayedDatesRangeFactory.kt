@@ -6,7 +6,7 @@ import ru.cleverpumpkin.calendar.DatesRange
 /**
  * Created by Alexander Surinov on 29/04/2019.
  */
-internal object DisplayedDatesRangeProvider {
+internal object DisplayedDatesRangeFactory {
 
     private const val MONTHS_PER_PAGE = 6
 

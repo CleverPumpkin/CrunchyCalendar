@@ -136,22 +136,22 @@ internal class YearSelectionView @JvmOverloads constructor(
         }
     }
 
-    fun applyStyle(style: CalendarStyles) {
-        setBackgroundColor(style.yearSelectionBackground)
+    fun applyStyle(styleAttributes: CalendarStyleAttributes) {
+        setBackgroundColor(styleAttributes.yearSelectionBackground)
 
         ImageViewCompat.setImageTintList(
             arrowPrevView,
-            ColorStateList.valueOf(style.yearSelectionArrowsColor)
+            ColorStateList.valueOf(styleAttributes.yearSelectionArrowsColor)
         )
 
         ImageViewCompat.setImageTintList(
             arrowNextView,
-            ColorStateList.valueOf(style.yearSelectionArrowsColor)
+            ColorStateList.valueOf(styleAttributes.yearSelectionArrowsColor)
         )
 
         for (i in 0..textSwitcher.childCount) {
             val textView = textSwitcher.getChildAt(i) as? TextView
-            textView?.setTextColor(style.yearSelectionTextColor)
+            textView?.setTextColor(styleAttributes.yearSelectionTextColor)
         }
     }
 

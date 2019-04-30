@@ -1,7 +1,7 @@
 package ru.cleverpumpkin.calendar.utils
 
 /**
- * TODO: Add unit tests for [DisplayedDatesRangeProvider].
+ * TODO: Add unit tests for [DisplayedDatesRangeFactory].
  *
  * Created by Alexander Surinov on 29/04/2019.
  */

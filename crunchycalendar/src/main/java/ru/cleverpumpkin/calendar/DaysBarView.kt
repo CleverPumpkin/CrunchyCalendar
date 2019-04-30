@@ -28,12 +28,12 @@ internal class DaysBarView @JvmOverloads constructor(
         LayoutInflater.from(context).inflate(R.layout.view_days_bar, this, true)
     }
 
-    fun applyStyle(style: CalendarStyles) {
-        setBackgroundColor(style.daysBarBackground)
+    fun applyStyle(styleAttributes: CalendarStyleAttributes) {
+        setBackgroundColor(styleAttributes.daysBarBackground)
 
         for (i in 0..childCount) {
             val dayView = getChildAt(i) as? TextView
-            dayView?.setTextColor(style.daysBarTextColor)
+            dayView?.setTextColor(styleAttributes.daysBarTextColor)
         }
     }
 
