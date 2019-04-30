@@ -49,8 +49,10 @@ internal class CalendarDateView @JvmOverloads constructor(
         style = Paint.Style.FILL
     }
 
-    private var dayNumberWidth = 0.0f
-    private var textColor: Int = getColorInt(R.color.calendar_date_text_color)
+    private var dayNumberCalculatedWidth = 0.0f
+    private var currentStateTextColor: Int = getColorInt(R.color.calendar_date_text_color)
+
+    var textColorStateList: ColorStateList? = null
 
     var isToday: Boolean = false
         set(value) {
@@ -89,7 +91,7 @@ internal class CalendarDateView @JvmOverloads constructor(
     var dayNumber: String = ""
         set(value) {
             field = value
-            dayNumberWidth = textPaint.measureText(value)
+            dayNumberCalculatedWidth = textPaint.measureText(value)
         }
 
     var dateIndicators: List<CalendarView.DateIndicator> = emptyList()
@@ -97,20 +99,18 @@ internal class CalendarDateView @JvmOverloads constructor(
             field = indicators.take(MAX_INDICATORS_COUNT)
         }
 
-    var textColorStateList: ColorStateList? = null
-
     override fun onDraw(canvas: Canvas) {
         canvas.drawDayNumber()
         canvas.drawIndicators()
     }
 
     private fun Canvas.drawDayNumber() {
-        textPaint.color = textColor
+        textPaint.color = currentStateTextColor
 
         val xPos = width / 2.0f
         val yPos = height / 2.0f - (textPaint.descent() + textPaint.ascent()) / 2.0f
 
-        drawText(dayNumber, xPos - (dayNumberWidth / 2.0f), yPos, textPaint)
+        drawText(dayNumber, xPos - (dayNumberCalculatedWidth / 2.0f), yPos, textPaint)
     }
 
     private fun Canvas.drawIndicators() {
@@ -164,7 +164,7 @@ internal class CalendarDateView @JvmOverloads constructor(
 
         val stateList = textColorStateList
         if (stateList != null) {
-            textColor = stateList.getColorForState(drawableState, textColor)
+            currentStateTextColor = stateList.getColorForState(drawableState, currentStateTextColor)
         }
     }
 

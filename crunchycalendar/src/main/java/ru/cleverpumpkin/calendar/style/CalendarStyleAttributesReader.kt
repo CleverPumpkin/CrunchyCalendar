@@ -1,9 +1,8 @@
-package ru.cleverpumpkin.calendar.utils
+package ru.cleverpumpkin.calendar.style
 
 import android.content.Context
 import android.util.AttributeSet
 import androidx.annotation.AttrRes
-import ru.cleverpumpkin.calendar.CalendarStyleAttributes
 import ru.cleverpumpkin.calendar.R
 
 internal object CalendarStyleAttributesReader {
@@ -64,9 +63,9 @@ internal object CalendarStyleAttributesReader {
                     dateCellBackgroundColorRes
                 )
 
-                dateTextColorStateList = typedArray.getColorStateList(
+                dateCellTextColorStateList = typedArray.getColorStateList(
                     R.styleable.CalendarView_calendar_date_text_color
-                ) ?: dateTextColorStateList
+                ) ?: dateCellTextColorStateList
             }
         } finally {
             typedArray.recycle()

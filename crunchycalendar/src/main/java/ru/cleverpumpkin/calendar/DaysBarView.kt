@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.AttrRes
+import ru.cleverpumpkin.calendar.style.CalendarStyleAttributes
 import java.text.SimpleDateFormat
 import java.util.*
 

@@ -13,6 +13,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.collection.ArrayMap
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.cleverpumpkin.calendar.adapter.CalendarAdapter
@@ -24,24 +25,25 @@ import ru.cleverpumpkin.calendar.adapter.manager.CalendarAdapterDataManager
 import ru.cleverpumpkin.calendar.decorations.GridDividerItemDecoration
 import ru.cleverpumpkin.calendar.extension.getColorInt
 import ru.cleverpumpkin.calendar.selection.*
-import ru.cleverpumpkin.calendar.utils.CalendarStyleAttributesReader
+import ru.cleverpumpkin.calendar.style.CalendarStyleAttributes
+import ru.cleverpumpkin.calendar.style.CalendarStyleAttributesReader
 import ru.cleverpumpkin.calendar.utils.DateInfoProvider
 import ru.cleverpumpkin.calendar.utils.DisplayedDatesRangeFactory
 import java.util.*
 
 /**
- * This class represents a Calendar Widget that allow displaying calendar grid, selecting dates,
+ * This class represents a Calendar Widget that allows displaying calendar grid, selecting dates,
  * displaying color indicators for the specific dates and handling date selection with a custom action.
  *
  * The Calendar must be initialized with the [setupCalendar] method where you can specify
  * parameters for the calendar.
  *
  * The Calendar UI open for customization.
- * Using XML attributes you can define grid divider color, date cell selectors etc.
+ * You can define grid divider color, date cell selectors etc.
  * Using standard [RecyclerView.ItemDecoration] you can define special drawing for the calendar items.
  *
  * This class overrides [onSaveInstanceState] and [onRestoreInstanceState], so it is able
- * to save and restore its state.
+ * to save and restore its internal state.
  */
 class CalendarView @JvmOverloads constructor(
     context: Context,
@@ -51,7 +53,7 @@ class CalendarView @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
     /**
-     * This interface represents a colored indicator for the specific date that will be displayed
+     * This interface represents a color indicator for the specific date that will be displayed
      * on the Calendar.
      */
     interface DateIndicator {
@@ -76,7 +78,7 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * This enum class represents available selection modes for dates selecting
+     * This enum class represents available selection modes for dates selecting.
      */
     enum class SelectionMode {
         /**
@@ -100,26 +102,26 @@ class CalendarView @JvmOverloads constructor(
         RANGE
     }
 
-    private val calendarStyleAttributes = CalendarStyleAttributes(context)
-
-    private val yearSelectionView: YearSelectionView
-    private val daysBarView: DaysBarView
-    private val recyclerView: RecyclerView
-    private val calendarAdapter: CalendarAdapter
-
     /**
      * Internal flag, that indicates whether the Calendar has been initialized
      * with [setupCalendar] method or not.
      */
     private var hasBeenInitializedWithSetup = false
 
+    private val yearSelectionView: YearSelectionView
+    private val daysBarView: DaysBarView
+    private val recyclerView: RecyclerView
+    private val calendarAdapter: CalendarAdapter
+
     private var displayedDatesRange = DatesRange.emptyRange()
     private var minMaxDatesRange = NullableDatesRange()
     private var dateSelectionStrategy: DateSelectionStrategy = NoDateSelectionStrategy()
     private val displayedYearUpdateListener = DisplayedYearUpdateListener()
-    private val dateInfoProvider: DateInfoProvider = DefaultDateInfoProvider()
+    private val dateInfoProvider = DefaultDateInfoProvider()
     private val adapterDataManager: AdapterDataManager
     private lateinit var calendarItemsGenerator: CalendarItemsGenerator
+
+    private val calendarStyleAttributes = CalendarStyleAttributes(context)
 
     private var selectionMode: SelectionMode = SelectionMode.NONE
         set(value) {
@@ -161,7 +163,8 @@ class CalendarView @JvmOverloads constructor(
         get() = Calendar.getInstance().firstDayOfWeek
 
     /**
-     * The first day of the week, e.g [Calendar.SUNDAY], [Calendar.MONDAY], etc.
+     * The first day of the week (e.g [Calendar.SUNDAY], [Calendar.MONDAY], etc.)
+     * that has been set for the Calendar.
      */
     var firstDayOfWeek: Int = defaultFirstDayOfWeek
         private set(value) {
@@ -171,12 +174,12 @@ class CalendarView @JvmOverloads constructor(
         }
 
     /**
-     * Grouped by date indicators that will be displayed on the Calendar.
+     * Grouped by date color indicators that are displayed on the Calendar.
      */
     private val groupedDatesIndicators = ArrayMap<CalendarDate, MutableList<DateIndicator>>()
 
     /**
-     * List of indicators that will be displayed on the Calendar.
+     * List of indicators that are displayed on the Calendar.
      */
     var datesIndicators: List<DateIndicator> = emptyList()
         set(value) {
@@ -214,10 +217,10 @@ class CalendarView @JvmOverloads constructor(
      * Returns selected dates according to the [selectionMode].
      *
      * When selection mode is:
-     * [SelectionMode.NONE] returns empty list
-     * [SelectionMode.SINGLE] returns list with a single selected date
-     * [SelectionMode.MULTIPLE] returns all selected dates in order they were added
-     * [SelectionMode.RANGE] returns all dates in selected range
+     * [SelectionMode.NONE] returns empty list.
+     * [SelectionMode.SINGLE] returns a list with a single selected date.
+     * [SelectionMode.MULTIPLE] returns a list with all selected dates in order they were added.
+     * [SelectionMode.RANGE] returns a list with all dates in the selected range.
      */
     val selectedDates: List<CalendarDate>
         get() = dateSelectionStrategy.getSelectedDates()
@@ -230,11 +233,128 @@ class CalendarView @JvmOverloads constructor(
             .firstOrNull()
 
     /**
+     * Init block where we read custom attributes and set up internal views.
+     */
+    init {
+        LayoutInflater.from(context).inflate(R.layout.view_calendar, this, true)
+
+        yearSelectionView = findViewById(R.id.year_selection_view)
+        daysBarView = findViewById(R.id.days_bar_view)
+        recyclerView = findViewById(R.id.recycler_view)
+
+        if (attrs != null) {
+            CalendarStyleAttributesReader.readStyleAttributes(
+                context = context,
+                attrs = attrs,
+                defStyleAttr = defStyleAttr,
+                styleAttributes = calendarStyleAttributes
+            )
+        }
+
+        calendarAdapter = CalendarAdapter(
+            styleAttributes = calendarStyleAttributes,
+            dateInfoProvider = dateInfoProvider,
+            onDateClickListener = { date, longClick ->
+                if (longClick) {
+                    onDateLongClickListener?.invoke(date)
+                } else {
+                    dateSelectionStrategy.onDateSelected(date)
+                    onDateClickListener?.invoke(date)
+                }
+            }
+        )
+
+        adapterDataManager = CalendarAdapterDataManager(calendarAdapter)
+
+        daysBarView.applyStyle(calendarStyleAttributes)
+        yearSelectionView.applyStyle(calendarStyleAttributes)
+
+        yearSelectionView.onYearChangeListener = { displayedDate ->
+            moveToDate(displayedDate)
+        }
+
+        setupRecyclerView(recyclerView)
+    }
+
+    /**
+     * Method for the initial calendar set up. All parameters have default values.
+     *
+     * [initialDate] the date that will be displayed initially.
+     * Default value - today date.
+     *
+     * [minDate] minimum date for the Calendar grid, inclusive.
+     * If null, the Calendar will display all available dates before [initialDate]
+     * Default value - null.
+     *
+     * [maxDate] maximum date for the Calendar grid, inclusive.
+     * If null, the Calendar will display all available dates after [initialDate]
+     * Default value - null.
+     *
+     * [selectionMode] mode for dates selecting.
+     * Default value - [SelectionMode.NONE].
+     *
+     * [selectedDates] list of the initially selected dates.
+     * Default value - empty list.
+     *
+     * When selection mode is:
+     * [SelectionMode.SINGLE], [selectedDates] can contains only single date.
+     * [SelectionMode.MULTIPLE], [selectedDates] can contains multiple dates.
+     * [SelectionMode.RANGE], [selectedDates] can contains two dates that represent selected range.
+     *
+     * [firstDayOfWeek] the first day of the week: [Calendar.SUNDAY], [Calendar.MONDAY], etc.
+     * If null, the Calendar will be initialized with the [defaultFirstDayOfWeek].
+     * Default value - null.
+     *
+     * [showYearSelectionView] flag that indicates whether year selection view will be displayed or not.
+     * Default value - true.
+     */
+    fun setupCalendar(
+        initialDate: CalendarDate = CalendarDate.today,
+        minDate: CalendarDate? = null,
+        maxDate: CalendarDate? = null,
+        selectionMode: SelectionMode = SelectionMode.NONE,
+        selectedDates: List<CalendarDate> = emptyList(),
+        firstDayOfWeek: Int = defaultFirstDayOfWeek,
+        showYearSelectionView: Boolean = true
+    ) {
+        if (minDate != null && maxDate != null && minDate > maxDate) {
+            throw IllegalArgumentException("minDate must be before maxDate: $minDate, maxDate: $maxDate")
+        }
+
+        if (firstDayOfWeek < Calendar.SUNDAY || firstDayOfWeek > Calendar.SATURDAY) {
+            throw IllegalArgumentException("Incorrect value of firstDayOfWeek: $firstDayOfWeek")
+        }
+
+        this.selectionMode = selectionMode
+        this.firstDayOfWeek = firstDayOfWeek
+        this.showYearSelectionView = showYearSelectionView
+        minMaxDatesRange = NullableDatesRange(dateFrom = minDate, dateTo = maxDate)
+
+        yearSelectionView.setupYearSelectionView(
+            displayedDate = initialDate,
+            minMaxDatesRange = minMaxDatesRange
+        )
+
+        updateSelectedDatesInternal(selectedDates)
+
+        displayedDatesRange = DisplayedDatesRangeFactory.getDisplayedDatesRange(
+            initialDate = initialDate,
+            minDate = minDate,
+            maxDate = maxDate
+        )
+
+        generateCalendarItems(displayedDatesRange)
+        moveToDate(initialDate)
+
+        hasBeenInitializedWithSetup = true
+    }
+
+    /**
      * Sets the calendar grid color.
      */
     fun setGridColor(@ColorInt color: Int) {
         calendarStyleAttributes.gridColor = color
-        updateGridDividerItemDecoration()
+        adapterDataManager.notifyDateItemsChanged()
     }
 
     /**
@@ -255,7 +375,7 @@ class CalendarView @JvmOverloads constructor(
     /**
      * Sets the year selection bar background color resource.
      */
-    fun setYearSelectionBackgroundColorRes(@ColorRes colorRes: Int) {
+    fun setYearSelectionBarBackgroundColorRes(@ColorRes colorRes: Int) {
         setYearSelectionBarBackgroundColor(getColorInt(colorRes))
     }
 
@@ -335,9 +455,9 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Sets a date cell background drawable resource.
+     * Sets a date cell background resource.
      */
-    fun setDateCellBackgroundDrawableRes(@DrawableRes drawableRes: Int) {
+    fun setDateCellBackgroundRes(@DrawableRes drawableRes: Int) {
         calendarStyleAttributes.dateCellBackgroundColorRes = drawableRes
         calendarAdapter.notifyDataSetChanged()
     }
@@ -345,174 +465,25 @@ class CalendarView @JvmOverloads constructor(
     /**
      * Sets a date cell text color.
      */
-    fun setDateCellTextColor(colors: ColorStateList) {
-        calendarStyleAttributes.dateTextColorStateList = colors
+    fun setDateCellTextColor(colorStateList: ColorStateList) {
+        calendarStyleAttributes.dateCellTextColorStateList = colorStateList
         calendarAdapter.notifyDataSetChanged()
     }
 
     /**
-     * Sets a date cell text color for all the states (normal, selected,
-     * focused, ...) to be this color.
+     * Sets a date cell text color.
      */
     fun setDateCellTextColor(@ColorInt color: Int) {
-        setDateCellTextColor(ColorStateList.valueOf(color))
+        val colorStateList = ColorStateList.valueOf(color)
+        setDateCellTextColor(colorStateList)
     }
 
     /**
-     * Init block where we read custom attributes and setting up internal views
+     * Sets a date cell text color resource.
      */
-    init {
-        LayoutInflater.from(context).inflate(R.layout.view_calendar, this, true)
-
-        yearSelectionView = findViewById(R.id.year_selection_view)
-        daysBarView = findViewById(R.id.days_bar_view)
-        recyclerView = findViewById(R.id.recycler_view)
-
-        if (attrs != null) {
-            CalendarStyleAttributesReader.readStyleAttributes(
-                context = context,
-                attrs = attrs,
-                defStyleAttr = defStyleAttr,
-                styleAttributes = calendarStyleAttributes
-            )
-        }
-
-        calendarAdapter = CalendarAdapter(
-            styleAttributes = calendarStyleAttributes,
-            dateInfoProvider = dateInfoProvider,
-            onDateClickListener = { date, longClick ->
-                if (longClick) {
-                    onDateLongClickListener?.invoke(date)
-                } else {
-                    dateSelectionStrategy.onDateSelected(date)
-                    onDateClickListener?.invoke(date)
-                }
-            }
-        )
-
-        adapterDataManager = CalendarAdapterDataManager(calendarAdapter)
-
-        daysBarView.applyStyle(calendarStyleAttributes)
-        yearSelectionView.applyStyle(calendarStyleAttributes)
-
-        yearSelectionView.onYearChangeListener = { displayedDate ->
-            moveToDate(displayedDate)
-        }
-
-        setupRecyclerView(recyclerView)
-    }
-
-    private fun setupRecyclerView(recyclerView: RecyclerView) {
-
-        val gridLayoutManager = object : GridLayoutManager(context, DAYS_IN_WEEK) {
-            override fun onRestoreInstanceState(state: Parcelable?) {
-                if (hasBeenInitializedWithSetup.not()) {
-                    super.onRestoreInstanceState(state)
-                }
-            }
-        }
-
-        gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-            override fun getSpanSize(position: Int): Int {
-                return when (recyclerView.adapter?.getItemViewType(position)) {
-                    CalendarAdapter.MONTH_VIEW_TYPE -> DAYS_IN_WEEK
-                    else -> 1
-                }
-            }
-        }
-
-        recyclerView.run {
-            adapter = calendarAdapter
-            layoutManager = gridLayoutManager
-            itemAnimator = null
-
-            recycledViewPool.setMaxRecycledViews(
-                CalendarAdapter.DATE_VIEW_TYPE,
-                MAX_RECYCLED_DAY_VIEWS
-            )
-
-            recycledViewPool.setMaxRecycledViews(
-                CalendarAdapter.EMPTY_VIEW_TYPE,
-                MAX_RECYCLED_EMPTY_VIEWS
-            )
-
-            setHasFixedSize(true)
-            updateGridDividerItemDecoration()
-
-            addOnScrollListener(CalendarItemsGenerationListener())
-        }
-    }
-
-    /**
-     * Method for the initial calendar set up. All parameters have default values.
-     *
-     * [initialDate] the date that will be displayed initially.
-     * Default value - today date.
-     *
-     * [minDate] minimum date for the Calendar grid, inclusive.
-     * If null, the Calendar will display all available dates before [initialDate]
-     * Default value - null.
-     *
-     * [maxDate] maximum date for the Calendar grid, inclusive.
-     * If null, the Calendar will display all available dates after [initialDate]
-     * Default value - null.
-     *
-     * [selectionMode] mode for dates selecting.
-     * Default value - [SelectionMode.NONE].
-     *
-     * When selection mode is:
-     * [SelectionMode.SINGLE], [selectedDates] can contains only single date.
-     * [SelectionMode.MULTIPLE], [selectedDates] can contains multiple date.
-     * [SelectionMode.RANGE], [selectedDates] can contains two dates that represent selected range.
-     *
-     * [selectedDates] list of the initially selected dates.
-     * Default value - empty list.
-     *
-     * [firstDayOfWeek] the first day of the week: [Calendar.SUNDAY], [Calendar.MONDAY], etc.
-     * Default value - null. If null, the Calendar will be initialized with the [defaultFirstDayOfWeek].
-     *
-     * [showYearSelectionView] flag that indicates whether year selection view will be displayed or not.
-     * Default value - true.
-     */
-    fun setupCalendar(
-        initialDate: CalendarDate = CalendarDate.today,
-        minDate: CalendarDate? = null,
-        maxDate: CalendarDate? = null,
-        selectionMode: SelectionMode = SelectionMode.NONE,
-        selectedDates: List<CalendarDate> = emptyList(),
-        firstDayOfWeek: Int = defaultFirstDayOfWeek,
-        showYearSelectionView: Boolean = true
-    ) {
-        if (minDate != null && maxDate != null && minDate > maxDate) {
-            throw IllegalArgumentException("minDate must be before maxDate: $minDate, maxDate: $maxDate")
-        }
-
-        if (firstDayOfWeek < Calendar.SUNDAY || firstDayOfWeek > Calendar.SATURDAY) {
-            throw IllegalArgumentException("Incorrect value of firstDayOfWeek: $firstDayOfWeek")
-        }
-
-        this.selectionMode = selectionMode
-        this.firstDayOfWeek = firstDayOfWeek
-        this.showYearSelectionView = showYearSelectionView
-        minMaxDatesRange = NullableDatesRange(dateFrom = minDate, dateTo = maxDate)
-
-        yearSelectionView.setupYearSelectionView(
-            displayedDate = initialDate,
-            minMaxDatesRange = minMaxDatesRange
-        )
-
-        updateSelectedDatesInternal(selectedDates)
-
-        displayedDatesRange = DisplayedDatesRangeFactory.getDisplayedDatesRange(
-            initialDate = initialDate,
-            minDate = minDate,
-            maxDate = maxDate
-        )
-
-        generateCalendarItems(displayedDatesRange)
-        moveToDate(initialDate)
-
-        hasBeenInitializedWithSetup = true
+    fun setDateCellTextColorRes(@ColorRes colorRes: Int) {
+        val colorStateList = requireNotNull(ContextCompat.getColorStateList(context, colorRes))
+        setDateCellTextColor(colorStateList)
     }
 
     /**
@@ -555,7 +526,7 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Remove specific [RecyclerView.ItemDecoration] that has been added.
+     * Remove [RecyclerView.ItemDecoration] that has been added.
      */
     fun removeCustomItemDecoration(itemDecoration: RecyclerView.ItemDecoration) {
         recyclerView.removeItemDecoration(itemDecoration)
@@ -610,14 +581,42 @@ class CalendarView @JvmOverloads constructor(
         }
     }
 
-    private fun updateGridDividerItemDecoration() {
-        val divider = GridDividerItemDecoration(context, calendarStyleAttributes)
-
-        if (recyclerView.itemDecorationCount > 0) {
-            recyclerView.removeItemDecorationAt(0)
+    private fun setupRecyclerView(recyclerView: RecyclerView) {
+        val gridLayoutManager = object : GridLayoutManager(context, DAYS_IN_WEEK) {
+            override fun onRestoreInstanceState(state: Parcelable?) {
+                if (hasBeenInitializedWithSetup.not()) {
+                    super.onRestoreInstanceState(state)
+                }
+            }
         }
 
-        recyclerView.addItemDecoration(divider, 0)
+        gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return when (recyclerView.adapter?.getItemViewType(position)) {
+                    CalendarAdapter.MONTH_VIEW_TYPE -> DAYS_IN_WEEK
+                    else -> 1
+                }
+            }
+        }
+
+        with(recyclerView) {
+            adapter = calendarAdapter
+            layoutManager = gridLayoutManager
+            itemAnimator = null
+
+            recycledViewPool.setMaxRecycledViews(
+                CalendarAdapter.DATE_VIEW_TYPE,
+                MAX_RECYCLED_DAY_VIEWS
+            )
+
+            recycledViewPool.setMaxRecycledViews(
+                CalendarAdapter.EMPTY_VIEW_TYPE,
+                MAX_RECYCLED_EMPTY_VIEWS
+            )
+
+            addItemDecoration(GridDividerItemDecoration(context, calendarStyleAttributes))
+            addOnScrollListener(CalendarItemsGenerationListener())
+        }
     }
 
     private fun generateCalendarItems(datesRange: DatesRange) {
@@ -701,7 +700,7 @@ class CalendarView @JvmOverloads constructor(
         val superState = super.onSaveInstanceState()
 
         return Bundle().apply {
-            putString(BUNDLE_SELECTION_MODE, selectionMode.name)
+            putSerializable(BUNDLE_SELECTION_MODE, selectionMode)
             putParcelable(BUNDLE_DISPLAY_DATE_RANGE, displayedDatesRange)
             putParcelable(BUNDLE_LIMIT_DATE_RANGE, minMaxDatesRange)
             putParcelable(BUNDLE_SUPER_STATE, superState)
@@ -727,15 +726,10 @@ class CalendarView @JvmOverloads constructor(
                 return
             }
 
-            val modeName = state.getString(BUNDLE_SELECTION_MODE, SelectionMode.NONE.name)
-            selectionMode = SelectionMode.valueOf(modeName)
-
-            displayedDatesRange = state.getParcelable(BUNDLE_DISPLAY_DATE_RANGE)
-                    ?: displayedDatesRange
-
-            minMaxDatesRange = state.getParcelable(BUNDLE_LIMIT_DATE_RANGE)
-                    ?: minMaxDatesRange
-
+            selectionMode = state.getSerializable(BUNDLE_SELECTION_MODE) as SelectionMode
+            displayedDatesRange =
+                state.getParcelable(BUNDLE_DISPLAY_DATE_RANGE) ?: DatesRange.emptyRange()
+            minMaxDatesRange = state.getParcelable(BUNDLE_LIMIT_DATE_RANGE) ?: NullableDatesRange()
             showYearSelectionView = state.getBoolean(BUNDLE_SHOW_YEAR_SELECTION_VIEW)
             firstDayOfWeek = state.getInt(BUNDLE_FIRST_DAY_OF_WEEK)
             dateSelectionStrategy.restoreSelectedDates(state)

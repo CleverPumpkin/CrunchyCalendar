@@ -8,7 +8,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarDateView
-import ru.cleverpumpkin.calendar.CalendarStyleAttributes
 import ru.cleverpumpkin.calendar.R
 import ru.cleverpumpkin.calendar.adapter.CalendarAdapter.Companion.DATE_VIEW_TYPE
 import ru.cleverpumpkin.calendar.adapter.CalendarAdapter.Companion.EMPTY_VIEW_TYPE
@@ -17,6 +16,7 @@ import ru.cleverpumpkin.calendar.adapter.item.CalendarItem
 import ru.cleverpumpkin.calendar.adapter.item.DateItem
 import ru.cleverpumpkin.calendar.adapter.item.EmptyItem
 import ru.cleverpumpkin.calendar.adapter.item.MonthItem
+import ru.cleverpumpkin.calendar.style.CalendarStyleAttributes
 import ru.cleverpumpkin.calendar.utils.DateInfoProvider
 import java.text.SimpleDateFormat
 import java.util.*
@@ -78,10 +78,6 @@ internal class CalendarAdapter(
 
     private fun createDateItemViewHolder(context: Context): DateItemViewHolder {
         val dateView = CalendarDateView(context)
-
-        dateView.setBackgroundResource(styleAttributes.dateCellBackgroundColorRes)
-        dateView.textColorStateList = styleAttributes.dateTextColorStateList
-
         val dayItemViewHolder = DateItemViewHolder(dateView)
 
         dateView.setOnClickListener {
@@ -149,6 +145,9 @@ internal class CalendarAdapter(
         dateView.isWeekend = dateInfoProvider.isWeekend(date)
         dateView.dateIndicators = dateInfoProvider.getDateIndicators(date)
         dateView.dayNumber = dayFormatter.format(date.date)
+
+        dateView.setBackgroundResource(styleAttributes.dateCellBackgroundColorRes)
+        dateView.textColorStateList = styleAttributes.dateCellTextColorStateList
     }
 
     private fun bindMonthItemViewHolder(holder: MonthItemViewHolder, monthItem: MonthItem) {
