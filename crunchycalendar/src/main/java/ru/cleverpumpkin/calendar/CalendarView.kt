@@ -209,9 +209,17 @@ class CalendarView @JvmOverloads constructor(
         }
 
     /**
-     * Date selection filter that indicates whether a date available for selection or not.
+     * Filter that is used to determine whether a date available for selection or not.
      */
     var dateSelectionFilter: ((CalendarDate) -> Boolean)? = null
+
+    /**
+     * Filter that is used to determine whether a date is a weekend or not.
+     * By default [Calendar.SUNDAY] and [Calendar.SATURDAY] are weekends.
+     */
+    var weekendFilter: (CalendarDate) -> Boolean = { date ->
+        date.dayOfWeek == Calendar.SUNDAY || date.dayOfWeek == Calendar.SATURDAY
+    }
 
     /**
      * Returns selected dates according to the [selectionMode].
@@ -775,7 +783,7 @@ class CalendarView @JvmOverloads constructor(
         }
 
         override fun isWeekend(date: CalendarDate): Boolean {
-            return date.dayOfWeek == Calendar.SUNDAY || date.dayOfWeek == Calendar.SATURDAY
+            return weekendFilter.invoke(date)
         }
 
         override fun getDateIndicators(date: CalendarDate): List<DateIndicator> {
