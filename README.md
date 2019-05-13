@@ -22,7 +22,7 @@ This library is available on [jCenter](https://bintray.com/cleverpumpkin/maven/C
 #### Gradle
 
 ```
-implementation 'ru.cleverpumpkin:crunchycalendar:1.1.0'
+implementation 'ru.cleverpumpkin:crunchycalendar:2.0.0'
 ```
 
 #### Maven
@@ -31,7 +31,7 @@ implementation 'ru.cleverpumpkin:crunchycalendar:1.1.0'
 <dependency>
   <groupId>ru.cleverpumpkin</groupId>
   <artifactId>crunchycalendar</artifactId>
-  <version>1.1.0</version>
+  <version>2.0.0</version>
   <type>pom</type>
 </dependency>
 ```
@@ -261,7 +261,23 @@ Apply your custom style.
 
 ```
 
-You can also apply custom style for all Calendars in your app at once.
+You can also set styles and coloros programmatically:
+```kotlin
+ with(calendarView) {
+     setDrawGridOnSelectedDates(drawGrid = true)
+     setGridColorRes(R.color.custom_calendar_grid_color)
+     setYearSelectionBarBackgroundColorRes(R.color.custom_calendar_year_selection_background)
+     setYearSelectionBarArrowsColorRes(R.color.custom_calendar_year_selection_arrows_color)
+     setYearSelectionBarTextColorRes(R.color.custom_calendar_year_selection_text_color)
+     setDaysBarBackgroundColorRes(R.color.custom_calendar_days_bar_background)
+     setDaysBarTextColorRes(R.color.custom_calendar_days_bar_text_color)
+     setMonthTextColorRes(R.color.custom_calendar_month_text_color)
+     setDateCellBackgroundRes(R.drawable.custom_date_bg_selector)
+     setDateCellTextColorRes(R.color.custom_date_text_selector)
+}
+```
+
+To define custom styles for all Calendars in your app at once you can do this:
 ```xml
 
 <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -275,7 +291,7 @@ You can also apply custom style for all Calendars in your app at once.
 ```
 
 
-If you need to do some custom drawing logic for Calendar, you can implement standard 
+If you need to add some custom drawing logic for Calendar, you can implement standard 
 `RecyclerView.ItemDecoration` and add it for Calendar using `addCustomItemDecoration()` method.
 
 ```kotlin
