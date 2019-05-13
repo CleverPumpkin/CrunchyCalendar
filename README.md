@@ -79,7 +79,7 @@ calendarView.setupCalendar(
     initialDate = initialDate, 
     minDate = minDate,
     maxDate = maxDate,
-    selectionMode = SelectionMode.NON,
+    selectionMode = SelectionMode.NONE,
     selectedDates = preselectedDates,
     firstDayOfWeek = firstDayOfWeek,
     showYearSelectionView = true
@@ -112,10 +112,10 @@ calendarView.onDateLongClickListener = { date ->
 
 ## Saving and Restoring state  
 Calendar takes care of saving and restoring its internal state (selected dates, selection mode, etc.),
-so there's no need to save it manually and call setupCalendar() method every time, 
+so there's no need to save it manually and call `CalendarView.setupCalendar()` method every time, 
 when `Activity` or `Fragment` is recreated.
 
-If a Calendar was set up with `setupCalendar()` method **before** restoring state, previous saved 
+If a Calendar was set up with `CalendarView.setupCalendar()` method **before** restoring state, previous saved 
 state will be ignored. 
 
 ## Dates Selection
@@ -224,8 +224,11 @@ calendarView.onDateClickListener = { date ->
 ```
 
 ## View Customization
+Calendar appearance open for customization.
 
-Calendar appearance can be customized with XML attributes. Here's an example of applying custom style for changing Calendar appearance.
+#### Styling using XML
+
+Calendar appearance can be customized with XML attributes. Here's an example of applying custom style to change Calendar appearance.
 
 Define your custom style for the Calendar.
 ```xml
@@ -261,7 +264,22 @@ Apply your custom style.
 
 ```
 
-You can also set styles and coloros programmatically:
+To define custom styles for all Calendars in your app at once you can do this:
+```xml
+
+<style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+
+    <!-- ...snip... -->
+    
+    <item name="calendarViewStyle">@style/CalendarViewCustomStyle</item>
+    
+    <!-- ...etc... -->
+</style>
+```
+
+#### Styling using code
+You can also set styles and colors programmatically:
+
 ```kotlin
  with(calendarView) {
      setDrawGridOnSelectedDates(drawGrid = true)
@@ -276,20 +294,6 @@ You can also set styles and coloros programmatically:
      setDateCellTextColorRes(R.color.custom_date_text_selector)
 }
 ```
-
-To define custom styles for all Calendars in your app at once you can do this:
-```xml
-
-<style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-
-    <!-- ...snip... -->
-    
-    <item name="calendarViewStyle">@style/CalendarViewCustomStyle</item>
-    
-    <!-- ...etc... -->
-</style>
-```
-
 
 If you need to add some custom drawing logic for Calendar, you can implement standard 
 `RecyclerView.ItemDecoration` and add it for Calendar using `addCustomItemDecoration()` method.
