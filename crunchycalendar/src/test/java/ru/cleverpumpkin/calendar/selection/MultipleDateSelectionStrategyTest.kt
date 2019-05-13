@@ -7,12 +7,12 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
-import ru.cleverpumpkin.calendar.CalendarView
 import ru.cleverpumpkin.calendar.adapter.manager.AdapterDataManager
 import ru.cleverpumpkin.calendar.anyNotNullObject
+import ru.cleverpumpkin.calendar.utils.DateInfoProvider
 
 /**
- * Set of unit tests for a [MultipleDateSelectionStrategy] class
+ * Set of unit tests for the [MultipleDateSelectionStrategy] class.
  *
  * Each test contains:
  * 1. `Given` section, where we prepare test object and test data
@@ -22,7 +22,7 @@ import ru.cleverpumpkin.calendar.anyNotNullObject
 class MultipleDateSelectionStrategyTest {
 
     @Mock private lateinit var adapterDataManager: AdapterDataManager
-    @Mock private lateinit var dateInfoProvider: CalendarView.DateInfoProvider
+    @Mock private lateinit var dateInfoProvider: DateInfoProvider
 
     private lateinit var dateSelectionStrategy: DateSelectionStrategy
 
