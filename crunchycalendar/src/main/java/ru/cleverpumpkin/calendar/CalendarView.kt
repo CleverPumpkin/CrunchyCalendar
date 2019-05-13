@@ -62,10 +62,8 @@ class CalendarView @JvmOverloads constructor(
     }
 
     companion object {
-        private const val DAYS_IN_WEEK = 7
         private const val MAX_RECYCLED_DAY_VIEWS = 90
         private const val MAX_RECYCLED_EMPTY_VIEWS = 20
-        private const val MONTHS_PER_PAGE = 6
 
         private const val BUNDLE_SUPER_STATE = "ru.cleverpumpkin.calendar.super_state"
         private const val BUNDLE_DISPLAYED_DATE = "ru.cleverpumpkin.calendar.displayed_date"
@@ -598,7 +596,7 @@ class CalendarView @JvmOverloads constructor(
     }
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
-        val gridLayoutManager = object : GridLayoutManager(context, DAYS_IN_WEEK) {
+        val gridLayoutManager = object : GridLayoutManager(context, CalendarConst.DAYS_IN_WEEK) {
             override fun onRestoreInstanceState(state: Parcelable?) {
                 if (hasBeenInitializedWithSetup.not()) {
                     super.onRestoreInstanceState(state)
@@ -609,7 +607,7 @@ class CalendarView @JvmOverloads constructor(
         gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
                 return when (recyclerView.adapter?.getItemViewType(position)) {
-                    CalendarAdapter.MONTH_VIEW_TYPE -> DAYS_IN_WEEK
+                    CalendarAdapter.MONTH_VIEW_TYPE -> CalendarConst.DAYS_IN_WEEK
                     else -> 1
                 }
             }
@@ -660,14 +658,14 @@ class CalendarView @JvmOverloads constructor(
         generateDatesFrom = if (minDate != null) {
             val monthBetween = minDate.monthsBetween(generateDatesTo)
 
-            if (monthBetween > MONTHS_PER_PAGE) {
-                generateDatesTo.minusMonths(MONTHS_PER_PAGE)
+            if (monthBetween > CalendarConst.MONTHS_PER_PAGE) {
+                generateDatesTo.minusMonths(CalendarConst.MONTHS_PER_PAGE)
             } else {
                 generateDatesTo.minusMonths(monthBetween)
             }
 
         } else {
-            generateDatesTo.minusMonths(MONTHS_PER_PAGE)
+            generateDatesTo.minusMonths(CalendarConst.MONTHS_PER_PAGE)
         }
 
         val calendarItems = calendarItemsGenerator.generateCalendarItems(
@@ -691,13 +689,13 @@ class CalendarView @JvmOverloads constructor(
         generateDatesTo = if (maxDate != null) {
             val monthBetween = generateDatesFrom.monthsBetween(maxDate)
 
-            if (monthBetween > MONTHS_PER_PAGE) {
-                generateDatesFrom.plusMonths(MONTHS_PER_PAGE)
+            if (monthBetween > CalendarConst.MONTHS_PER_PAGE) {
+                generateDatesFrom.plusMonths(CalendarConst.MONTHS_PER_PAGE)
             } else {
                 generateDatesFrom.plusMonths(monthBetween)
             }
         } else {
-            generateDatesFrom.plusMonths(MONTHS_PER_PAGE)
+            generateDatesFrom.plusMonths(CalendarConst.MONTHS_PER_PAGE)
         }
 
         val calendarItems = calendarItemsGenerator.generateCalendarItems(
