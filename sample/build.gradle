@@ -41,6 +41,13 @@ android {
     }
 }
 
+androidExtensions {
+    experimental = true
+
+    // Default cache implementation for layout views.
+    defaultCacheImplementation = "SPARSE_ARRAY"
+}
+
 dependencies {
     implementation project(':crunchycalendar')
 

@@ -152,4 +152,5 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
     fun isBetween(dateFrom: CalendarDate, dateTo: CalendarDate): Boolean {
         return this >= dateFrom && this <= dateTo
     }
+
 }

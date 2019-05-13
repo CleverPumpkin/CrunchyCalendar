@@ -1,14 +1,18 @@
 <resources>
     <string name="app_name">CrunchyCalendar</string>
 
-    <string name="selection_sample">Selection sample</string>
-    <string name="custom_style_sample">Custom style sample</string>
-    <string name="date_indicators_sample">Date indicators sample</string>
-    <string name="dialog_sample">Dialog</string>
+    <string name="demo_selection">Selection modes sample</string>
+    <string name="demo_date_boundaries">Date boundaries sample</string>
+    <string name="demo_styling">Styling sample</string>
+    <string name="demo_events">Displayable events sample</string>
+    <string name="demo_dialog">Calendar dialog sample</string>
 
-    <string name="single">Single</string>
-    <string name="multi">Multiple</string>
-    <string name="range">Range</string>
+    <string name="selection_mode_none">None</string>
+    <string name="selection_mode_single">Single</string>
+    <string name="selection_mode_multiple">Multiple</string>
+    <string name="selection_mode_range">Range</string>
+    <string name="selection_mode_week">Week</string>
+
     <string name="week">Week</string>
     <string name="boundaries">Date boundaries</string>
     <string name="selection_filter">Date selection filter</string>
