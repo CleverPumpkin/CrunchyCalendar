@@ -40,7 +40,6 @@ internal class CalendarAdapter(
     companion object {
         const val MONTH_FORMAT = "LLLL yyyy"
         const val DAY_FORMAT = "d"
-
         const val DATE_VIEW_TYPE = 0
         const val MONTH_VIEW_TYPE = 1
         const val EMPTY_VIEW_TYPE = 2
@@ -65,7 +64,7 @@ internal class CalendarAdapter(
     }
 
 
-    // region Create View Holders
+    // region View Holders creation
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -111,19 +110,19 @@ internal class CalendarAdapter(
         return EmptyItemViewHolder(view)
     }
 
-    // endregion
+    // endregion View Holders creation
 
 
-    // region Bind View Holders
+    // region View Binding
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val viewType = getItemViewType(position)
-        when (viewType) {
+        when (getItemViewType(position)) {
             DATE_VIEW_TYPE -> {
                 val dateItemViewHolder = holder as DateItemViewHolder
                 val dateItem = calendarItems[position] as DateItem
                 bindDateItemViewHolder(dateItemViewHolder, dateItem)
             }
+
             MONTH_VIEW_TYPE -> {
                 val monthItemViewHolder = holder as MonthItemViewHolder
                 val monthItem = calendarItems[position] as MonthItem
@@ -156,7 +155,7 @@ internal class CalendarAdapter(
         holder.textView.setTextColor(styleAttributes.monthTextColor)
     }
 
-    // endregion
+    // endregion View Binding
 
 
     fun findMonthPosition(date: CalendarDate): Int {
@@ -225,4 +224,5 @@ internal class CalendarAdapter(
     class MonthItemViewHolder(val textView: TextView) : RecyclerView.ViewHolder(textView)
 
     class EmptyItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+
 }

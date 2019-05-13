@@ -350,6 +350,14 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
+     * Sets whether the calendar grid will be drawn over selected dates or not.
+     */
+    fun setDrawGridOnSelectedDates(drawGrid: Boolean) {
+        calendarStyleAttributes.drawGridOnSelectedDates = drawGrid
+        adapterDataManager.notifyDateItemsChanged()
+    }
+
+    /**
      * Sets the calendar grid color.
      */
     fun setGridColor(@ColorInt color: Int) {
@@ -727,8 +735,7 @@ class CalendarView @JvmOverloads constructor(
             }
 
             selectionMode = state.getSerializable(BUNDLE_SELECTION_MODE) as SelectionMode
-            displayedDatesRange =
-                state.getParcelable(BUNDLE_DISPLAY_DATE_RANGE) ?: DatesRange.emptyRange()
+            displayedDatesRange = state.getParcelable(BUNDLE_DISPLAY_DATE_RANGE) ?: DatesRange.emptyRange()
             minMaxDatesRange = state.getParcelable(BUNDLE_LIMIT_DATE_RANGE) ?: NullableDatesRange()
             showYearSelectionView = state.getBoolean(BUNDLE_SHOW_YEAR_SELECTION_VIEW)
             firstDayOfWeek = state.getInt(BUNDLE_FIRST_DAY_OF_WEEK)
