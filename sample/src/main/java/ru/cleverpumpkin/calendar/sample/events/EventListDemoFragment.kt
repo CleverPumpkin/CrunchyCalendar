@@ -59,11 +59,11 @@ class EventListDemoFragment : BaseFragment() {
         }
     }
 
-    private fun generateEventItems(): List<CalendarView.DateIndicator> {
+    private fun generateEventItems(): List<EventItem> {
         val context = requireContext()
         val calendar = Calendar.getInstance()
 
-        val eventItems = mutableListOf<CalendarView.DateIndicator>()
+        val eventItems = mutableListOf<EventItem>()
 
         repeat(10) {
             eventItems += EventItem(
