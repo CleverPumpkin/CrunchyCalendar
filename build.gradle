@@ -26,7 +26,7 @@ buildscript {
 
         // Gradle plugins versions
         gradle_plugins = [
-                android_plugin_version: '3.3.2',
+                android_plugin_version: '3.4.0',
                 kotlin_plugin_version : libs.kotlin_version,
                 bintray_plugin_version: '1.8.0',
                 maven_plugin_version  : '2.0'
