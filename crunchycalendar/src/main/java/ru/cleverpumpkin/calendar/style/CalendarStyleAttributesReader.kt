@@ -5,6 +5,9 @@ import android.util.AttributeSet
 import androidx.annotation.AttrRes
 import ru.cleverpumpkin.calendar.R
 
+/**
+ * This class responsible for reading Calendar's style XML attributes.
+ */
 internal object CalendarStyleAttributesReader {
 
     fun readStyleAttributes(

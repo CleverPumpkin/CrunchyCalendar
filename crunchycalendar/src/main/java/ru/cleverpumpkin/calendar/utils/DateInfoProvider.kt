@@ -4,7 +4,8 @@ import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarView
 
 /**
- * Internal interface that provides required information for the specific [CalendarDate].
+ * Internal interface that defines methods for providing required information
+ * for the specific [CalendarDate].
  */
 internal interface DateInfoProvider {
 

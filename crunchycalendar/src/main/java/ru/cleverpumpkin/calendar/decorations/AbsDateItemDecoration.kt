@@ -8,9 +8,9 @@ import ru.cleverpumpkin.calendar.adapter.CalendarAdapter
 import ru.cleverpumpkin.calendar.adapter.item.DateItem
 
 /**
- * This class designed for calendar date views decorating.
+ * This class designed for calendar date cells decorating.
  *
- * Clients can extend this class and implement their custom decoration logic for date views
+ * Clients can extend this class and implement their custom decoration logic for date cell views
  * in [decorateDateView] method.
  */
 abstract class AbsDateItemDecoration : RecyclerView.ItemDecoration() {
@@ -49,4 +49,5 @@ abstract class AbsDateItemDecoration : RecyclerView.ItemDecoration() {
             }
         }
     }
+
 }

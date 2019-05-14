@@ -9,7 +9,7 @@ import ru.cleverpumpkin.calendar.R
 import ru.cleverpumpkin.calendar.extension.getColorInt
 
 /**
- * Created by Alexander Surinov on 29/04/2019.
+ * This class represent a holder for Calendar's style XML attributes.
  */
 internal class CalendarStyleAttributes(
     context: Context,

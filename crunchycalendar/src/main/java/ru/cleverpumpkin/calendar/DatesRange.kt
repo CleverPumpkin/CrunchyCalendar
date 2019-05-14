@@ -5,9 +5,6 @@ import android.os.Parcelable
 
 /**
  * This internal class represents a range of dates from [dateFrom] to [dateTo].
- *
- * This class implements [Parcelable] interface so instances of the class
- * can be stored in a [Parcel] object.
  */
 internal data class DatesRange(
     val dateFrom: CalendarDate,
@@ -16,8 +13,8 @@ internal data class DatesRange(
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
-        dateFrom = parcel.readParcelable(CalendarDate::class.java.classLoader),
-        dateTo = parcel.readParcelable(CalendarDate::class.java.classLoader)
+        dateFrom = requireNotNull(parcel.readParcelable(CalendarDate::class.java.classLoader)),
+        dateTo = requireNotNull(parcel.readParcelable(CalendarDate::class.java.classLoader))
     )
 
     companion object {
@@ -43,4 +40,5 @@ internal data class DatesRange(
     }
 
     override fun describeContents() = 0
+
 }

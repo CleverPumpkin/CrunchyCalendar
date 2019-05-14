@@ -5,9 +5,6 @@ import android.os.Parcelable
 
 /**
  * This internal class represents a range of dates where [dateFrom] and [dateTo] are optional.
- *
- * This class implements [Parcelable] interface so instances of the class
- * can be stored in a [Parcel] object.
  */
 internal data class NullableDatesRange(
     val dateFrom: CalendarDate? = null,
@@ -40,4 +37,5 @@ internal data class NullableDatesRange(
     fun isDateOutOfRange(date: CalendarDate): Boolean {
         return (dateFrom != null && date < dateFrom) || (dateTo != null && date > dateTo)
     }
+
 }

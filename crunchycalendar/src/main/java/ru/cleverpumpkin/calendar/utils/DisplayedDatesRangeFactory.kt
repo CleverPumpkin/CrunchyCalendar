@@ -5,7 +5,7 @@ import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.DatesRange
 
 /**
- * Created by Alexander Surinov on 29/04/2019.
+ * This class responsible for providing [DatesRange] according to incoming params.
  */
 internal object DisplayedDatesRangeFactory {
 

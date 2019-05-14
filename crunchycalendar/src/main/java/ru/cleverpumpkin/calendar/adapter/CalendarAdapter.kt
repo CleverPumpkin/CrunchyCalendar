@@ -26,8 +26,8 @@ import java.util.*
  *
  * There are three types of items:
  *
- * [DATE_VIEW_TYPE] - single date cell
- * [MONTH_VIEW_TYPE] - simple name of month
+ * [DATE_VIEW_TYPE] - single date cell.
+ * [MONTH_VIEW_TYPE] - name of month.
  * [EMPTY_VIEW_TYPE] - empty view that represents start and end offset for each month
  */
 internal class CalendarAdapter(

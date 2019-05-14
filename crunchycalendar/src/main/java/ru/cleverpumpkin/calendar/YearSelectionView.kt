@@ -18,7 +18,7 @@ import java.util.*
 
 /**
  * This internal view class represents a year selection control.
- * It is used as a part of the Calendar Widget.
+ * It is used as a part of the [CalendarView].
  */
 internal class YearSelectionView @JvmOverloads constructor(
     context: Context,

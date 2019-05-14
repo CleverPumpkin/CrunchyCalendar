@@ -12,7 +12,7 @@ import java.util.*
 
 /**
  * This internal view class represents a bar with week days.
- * It is used as a part of the Calendar Widget.
+ * It is used as a part of the [CalendarView].
  */
 internal class DaysBarView @JvmOverloads constructor(
     context: Context,

@@ -32,15 +32,16 @@ import ru.cleverpumpkin.calendar.utils.DisplayedDatesRangeFactory
 import java.util.*
 
 /**
- * This class represents a Calendar Widget that allows displaying calendar grid, selecting dates,
- * displaying color indicators for the specific dates and handling date selection with a custom action.
+ * This class represents a calendar widget that allows to display vertical scrollable calendar grid,
+ * selecting dates, displaying color indicators for the specific dates, handling date selection
+ * and so on.
  *
  * The Calendar must be initialized with the [setupCalendar] method where you can specify
- * parameters for the calendar.
+ * Calendar parameters.
  *
- * The Calendar UI open for customization.
- * You can define grid divider color, date cell selectors etc.
- * Using standard [RecyclerView.ItemDecoration] you can define special drawing for the calendar items.
+ * The Calendar UI open for customization: you can define grid divider color, date cell selectors etc.
+ * Using standard [RecyclerView.ItemDecoration] you can define special drawing logic for the calendar
+ * items.
  *
  * This class overrides [onSaveInstanceState] and [onRestoreInstanceState], so it is able
  * to save and restore its internal state.
@@ -163,6 +164,8 @@ class CalendarView @JvmOverloads constructor(
     /**
      * The first day of the week (e.g [Calendar.SUNDAY], [Calendar.MONDAY], etc.)
      * that has been set for the Calendar.
+     *
+     * If null, [defaultFirstDayOfWeek] will be used.
      */
     private var firstDayOfWeek: Int? = null
         set(value) {
@@ -213,7 +216,6 @@ class CalendarView @JvmOverloads constructor(
 
     /**
      * Filter that is used to determine whether a date is a weekend or not.
-     * By default [Calendar.SUNDAY] and [Calendar.SATURDAY] are weekends.
      */
     var weekendFilter: (CalendarDate) -> Boolean = { date ->
         date.dayOfWeek == Calendar.SUNDAY || date.dayOfWeek == Calendar.SATURDAY
@@ -283,7 +285,7 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Method for the initial calendar set up. All parameters have default values.
+     * Method for the initial Calendar set up. All parameters have default values.
      *
      * [initialDate] the date that will be displayed initially.
      * Default value - today date.
@@ -359,7 +361,6 @@ class CalendarView @JvmOverloads constructor(
 
     /**
      * Move to the specific calendar date.
-     * If [date] is out of min-max date boundaries, moving won't be performed.
      */
     fun moveToDate(date: CalendarDate) {
         val (minDate, maxDate) = minMaxDatesRange
@@ -488,7 +489,7 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Sets the month name text color.
+     * Sets the month text color.
      */
     fun setMonthTextColor(@ColorInt color: Int) {
         calendarStyleAttributes.monthTextColor = color
@@ -496,7 +497,7 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Sets the month name text color resource.
+     * Sets the month text color resource.
      */
     fun setMonthTextColorRes(@ColorRes colorRes: Int) {
         setMonthTextColor(getColorInt(colorRes))
