@@ -356,6 +356,38 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
+     * Move to the specific calendar date.
+     * If [date] is out of min-max date boundaries, moving won't be performed.
+     */
+    fun moveToDate(date: CalendarDate) {
+        val (minDate, maxDate) = minMaxDatesRange
+
+        if ((minDate != null && date < minDate.monthBeginning()) ||
+            (maxDate != null && date > maxDate.monthEnd())) {
+            return
+        }
+
+        val (displayDatesFrom, displayDatesTo) = displayedDatesRange
+
+        if (date.isBetween(dateFrom = displayDatesFrom, dateTo = displayDatesTo).not()) {
+            displayedDatesRange = DisplayedDatesRangeFactory.getDisplayedDatesRange(
+                initialDate = date,
+                minDate = minDate,
+                maxDate = maxDate
+            )
+
+            generateCalendarItems(displayedDatesRange)
+        }
+
+        val dateMonthPosition = calendarAdapter.findMonthPosition(date)
+        if (dateMonthPosition != -1) {
+            val gridLayoutManager = recyclerView.layoutManager as GridLayoutManager
+            gridLayoutManager.scrollToPositionWithOffset(dateMonthPosition, 0)
+            recyclerView.stopScroll()
+        }
+    }
+
+    /**
      * Sets whether the calendar grid will be drawn over selected dates or not.
      */
     fun setDrawGridOnSelectedDates(drawGrid: Boolean) {
@@ -498,38 +530,6 @@ class CalendarView @JvmOverloads constructor(
     fun setDateCellTextColorRes(@ColorRes colorRes: Int) {
         val colorStateList = requireNotNull(ContextCompat.getColorStateList(context, colorRes))
         setDateCellTextColor(colorStateList)
-    }
-
-    /**
-     * Move to the specific calendar date.
-     * If [date] is out of min-max date boundaries, moving won't be performed.
-     */
-    fun moveToDate(date: CalendarDate) {
-        val (minDate, maxDate) = minMaxDatesRange
-
-        if ((minDate != null && date < minDate.monthBeginning()) ||
-            (maxDate != null && date > maxDate.monthEnd())) {
-            return
-        }
-
-        val (displayDatesFrom, displayDatesTo) = displayedDatesRange
-
-        if (date.isBetween(dateFrom = displayDatesFrom, dateTo = displayDatesTo).not()) {
-            displayedDatesRange = DisplayedDatesRangeFactory.getDisplayedDatesRange(
-                initialDate = date,
-                minDate = minDate,
-                maxDate = maxDate
-            )
-
-            generateCalendarItems(displayedDatesRange)
-        }
-
-        val dateMonthPosition = calendarAdapter.findMonthPosition(date)
-        if (dateMonthPosition != -1) {
-            val gridLayoutManager = recyclerView.layoutManager as GridLayoutManager
-            gridLayoutManager.scrollToPositionWithOffset(dateMonthPosition, 0)
-            recyclerView.stopScroll()
-        }
     }
 
     /**
@@ -792,21 +792,16 @@ class CalendarView @JvmOverloads constructor(
     private inner class CalendarItemsGenerationListener : RecyclerView.OnScrollListener() {
 
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            super.onScrolled(recyclerView, dx, dy)
+            val gridLayoutManager = recyclerView.layoutManager as? GridLayoutManager ?: return
 
-            val lastChildIndex = recyclerView.layoutManager?.childCount ?: return
-            val lastChild = recyclerView.layoutManager?.getChildAt(lastChildIndex - 1) ?: return
-            val lastChildAdapterPosition = recyclerView.getChildAdapterPosition(lastChild) + 1
+            when {
+                calendarAdapter.itemCount == gridLayoutManager.findLastVisibleItemPosition().inc() -> {
+                    recyclerView.post { generateNextCalendarItems() }
+                }
 
-            if (recyclerView.adapter?.itemCount == lastChildAdapterPosition) {
-                recyclerView.post { generateNextCalendarItems() }
-            }
-
-            val firstChild = recyclerView.layoutManager?.getChildAt(0) ?: return
-            val firstChildAdapterPosition = recyclerView.getChildAdapterPosition(firstChild)
-
-            if (firstChildAdapterPosition == 0) {
-                recyclerView.post { generatePrevCalendarItems() }
+                gridLayoutManager.findFirstVisibleItemPosition() == 0 -> {
+                    recyclerView.post { generatePrevCalendarItems() }
+                }
             }
         }
     }
@@ -816,14 +811,14 @@ class CalendarView @JvmOverloads constructor(
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
 
-            val firstChild = recyclerView.layoutManager?.getChildAt(0) ?: return
-            val firstChildAdapterPosition = recyclerView.getChildAdapterPosition(firstChild)
+            val gridLayoutManager = recyclerView.layoutManager as? GridLayoutManager ?: return
 
+            val firstChildAdapterPosition = gridLayoutManager.findFirstVisibleItemPosition()
             val calendarItem = calendarAdapter.getCalendarItemAt(firstChildAdapterPosition)
-            if (calendarItem is DateItem) {
-                yearSelectionView.displayedDate = calendarItem.date
-            } else if (calendarItem is MonthItem) {
-                yearSelectionView.displayedDate = calendarItem.date
+
+            when (calendarItem) {
+                is DateItem -> yearSelectionView.displayedDate = calendarItem.date
+                is MonthItem -> yearSelectionView.displayedDate = calendarItem.date
             }
         }
     }

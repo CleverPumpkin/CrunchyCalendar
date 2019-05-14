@@ -11,9 +11,15 @@ import java.util.*
 /**
  * This internal class responsible for generation items for the [CalendarAdapter]
  */
-internal class CalendarItemsGenerator(firstDayOfWeek: Int) {
+internal class CalendarItemsGenerator(private val firstDayOfWeek: Int) {
 
-    private val positionedDaysOfWeek: List<Int> = mutableListOf<Int>().apply {
+    /**
+     * List of days of week according to [firstDayOfWeek].
+     *
+     * For example, when [firstDayOfWeek] is [Calendar.MONDAY] list looks like:
+     * [MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY]
+     */
+    private val daysOfWeek = mutableListOf<Int>().apply {
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.DAY_OF_WEEK, firstDayOfWeek)
 
@@ -51,18 +57,26 @@ internal class CalendarItemsGenerator(firstDayOfWeek: Int) {
 
     private fun generateCalendarItemsForMonth(year: Int, month: Int): List<CalendarItem> {
         val itemsForMonth = mutableListOf<CalendarItem>()
-        val calendar = Calendar.getInstance()
 
-        // Add empty items for start offset
+        val calendar = Calendar.getInstance()
+        calendar.firstDayOfWeek = firstDayOfWeek
+
         calendar.set(year, month, 1)
         val firstDayOfMonth = calendar.get(Calendar.DAY_OF_WEEK)
-        val startOffset = positionedDaysOfWeek.indexOf(firstDayOfMonth)
+        val startOffset = daysOfWeek.indexOf(firstDayOfMonth)
 
-        repeat(startOffset) { itemsForMonth += EmptyItem }
-
-        // Add date items
         val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
 
+        calendar.set(Calendar.DAY_OF_MONTH, daysInMonth)
+        val lastDayOfMonth = calendar.get(Calendar.DAY_OF_WEEK)
+        val endOffset = CalendarConst.DAYS_IN_WEEK.dec() - daysOfWeek.indexOf(lastDayOfMonth)
+
+        // Add empty items for start offset
+        repeat(startOffset) { itemsForMonth += EmptyItem }
+
+        calendar.set(year, month, 1)
+
+        // Add date items
         repeat(daysInMonth) {
             val date = CalendarDate(calendar.time)
             itemsForMonth += DateItem(date)
@@ -70,13 +84,9 @@ internal class CalendarItemsGenerator(firstDayOfWeek: Int) {
         }
 
         // Add empty items for end offset
-        calendar.set(Calendar.DAY_OF_MONTH, daysInMonth)
-        val lastDayOfMonth = calendar.get(Calendar.DAY_OF_WEEK)
-        val positionOfLastDayOfMonth = positionedDaysOfWeek.indexOf(lastDayOfMonth)
-        val endOffset = (CalendarConst.DAYS_IN_WEEK - positionOfLastDayOfMonth) - 1
-
         repeat(endOffset) { itemsForMonth += EmptyItem }
 
         return itemsForMonth
     }
+
 }
