@@ -16,14 +16,6 @@
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="CalendarTextStyleRegular">
-        <item name="android:fontFamily">sans-serif</item>
-    </style>
-
-    <style name="CalendarTextStyleMedium">
-        <item name="android:fontFamily">sans-serif-medium</item>
-    </style>
-
     <style name="CalendarClickableView">
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
