@@ -6,7 +6,7 @@ buildscript {
         // App info section
         app = [
                 version_code       : 1,
-                version_name       : '2.0.0-beta2',
+                version_name       : '2.0.0',
                 min_sdk_version    : 16,
                 target_sdk_version : 28,
                 compile_sdk_version: 28
