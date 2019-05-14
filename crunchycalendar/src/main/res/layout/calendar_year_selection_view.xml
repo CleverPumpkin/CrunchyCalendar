@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,10 +10,10 @@
 
     <ImageView
         android:id="@+id/arrow_prev"
-        style="@style/ClickableView.YearSelectionArrow"
+        style="@style/CalendarClickableView.YearSelectionArrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_keyboard_arrow_left_24dp"
+        app:srcCompat="@drawable/calendar_ic_arrow_left"
         tools:ignore="ContentDescription" />
 
     <TextSwitcher
@@ -22,13 +23,13 @@
         android:layout_weight="1">
 
         <TextView
-            style="@style/YearSelectionText"
+            style="@style/CalendarYearSelectionText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:text="2017 Год" />
 
         <TextView
-            style="@style/YearSelectionText"
+            style="@style/CalendarYearSelectionText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:text="2017 Год" />
@@ -37,10 +38,10 @@
 
     <ImageView
         android:id="@+id/arrow_next"
-        style="@style/ClickableView.YearSelectionArrow"
+        style="@style/CalendarClickableView.YearSelectionArrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_keyboard_arrow_right_24dp"
+        app:srcCompat="@drawable/calendar_ic_arrow_right"
         tools:ignore="ContentDescription" />
 
 </LinearLayout>

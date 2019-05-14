@@ -101,7 +101,7 @@ internal class CalendarAdapter(
     }
 
     private fun createMonthItemViewHolder(parent: ViewGroup): MonthItemViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_month, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.calendar_item_month, parent, false)
         return MonthItemViewHolder(view as TextView)
     }
 

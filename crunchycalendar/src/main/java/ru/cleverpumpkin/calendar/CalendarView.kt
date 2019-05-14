@@ -244,11 +244,11 @@ class CalendarView @JvmOverloads constructor(
      * Init block where we read custom attributes and set up internal views.
      */
     init {
-        LayoutInflater.from(context).inflate(R.layout.view_calendar, this, true)
+        LayoutInflater.from(context).inflate(R.layout.calendar_view, this, true)
 
-        yearSelectionView = findViewById(R.id.year_selection_view)
-        daysBarView = findViewById(R.id.days_bar_view)
-        recyclerView = findViewById(R.id.recycler_view)
+        yearSelectionView = findViewById(R.id.calendar_year_selection_view)
+        daysBarView = findViewById(R.id.calendar_days_bar_view)
+        recyclerView = findViewById(R.id.calendar_recycler_view)
 
         if (attrs != null) {
             CalendarStyleAttributesReader.readStyleAttributes(

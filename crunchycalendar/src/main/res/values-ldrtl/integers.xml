@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="angle">180</integer>
+    <integer name="calendar_arrow_icon_angle">180</integer>
 </resources>

@@ -2,6 +2,9 @@ package ru.cleverpumpkin.calendar.extension
 
 import android.content.Context
 import android.util.TypedValue
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import androidx.annotation.AnimRes
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
@@ -17,4 +20,8 @@ fun Context.dpToPix(dpValue: Float): Float {
 @ColorInt
 fun Context.getColorInt(@ColorRes colorRes: Int): Int {
     return ContextCompat.getColor(this, colorRes)
+}
+
+fun Context.loadAnim(@AnimRes animResId: Int): Animation {
+    return AnimationUtils.loadAnimation(this, animResId)
 }

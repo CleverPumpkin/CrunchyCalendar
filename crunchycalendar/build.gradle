@@ -53,6 +53,11 @@ android {
     }
 }
 
+android {
+    // Use resource prefix to avoid collisions with resources from other modules.
+    resourcePrefix 'calendar_'
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 

@@ -5,26 +5,26 @@
     android:layout_height="match_parent">
 
     <ru.cleverpumpkin.calendar.YearSelectionView
-        android:id="@+id/year_selection_view"
+        android:id="@+id/calendar_year_selection_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#FFFFFF" />
 
     <ru.cleverpumpkin.calendar.DaysBarView
-        android:id="@+id/days_bar_view"
+        android:id="@+id/calendar_days_bar_view"
         style="@style/CalendarWeekDaysBar"
-        android:layout_below="@id/year_selection_view" />
+        android:layout_below="@id/calendar_year_selection_view" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
+        android:id="@+id/calendar_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/days_bar_view" />
+        android:layout_below="@id/calendar_days_bar_view" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="4dp"
-        android:layout_below="@id/days_bar_view"
-        android:background="@drawable/shadow" />
+        android:layout_below="@id/calendar_days_bar_view"
+        android:background="@drawable/calendar_days_of_week_bar_shadow" />
 
 </RelativeLayout>

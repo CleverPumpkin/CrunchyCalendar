@@ -26,7 +26,7 @@ internal class DaysBarView @JvmOverloads constructor(
     }
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.view_days_bar, this, true)
+        LayoutInflater.from(context).inflate(R.layout.calendar_days_bar_view, this, true)
     }
 
     fun applyStyle(styleAttributes: CalendarStyleAttributes) {

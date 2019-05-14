@@ -5,13 +5,13 @@ import android.content.res.ColorStateList
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View.OnClickListener
-import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextSwitcher
 import android.widget.TextView
 import androidx.annotation.AttrRes
 import androidx.core.widget.ImageViewCompat
+import ru.cleverpumpkin.calendar.extension.loadAnim
 import ru.cleverpumpkin.calendar.style.CalendarStyleAttributes
 import java.text.SimpleDateFormat
 import java.util.*
@@ -35,10 +35,10 @@ internal class YearSelectionView @JvmOverloads constructor(
     private val arrowNextView: ImageView
     private val textSwitcher: TextSwitcher
 
-    private val slideInBottomAnim = AnimationUtils.loadAnimation(context, R.anim.slide_in_bottom)
-    private val slideInTopAnim = AnimationUtils.loadAnimation(context, R.anim.slide_in_top)
-    private val slideOutBottomAnim = AnimationUtils.loadAnimation(context, R.anim.slide_out_bottom)
-    private val slideOutTopAnim = AnimationUtils.loadAnimation(context, R.anim.slide_out_top)
+    private val slideInBottomAnim = context.loadAnim(R.anim.calendar_slide_in_bottom)
+    private val slideInTopAnim = context.loadAnim(R.anim.calendar_slide_in_top)
+    private val slideOutBottomAnim = context.loadAnim(R.anim.calendar_slide_out_bottom)
+    private val slideOutTopAnim = context.loadAnim(R.anim.calendar_slide_out_top)
 
     private val yearFormatter = SimpleDateFormat(YEAR_FORMAT, Locale.getDefault())
     private var minMaxDatesRange = NullableDatesRange()
@@ -60,7 +60,7 @@ internal class YearSelectionView @JvmOverloads constructor(
     var onYearClickListener: ((Int) -> Unit)? = null
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.view_year_selection, this, true)
+        LayoutInflater.from(context).inflate(R.layout.calendar_year_selection_view, this, true)
 
         arrowPrevView = findViewById(R.id.arrow_prev)
         arrowNextView = findViewById(R.id.arrow_next)
