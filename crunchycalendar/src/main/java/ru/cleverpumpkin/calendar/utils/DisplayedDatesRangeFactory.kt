@@ -26,22 +26,22 @@ internal object DisplayedDatesRangeFactory {
             }
 
             minDate != null && maxDate == null -> {
-                rangeStart = calculateRangeStart(minDate = minDate, initialDate = initialDate)
+                rangeStart = calculateRangeStart(dateFrom = minDate, dateTo = initialDate)
                 rangeEnd = rangeStart.plusMonths(CalendarConst.MONTHS_PER_PAGE)
             }
 
             minDate == null && maxDate != null -> {
-                rangeEnd = calculateRangeEnd(maxDate = maxDate, initialDate = initialDate)
+                rangeEnd = calculateRangeEnd(dateFrom = initialDate, dateTo = maxDate)
                 rangeStart = rangeEnd.minusMonths(CalendarConst.MONTHS_PER_PAGE)
             }
 
             minDate != null && maxDate != null -> {
                 if (initialDate.isBetween(minDate, maxDate)) {
-                    rangeStart = calculateRangeStart(minDate = minDate, initialDate = initialDate)
-                    rangeEnd = calculateRangeEnd(maxDate = maxDate, initialDate = initialDate)
+                    rangeStart = calculateRangeStart(dateFrom = minDate, dateTo = initialDate)
+                    rangeEnd = calculateRangeEnd(dateFrom = initialDate, dateTo = maxDate)
                 } else {
                     rangeStart = minDate
-                    rangeEnd = calculateRangeEnd(maxDate = maxDate, initialDate = minDate)
+                    rangeEnd = calculateRangeEnd(dateFrom = minDate, dateTo = maxDate)
                 }
             }
 
@@ -52,28 +52,24 @@ internal object DisplayedDatesRangeFactory {
     }
 
     private fun calculateRangeStart(
-        minDate: CalendarDate,
-        initialDate: CalendarDate
+        dateFrom: CalendarDate,
+        dateTo: CalendarDate
     ): CalendarDate {
-        val monthsBetween = minDate.monthsBetween(initialDate)
-
-        return if (monthsBetween > CalendarConst.MONTHS_PER_PAGE) {
-            initialDate.minusMonths(CalendarConst.MONTHS_PER_PAGE)
+        return if (dateFrom.monthsBetween(dateTo) > CalendarConst.MONTHS_PER_PAGE) {
+            dateTo.minusMonths(CalendarConst.MONTHS_PER_PAGE)
         } else {
-            minDate
+            dateFrom
         }
     }
 
     private fun calculateRangeEnd(
-        maxDate: CalendarDate,
-        initialDate: CalendarDate
+        dateFrom: CalendarDate,
+        dateTo: CalendarDate
     ): CalendarDate {
-        val monthsBetween = initialDate.monthsBetween(maxDate)
-
-        return if (monthsBetween > CalendarConst.MONTHS_PER_PAGE) {
-            initialDate.plusMonths(CalendarConst.MONTHS_PER_PAGE)
+        return if (dateFrom.monthsBetween(dateTo) > CalendarConst.MONTHS_PER_PAGE) {
+            dateFrom.plusMonths(CalendarConst.MONTHS_PER_PAGE)
         } else {
-            maxDate
+            dateTo
         }
     }
 
