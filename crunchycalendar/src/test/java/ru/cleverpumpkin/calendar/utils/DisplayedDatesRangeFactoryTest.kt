@@ -5,6 +5,7 @@ import org.junit.Test
 import ru.cleverpumpkin.calendar.CalendarConst
 import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.DatesRange
+import java.util.*
 
 /**
  * Set of unit tests for the [DisplayedDatesRangeFactory] class.
@@ -16,7 +17,7 @@ import ru.cleverpumpkin.calendar.DatesRange
  *
  * Created by Alexander Surinov on 29/04/2019.
  */
-class DisplayedDatesRangeProviderTest {
+class DisplayedDatesRangeFactoryTest {
 
     @Test
     fun `Get displayed dates range when min and max dates aren't defined, as a result correct dates range is returned`() {
@@ -43,7 +44,7 @@ class DisplayedDatesRangeProviderTest {
     }
 
     @Test
-    fun `Get displayed dates range when min date isn't defined and max date is defined, as a result correct dates range is returned`() {
+    fun `Get displayed dates range when min date is defined and max date isn't defined, as a result correct dates range is returned`() {
         // Given
         val minDate = CalendarDate.today
 
@@ -67,7 +68,7 @@ class DisplayedDatesRangeProviderTest {
     }
 
     @Test
-    fun `Get displayed dates range when min date is defined and max date isn't defined, as a result correct dates range is returned`() {
+    fun `Get displayed dates range when min date isn't defined and max date is defined, as a result correct dates range is returned`() {
         // Given
         val maxDate = CalendarDate.today
 
@@ -79,6 +80,64 @@ class DisplayedDatesRangeProviderTest {
         // When
         val actualDatesRange = DisplayedDatesRangeFactory.getDisplayedDatesRange(
             initialDate = CalendarDate.today,
+            minDate = null,
+            maxDate = maxDate
+        )
+
+        // Then
+        Assert.assertTrue(
+            "Unexpected actual dates range: $actualDatesRange, expected: $expectedDatesRange",
+            expectedDatesRange == actualDatesRange
+        )
+    }
+
+    @Test
+    fun `Get displayed dates range when min date is defined, max date isn't defined and initial date is far from min date, as a result correct dates range is returned`() {
+        // Given
+        val calendar = Calendar.getInstance()
+        calendar.set(2019, Calendar.JANUARY, 1)
+        val minDate = CalendarDate(calendar.time)
+
+        calendar.set(2019, Calendar.AUGUST, 1)
+        val initialDate = CalendarDate(calendar.time)
+
+        val expectedDatesRange = DatesRange(
+            dateFrom = initialDate.minusMonths(CalendarConst.MONTHS_PER_PAGE),
+            dateTo = initialDate
+        )
+
+        // When
+        val actualDatesRange = DisplayedDatesRangeFactory.getDisplayedDatesRange(
+            initialDate = CalendarDate.today,
+            minDate = minDate,
+            maxDate = null
+        )
+
+        // Then
+        Assert.assertTrue(
+            "Unexpected actual dates range: $actualDatesRange, expected: $expectedDatesRange",
+            expectedDatesRange == actualDatesRange
+        )
+    }
+
+    @Test
+    fun `Get displayed dates range when min date isn't defined, max date is defined and initial date is far from max date, as a result correct dates range is returned`() {
+        // Given
+        val calendar = Calendar.getInstance()
+        calendar.set(2019, Calendar.AUGUST, 1)
+        val maxDate = CalendarDate(calendar.time)
+
+        calendar.set(2019, Calendar.JANUARY, 1)
+        val initialDate = CalendarDate(calendar.time)
+
+        val expectedDatesRange = DatesRange(
+            dateFrom = initialDate,
+            dateTo = initialDate.plusMonths(CalendarConst.MONTHS_PER_PAGE)
+        )
+
+        // When
+        val actualDatesRange = DisplayedDatesRangeFactory.getDisplayedDatesRange(
+            initialDate = initialDate,
             minDate = null,
             maxDate = maxDate
         )
