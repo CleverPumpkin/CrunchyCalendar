@@ -15,6 +15,11 @@
         <attr name="calendar_year_selection_arrows_color" format="color" />
         <attr name="calendar_year_selection_text_color" format="color" />
         <attr name="calendar_month_text_color" format="color" />
+        <attr name="calendar_month_text_size" format="dimension" />
+        <attr name="calendar_month_text_style">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+        </attr>
         <attr name="calendar_date_background" format="reference" />
         <attr name="calendar_date_text_color" format="reference" />
     </declare-styleable>

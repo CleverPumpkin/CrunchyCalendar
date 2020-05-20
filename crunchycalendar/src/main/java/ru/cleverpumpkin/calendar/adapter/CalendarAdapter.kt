@@ -1,6 +1,9 @@
 package ru.cleverpumpkin.calendar.adapter
 
 import android.content.Context
+import android.graphics.Typeface
+import android.util.DisplayMetrics
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -153,6 +156,8 @@ internal class CalendarAdapter(
         val monthName = monthFormatter.format(monthItem.date.date)
         holder.textView.text = monthName.capitalize()
         holder.textView.setTextColor(styleAttributes.monthTextColor)
+        holder.textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, styleAttributes.monthTextSize)
+        holder.textView.setTypeface(Typeface.DEFAULT, styleAttributes.monthTextStyle)
     }
 
     // endregion View Binding
