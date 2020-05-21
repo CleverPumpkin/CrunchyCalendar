@@ -2,6 +2,7 @@ package ru.cleverpumpkin.calendar.style
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Typeface
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
@@ -36,6 +37,10 @@ internal class CalendarStyleAttributes(
 
     @ColorInt
     var monthTextColor: Int = context.getColorInt(R.color.calendar_month_text_color),
+
+    var monthTextSize: Float = context.resources.getDimension(R.dimen.calendar_month_text_size),
+
+    var monthTextStyle: Int = Typeface.NORMAL,
 
     @DrawableRes
     var dateCellBackgroundColorRes: Int = R.drawable.calendar_date_bg_selector,

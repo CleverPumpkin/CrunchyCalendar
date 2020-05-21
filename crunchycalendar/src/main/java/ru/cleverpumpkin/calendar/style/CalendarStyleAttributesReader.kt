@@ -61,6 +61,16 @@ internal object CalendarStyleAttributesReader {
                     monthTextColor
                 )
 
+                monthTextSize = typedArray.getDimension(
+                    R.styleable.CalendarView_calendar_month_text_size,
+                    monthTextSize
+                )
+
+                monthTextStyle = typedArray.getInt(
+                    R.styleable.CalendarView_calendar_month_text_style,
+                    monthTextStyle
+                )
+
                 dateCellBackgroundColorRes = typedArray.getResourceId(
                     R.styleable.CalendarView_calendar_date_background,
                     dateCellBackgroundColorRes

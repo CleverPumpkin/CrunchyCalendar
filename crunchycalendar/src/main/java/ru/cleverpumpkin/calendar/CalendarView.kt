@@ -504,6 +504,22 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
+     * Sets the month text size in SP.
+     */
+    fun setMonthTextSize(size: Int) {
+        calendarStyleAttributes.monthTextSize = resources.getDimension(size)
+        calendarAdapter.notifyDataSetChanged()
+    }
+
+    /**
+     * Sets the month text style typeface.
+     */
+    fun setMonthTextStyle(style: Int) {
+        calendarStyleAttributes.monthTextStyle = style
+        calendarAdapter.notifyDataSetChanged()
+    }
+
+    /**
      * Sets a date cell background resource.
      */
     fun setDateCellBackgroundRes(@DrawableRes drawableRes: Int) {
