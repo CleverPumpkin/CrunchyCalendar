@@ -18,6 +18,7 @@ or can be integrated into another custom View.
 ## Dependency
 
 This library is available on [jCenter](https://bintray.com/cleverpumpkin/maven/CrunchyCalendar). jCenter is the default Maven repository used by Android Studio.
+[ ![Download](https://api.bintray.com/packages/cleverpumpkin/maven/CrunchyCalendar/images/download.svg) ](https://bintray.com/cleverpumpkin/maven/CrunchyCalendar/_latestVersion)
 
 #### Gradle
 
