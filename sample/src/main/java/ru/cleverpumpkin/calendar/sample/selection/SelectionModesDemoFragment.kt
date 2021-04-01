@@ -2,9 +2,10 @@ package ru.cleverpumpkin.calendar.sample.selection
 
 import android.os.Bundle
 import android.view.View
-import kotlinx.android.synthetic.main.fragment_selection_modes.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.cleverpumpkin.calendar.sample.BaseFragment
 import ru.cleverpumpkin.calendar.sample.R
+import ru.cleverpumpkin.calendar.sample.databinding.FragmentSelectionModesBinding
 import ru.cleverpumpkin.calendar.sample.selection.modes.*
 
 /**
@@ -15,17 +16,19 @@ class SelectionModesDemoFragment : BaseFragment() {
     override val layoutRes: Int
         get() = R.layout.fragment_selection_modes
 
+    private val viewBinding: FragmentSelectionModesBinding by viewBinding(FragmentSelectionModesBinding::bind)
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        with(toolbarView) {
+        with(viewBinding.toolbarView) {
             setTitle(R.string.demo_selection)
             setNavigationIcon(R.drawable.ic_arrow_back_24dp)
             setNavigationOnClickListener { activity?.onBackPressed() }
         }
 
         if (savedInstanceState == null) {
-            selectionModesRadioGroup.check(R.id.selectionModeNone)
+            viewBinding.selectionModesRadioGroup.check(R.id.selectionModeNone)
             changeSelectionModeDemoFragment(R.id.selectionModeNone)
         }
     }
@@ -33,7 +36,7 @@ class SelectionModesDemoFragment : BaseFragment() {
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
 
-        selectionModesRadioGroup.setOnCheckedChangeListener { _, selectedModeId ->
+        viewBinding.selectionModesRadioGroup.setOnCheckedChangeListener { _, selectedModeId ->
             changeSelectionModeDemoFragment(selectedModeId)
         }
     }

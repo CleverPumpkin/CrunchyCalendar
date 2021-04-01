@@ -2,11 +2,12 @@ package ru.cleverpumpkin.calendar.sample.dateboundaries
 
 import android.os.Bundle
 import android.view.View
-import kotlinx.android.synthetic.main.fragment_calendar.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarView
 import ru.cleverpumpkin.calendar.sample.BaseFragment
 import ru.cleverpumpkin.calendar.sample.R
+import ru.cleverpumpkin.calendar.sample.databinding.FragmentCalendarBinding
 import java.util.*
 
 /**
@@ -19,10 +20,12 @@ class DateBoundariesDemoFragment : BaseFragment() {
     override val layoutRes: Int
         get() = R.layout.fragment_calendar
 
+    private val viewBinding: FragmentCalendarBinding by viewBinding(FragmentCalendarBinding::bind)
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        with(toolbarView) {
+        with(viewBinding.toolbarView) {
             setTitle(R.string.demo_date_boundaries)
             setNavigationIcon(R.drawable.ic_arrow_back_24dp)
             setNavigationOnClickListener { activity?.onBackPressed() }
@@ -45,7 +48,7 @@ class DateBoundariesDemoFragment : BaseFragment() {
         calendar.set(2018, Calendar.JULY, 2)
         val maxDate = CalendarDate(calendar.time)
 
-        calendarView.setupCalendar(
+        viewBinding.calendarView.setupCalendar(
             initialDate = initialDate,
             minDate = minDate,
             maxDate = maxDate,

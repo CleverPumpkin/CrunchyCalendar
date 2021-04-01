@@ -2,11 +2,12 @@ package ru.cleverpumpkin.calendar.sample.selection.modes
 
 import android.os.Bundle
 import android.view.View
-import kotlinx.android.synthetic.main.fragment_demo_selection.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarView
 import ru.cleverpumpkin.calendar.sample.BaseFragment
 import ru.cleverpumpkin.calendar.sample.R
+import ru.cleverpumpkin.calendar.sample.databinding.FragmentDemoSelectionBinding
 import java.util.*
 
 /**
@@ -20,6 +21,8 @@ class SingleSelectionModeDemoFragment : BaseFragment() {
     override val layoutRes: Int
         get() = R.layout.fragment_demo_selection
 
+    private val viewBinding: FragmentDemoSelectionBinding by viewBinding(FragmentDemoSelectionBinding::bind)
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -27,7 +30,7 @@ class SingleSelectionModeDemoFragment : BaseFragment() {
             setupCalendar()
         }
 
-        calendarView.onDateClickListener = { updateSelectedDatesView() }
+        viewBinding.calendarView.onDateClickListener = { updateSelectedDatesView() }
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
@@ -44,7 +47,7 @@ class SingleSelectionModeDemoFragment : BaseFragment() {
         calendar.set(2018, Calendar.JUNE, 18)
         val preselectedDate = CalendarDate(calendar.time)
 
-        calendarView.setupCalendar(
+        viewBinding.calendarView.setupCalendar(
             initialDate = initialDate,
             selectionMode = CalendarView.SelectionMode.SINGLE,
             selectedDates = listOf(preselectedDate)
@@ -52,8 +55,8 @@ class SingleSelectionModeDemoFragment : BaseFragment() {
     }
 
     private fun updateSelectedDatesView() {
-        val selectedDates = "Selected dates = ${calendarView.selectedDates}"
-        selectedDatesView.text = selectedDates
+        val selectedDates = "Selected dates = ${viewBinding.calendarView.selectedDates}"
+        viewBinding.selectedDatesView.text = selectedDates
     }
 
 }

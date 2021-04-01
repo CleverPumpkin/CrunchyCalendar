@@ -3,12 +3,13 @@ package ru.cleverpumpkin.calendar.sample.events
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
-import kotlinx.android.synthetic.main.fragment_calendar.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarView
 import ru.cleverpumpkin.calendar.extension.getColorInt
 import ru.cleverpumpkin.calendar.sample.BaseFragment
 import ru.cleverpumpkin.calendar.sample.R
+import ru.cleverpumpkin.calendar.sample.databinding.FragmentCalendarBinding
 import java.util.*
 
 /**
@@ -22,28 +23,30 @@ class EventListDemoFragment : BaseFragment() {
     override val layoutRes: Int
         get() = R.layout.fragment_calendar
 
+    private val viewBinding: FragmentCalendarBinding by viewBinding(FragmentCalendarBinding::bind)
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        with(toolbarView) {
+        with(viewBinding.toolbarView) {
             setTitle(R.string.demo_events)
             setNavigationIcon(R.drawable.ic_arrow_back_24dp)
             setNavigationOnClickListener { activity?.onBackPressed() }
         }
 
-        calendarView.datesIndicators = generateEventItems()
+        viewBinding.calendarView.datesIndicators = generateEventItems()
 
-        calendarView.onDateClickListener = { date ->
+        viewBinding.calendarView.onDateClickListener = { date ->
             showDialogWithEventsForSpecificDate(date)
         }
 
         if (savedInstanceState == null) {
-            calendarView.setupCalendar(selectionMode = CalendarView.SelectionMode.NONE)
+            viewBinding.calendarView.setupCalendar(selectionMode = CalendarView.SelectionMode.NONE)
         }
     }
 
     private fun showDialogWithEventsForSpecificDate(date: CalendarDate) {
-        val eventItems = calendarView.getDateIndicators(date)
+        val eventItems = viewBinding.calendarView.getDateIndicators(date)
             .filterIsInstance<EventItem>()
             .toTypedArray()
 

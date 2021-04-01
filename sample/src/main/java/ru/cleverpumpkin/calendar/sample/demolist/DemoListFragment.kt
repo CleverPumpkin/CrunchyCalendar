@@ -4,9 +4,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.fragment_demo_list.*
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.cleverpumpkin.calendar.sample.BaseFragment
 import ru.cleverpumpkin.calendar.sample.R
+import ru.cleverpumpkin.calendar.sample.databinding.FragmentDemoListBinding
 
 class DemoListFragment : BaseFragment() {
 
@@ -18,6 +19,8 @@ class DemoListFragment : BaseFragment() {
     override val layoutRes: Int
         get() = R.layout.fragment_demo_list
 
+    private val viewBinding: FragmentDemoListBinding by viewBinding(FragmentDemoListBinding::bind)
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -27,7 +30,7 @@ class DemoListFragment : BaseFragment() {
             }
         )
 
-        with(recyclerView) {
+        with(viewBinding.recyclerView) {
             addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
             layoutManager = LinearLayoutManager(context)
             adapter = demoListAdapter

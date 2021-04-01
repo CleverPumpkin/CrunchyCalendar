@@ -14,9 +14,10 @@ buildscript {
 
         // 3-rd party libraries versions
         libs = [
-                kotlin_version     : '1.3.72',
-                appCompatX         : '1.1.0',
-                recyclerViewX      : '1.1.0',
+                kotlin_version                  : '1.4.32',
+                appCompatX                      : '1.2.0',
+                recyclerViewX                   : '1.1.0',
+                viewBindingPropertyDelegate     : '1.4.5',
 
                 // libs for testing
                 junit_version      : '4.13',
@@ -26,7 +27,7 @@ buildscript {
 
         // Gradle plugins versions
         gradle_plugins = [
-                android_plugin_version: '3.4.0',
+                android_plugin_version: '4.1.3',
                 kotlin_plugin_version : libs.kotlin_version,
                 bintray_plugin_version: '1.8.0',
                 maven_plugin_version  : '2.0'

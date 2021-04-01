@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 
 def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
@@ -39,13 +38,20 @@ android {
             applicationIdSuffix '.debug'
         }
     }
-}
 
-androidExtensions {
-    experimental = true
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 
-    // Default cache implementation for layout views.
-    defaultCacheImplementation = "SPARSE_ARRAY"
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
+    buildFeatures {
+        viewBinding true
+    }
+
 }
 
 dependencies {
@@ -57,4 +63,7 @@ dependencies {
     // AndroidX: UI
     implementation "androidx.appcompat:appcompat:$libs.appCompatX"
     implementation "androidx.recyclerview:recyclerview:$libs.recyclerViewX"
+
+    // ViewBindingPropertyDelegate
+    implementation "com.github.kirich1409:viewbindingpropertydelegate-noreflection:$libs.viewBindingPropertyDelegate"
 }
