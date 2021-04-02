@@ -11,6 +11,7 @@
         <attr name="calendar_grid_color" format="color" />
         <attr name="calendar_day_bar_background" format="color" />
         <attr name="calendar_day_bar_text_color" format="color" />
+        <attr name="calendar_day_bar_weekend_text_color" format="color" />
         <attr name="calendar_year_selection_background" format="color" />
         <attr name="calendar_year_selection_arrows_color" format="color" />
         <attr name="calendar_year_selection_text_color" format="color" />
@@ -21,6 +22,7 @@
             <enum name="bold" value="1" />
         </attr>
         <attr name="calendar_date_background" format="reference" />
+        <attr name="calendar_date_background_tint" format="reference"/>
         <attr name="calendar_date_text_color" format="reference" />
     </declare-styleable>
 

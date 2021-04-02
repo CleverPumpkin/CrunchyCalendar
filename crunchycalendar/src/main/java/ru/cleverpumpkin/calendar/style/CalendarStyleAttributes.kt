@@ -43,16 +43,15 @@ internal class CalendarStyleAttributes(
 
     var monthTextStyle: Int = Typeface.NORMAL,
 
+    @DrawableRes
+    var dateCellBackgroundShapeForm: Int = R.drawable.calendar_date_shape_form,
+
     @ColorRes
     var dateCellBackgroundColorRes: Int = R.color.calendar_date_bg_selector,
 
     var dateCellTextColorStateList: ColorStateList = requireNotNull(
         ContextCompat.getColorStateList(context, R.color.calendar_date_text_selector)
-    ),
-
-    var dateCellBackgroundShapeForm: Int = R.drawable.calendar_date_shape_form,
-
-    var useSeparateColorForWeekendDays: Boolean = false
+    )
 
 ) {
 
@@ -63,5 +62,5 @@ internal class CalendarStyleAttributes(
         } else {
             field
         }
-    
+
 }

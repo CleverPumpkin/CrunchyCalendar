@@ -575,14 +575,6 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Sets
-     */
-    fun useSeparateWeekendDaysBarTextColor(used: Boolean){
-        calendarStyleAttributes.useSeparateColorForWeekendDays = used
-        daysBarView.applyStyle(calendarStyleAttributes)
-    }
-
-    /**
      * Add custom [RecyclerView.ItemDecoration] that will be used for the Calendar view decoration.
      */
     fun addCustomItemDecoration(itemDecoration: RecyclerView.ItemDecoration) {
