@@ -1,3 +1,5 @@
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/ru.cleverpumpkin/crunchycalendar/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ru.cleverpumpkin/crunchycalendar/)
+
 ![alt text](images/Cover.png)
 
 # CrunchyCalendar
@@ -17,8 +19,7 @@ or can be integrated into another custom View.
 
 ## Dependency
 
-This library is available on [jCenter](https://bintray.com/cleverpumpkin/maven/CrunchyCalendar). jCenter is the default Maven repository used by Android Studio.
-[ ![Download](https://api.bintray.com/packages/cleverpumpkin/maven/CrunchyCalendar/images/download.svg) ](https://bintray.com/cleverpumpkin/maven/CrunchyCalendar/_latestVersion)
+This library is available on [Maven Central](https://search.maven.org/artifact/ru.cleverpumpkin/crunchycalendar) (Previously on [jCenter](https://bintray.com/cleverpumpkin/maven/CrunchyCalendar)).
 
 #### Gradle
 
@@ -239,6 +240,7 @@ Define your custom style for the Calendar.
     <item name="calendar_date_text_color">@color/custom_date_text_selector</item>
     <item name="calendar_day_bar_background">@color/custom_calendar_days_bar_background</item>
     <item name="calendar_day_bar_text_color">@color/custom_calendar_days_bar_text_color</item>
+    <item name="calendar_day_bar_weekend_text_color">@color/custom_calendar_days_bar_text_color</item>
     <item name="calendar_grid_color">@color/custom_calendar_grid_color</item>
     <item name="calendar_grid_on_selected_dates">false</item>
     <item name="calendar_month_text_color">@color/custom_calendar_month_text_color</item>
@@ -290,6 +292,7 @@ You can also set styles and colors programmatically:
      setYearSelectionBarTextColorRes(R.color.custom_calendar_year_selection_text_color)
      setDaysBarBackgroundColorRes(R.color.custom_calendar_days_bar_background)
      setDaysBarTextColorRes(R.color.custom_calendar_days_bar_text_color)
+     setDaysBarWeekendTextColorRes(R.color.custom_calendar_days_bar_text_color)
      setMonthTextColorRes(R.color.custom_calendar_month_text_color)
      setDateCellBackgroundRes(R.drawable.custom_date_bg_selector)
      setDateCellTextColorRes(R.color.custom_date_text_selector)
