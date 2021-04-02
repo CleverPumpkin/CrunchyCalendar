@@ -2,6 +2,7 @@ package ru.cleverpumpkin.calendar.selection
 
 import android.os.Bundle
 import ru.cleverpumpkin.calendar.CalendarDate
+import ru.cleverpumpkin.calendar.DateCellSelectedState
 
 /**
  * Internal interface that defines methods for managing selected dates.
@@ -16,7 +17,7 @@ internal interface DateSelectionStrategy {
     /**
      * Returns `true` if the [date] is selected.
      */
-    fun isDateSelected(date: CalendarDate): Boolean
+    fun getDateCellSelectedState(date: CalendarDate): DateCellSelectedState
 
     /**
      * Returns list of selected dates.

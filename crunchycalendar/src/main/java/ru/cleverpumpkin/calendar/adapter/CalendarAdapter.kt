@@ -2,12 +2,13 @@ package ru.cleverpumpkin.calendar.adapter
 
 import android.content.Context
 import android.graphics.Typeface
-import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarDateView
@@ -139,7 +140,7 @@ internal class CalendarAdapter(
         val dateView = holder.dateView
 
         dateView.isToday = dateInfoProvider.isToday(date)
-        dateView.isDateSelected = dateInfoProvider.isDateSelected(date)
+        dateView.cellSelectionState = dateInfoProvider.getDateCellSelectedState(date)
 
         dateView.isDateDisabled =
             dateInfoProvider.isDateOutOfRange(date) || dateInfoProvider.isDateSelectable(date).not()
@@ -148,13 +149,15 @@ internal class CalendarAdapter(
         dateView.dateIndicators = dateInfoProvider.getDateIndicators(date)
         dateView.dayNumber = dayFormatter.format(date.date)
 
-        dateView.setBackgroundResource(styleAttributes.dateCellBackgroundColorRes)
         dateView.textColorStateList = styleAttributes.dateCellTextColorStateList
+        dateView.setBackgroundResource(styleAttributes.dateCellBackgroundShapeForm)
+        val bgColorStateList = ContextCompat.getColorStateList(dateView.context, styleAttributes.dateCellBackgroundColorRes)
+        ViewCompat.setBackgroundTintList(dateView, bgColorStateList)
     }
 
     private fun bindMonthItemViewHolder(holder: MonthItemViewHolder, monthItem: MonthItem) {
         val monthName = monthFormatter.format(monthItem.date.date)
-        holder.textView.text = monthName.capitalize()
+        holder.textView.text = monthName.capitalize(Locale.ROOT)
         holder.textView.setTextColor(styleAttributes.monthTextColor)
         holder.textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, styleAttributes.monthTextSize)
         holder.textView.setTypeface(Typeface.DEFAULT, styleAttributes.monthTextStyle)

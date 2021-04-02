@@ -26,7 +26,12 @@
 
     <declare-styleable name="CalendarDateStates">
         <attr name="calendar_state_today" format="boolean" />
+
         <attr name="calendar_state_selected" format="boolean" />
+        <attr name="calendar_state_selected_single" format="boolean" />
+        <attr name="calendar_state_selected_start" format="boolean" />
+        <attr name="calendar_state_selected_end" format="boolean" />
+
         <attr name="calendar_state_disabled" format="boolean" />
         <attr name="calendar_state_weekend" format="boolean" />
     </declare-styleable>

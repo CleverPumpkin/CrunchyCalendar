@@ -2,6 +2,7 @@ package ru.cleverpumpkin.calendar.selection
 
 import android.os.Bundle
 import ru.cleverpumpkin.calendar.CalendarDate
+import ru.cleverpumpkin.calendar.DateCellSelectedState
 import ru.cleverpumpkin.calendar.adapter.manager.AdapterDataManager
 import ru.cleverpumpkin.calendar.utils.DateInfoProvider
 
@@ -37,8 +38,8 @@ internal class MultipleDateSelectionStrategy(
         return selectedDates.toList()
     }
 
-    override fun isDateSelected(date: CalendarDate): Boolean {
-        return selectedDates.contains(date)
+    override fun getDateCellSelectedState(date: CalendarDate): DateCellSelectedState {
+        return if(selectedDates.contains(date)) DateCellSelectedState.SINGLE else DateCellSelectedState.NOT_SELECTED
     }
 
     override fun saveSelectedDates(bundle: Bundle) {

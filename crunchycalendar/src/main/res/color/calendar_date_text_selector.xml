@@ -4,6 +4,9 @@
     <item android:color="@color/calendar_date_pressed_text_color" android:state_pressed="true" />
 
     <item android:color="@color/calendar_date_selected_text_color" app:calendar_state_selected="true" />
+    <item android:color="@color/calendar_date_selected_text_color" app:calendar_state_selected_single="true" />
+    <item android:color="@color/calendar_date_selected_text_color" app:calendar_state_selected_start="true" />
+    <item android:color="@color/calendar_date_selected_text_color" app:calendar_state_selected_end="true" />
 
     <item android:color="@color/calendar_date_today_text_color" app:calendar_state_today="true" />
 

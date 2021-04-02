@@ -523,7 +523,15 @@ class CalendarView @JvmOverloads constructor(
      * Sets a date cell background resource.
      */
     fun setDateCellBackgroundRes(@DrawableRes drawableRes: Int) {
-        calendarStyleAttributes.dateCellBackgroundColorRes = drawableRes
+        calendarStyleAttributes.dateCellBackgroundShapeForm = drawableRes
+        calendarAdapter.notifyDataSetChanged()
+    }
+
+    /**
+     * Sets a date cell background tint.
+     */
+    fun setDateCellBackgroundTintRes(@ColorRes colorRes: Int) {
+        calendarStyleAttributes.dateCellBackgroundColorRes = colorRes
         calendarAdapter.notifyDataSetChanged()
     }
 
@@ -787,8 +795,8 @@ class CalendarView @JvmOverloads constructor(
             return date == todayCalendarDate
         }
 
-        override fun isDateSelected(date: CalendarDate): Boolean {
-            return dateSelectionStrategy.isDateSelected(date)
+        override fun getDateCellSelectedState(date: CalendarDate): DateCellSelectedState {
+            return dateSelectionStrategy.getDateCellSelectedState(date)
         }
 
         override fun isDateOutOfRange(date: CalendarDate): Boolean {

@@ -2,6 +2,7 @@ package ru.cleverpumpkin.calendar.selection
 
 import android.os.Bundle
 import ru.cleverpumpkin.calendar.CalendarDate
+import ru.cleverpumpkin.calendar.DateCellSelectedState
 import ru.cleverpumpkin.calendar.NullableDatesRange
 import ru.cleverpumpkin.calendar.adapter.manager.AdapterDataManager
 import ru.cleverpumpkin.calendar.utils.DateInfoProvider
@@ -89,21 +90,44 @@ internal class RangeDateSelectionStrategy(
         }
     }
 
-    override fun isDateSelected(date: CalendarDate): Boolean {
+    override fun getDateCellSelectedState(date: CalendarDate): DateCellSelectedState {
         val dateFrom = datesRange.dateFrom
         val dateTo = datesRange.dateTo
 
         return when {
             dateInfoProvider.isDateSelectable(date).not() -> {
-                false
+                DateCellSelectedState.NOT_SELECTED
             }
 
             (dateFrom != null && dateTo != null) -> {
-                date.isBetween(dateFrom, dateTo)
+                when {
+                    date == dateFrom && date == dateTo -> {
+                        DateCellSelectedState.SINGLE
+                    }
+                    date == dateFrom -> {
+                        DateCellSelectedState.SELECTION_START
+                    }
+                    date == dateTo -> {
+                        DateCellSelectedState.SELECTION_END
+                    }
+                    date.isBetween(dateFrom, dateTo) -> {
+                        DateCellSelectedState.SELECTED
+                    }
+                    else -> {
+                        DateCellSelectedState.NOT_SELECTED
+                    }
+                }
             }
 
             else -> {
-                dateFrom == date || dateTo == date
+                when {
+                    dateFrom == date || dateTo == date -> {
+                        DateCellSelectedState.SINGLE
+                    }
+                    else -> {
+                        DateCellSelectedState.NOT_SELECTED
+                    }
+                }
             }
         }
     }

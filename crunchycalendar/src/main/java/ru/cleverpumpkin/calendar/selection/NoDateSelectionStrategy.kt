@@ -2,6 +2,7 @@ package ru.cleverpumpkin.calendar.selection
 
 import android.os.Bundle
 import ru.cleverpumpkin.calendar.CalendarDate
+import ru.cleverpumpkin.calendar.DateCellSelectedState
 
 /**
  * Empty date selection strategy implementation that do nothing.
@@ -16,8 +17,8 @@ internal class NoDateSelectionStrategy : DateSelectionStrategy {
         return emptyList()
     }
 
-    override fun isDateSelected(date: CalendarDate): Boolean {
-        return false
+    override fun getDateCellSelectedState(date: CalendarDate): DateCellSelectedState {
+        return DateCellSelectedState.NOT_SELECTED
     }
 
     override fun saveSelectedDates(bundle: Bundle) {

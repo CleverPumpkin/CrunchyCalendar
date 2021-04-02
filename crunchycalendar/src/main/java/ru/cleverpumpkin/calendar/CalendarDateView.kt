@@ -16,7 +16,7 @@ import ru.cleverpumpkin.calendar.extension.spToPix
  * This internal view class represents a single date cell of the Calendar with optional
  * colored indicators.
  *
- * This view class control its drawable state with [isToday], [isDateSelected], [isDateDisabled]
+ * This view class control its drawable state with [isToday], [cellSelectionState], [isDateDisabled]
  * and [isWeekend] properties.
  */
 internal class CalendarDateView @JvmOverloads constructor(
@@ -34,6 +34,9 @@ internal class CalendarDateView @JvmOverloads constructor(
 
         private val stateToday = intArrayOf(R.attr.calendar_state_today)
         private val stateDateSelected = intArrayOf(R.attr.calendar_state_selected)
+        private val stateDateSelectedSingle = intArrayOf(R.attr.calendar_state_selected_single)
+        private val stateDateSelectedStart = intArrayOf(R.attr.calendar_state_selected_start)
+        private val stateDateSelectedEnd = intArrayOf(R.attr.calendar_state_selected_end)
         private val stateDateDisabled = intArrayOf(R.attr.calendar_state_disabled)
         private val stateWeekend = intArrayOf(R.attr.calendar_state_weekend)
     }
@@ -62,7 +65,7 @@ internal class CalendarDateView @JvmOverloads constructor(
             }
         }
 
-    var isDateSelected: Boolean = false
+    var cellSelectionState: DateCellSelectedState = DateCellSelectedState.NOT_SELECTED
         set(value) {
             if (value != field) {
                 field = value
@@ -144,8 +147,22 @@ internal class CalendarDateView @JvmOverloads constructor(
             mergeDrawableStates(drawableState, stateToday)
         }
 
-        if (isDateSelected) {
-            mergeDrawableStates(drawableState, stateDateSelected)
+        when(cellSelectionState){
+            DateCellSelectedState.NOT_SELECTED -> {
+
+            }
+            DateCellSelectedState.SELECTED -> {
+                mergeDrawableStates(drawableState, stateDateSelected)
+            }
+            DateCellSelectedState.SINGLE -> {
+                mergeDrawableStates(drawableState, stateDateSelectedSingle)
+            }
+            DateCellSelectedState.SELECTION_START -> {
+                mergeDrawableStates(drawableState, stateDateSelectedStart)
+            }
+            DateCellSelectedState.SELECTION_END -> {
+                mergeDrawableStates(drawableState, stateDateSelectedEnd)
+            }
         }
 
         if (isDateDisabled) {

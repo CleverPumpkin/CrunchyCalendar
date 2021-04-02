@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:color="@android:color/holo_green_light" android:state_pressed="true"/>
+
+    <item android:color="@android:color/holo_green_light" app:calendar_state_selected="true"/>
+    <item android:color="@android:color/holo_green_light" app:calendar_state_selected_single="true"/>
+    <item android:color="@android:color/holo_green_light" app:calendar_state_selected_start="true"/>
+    <item android:color="@android:color/holo_green_light" app:calendar_state_selected_end="true"/>
+    <item android:color="@android:color/holo_green_light" app:calendar_state_selected="true" app:calendar_state_weekend="true"/>
+
+    <item android:color="@android:color/holo_green_light" app:calendar_state_selected="true" app:calendar_state_weekend="true"/>
+
+    <item android:color="@android:color/holo_red_light" app:calendar_state_today="true" />
+
+    <item android:color="@android:color/holo_orange_light" app:calendar_state_disabled="true" app:calendar_state_weekend="true" />
+
+    <item android:color="@android:color/darker_gray" app:calendar_state_disabled="true" />
+
+    <item android:color="@android:color/holo_orange_dark" app:calendar_state_weekend="true" />
+
+    <item android:color="@android:color/holo_blue_light"/>
+
+</selector>

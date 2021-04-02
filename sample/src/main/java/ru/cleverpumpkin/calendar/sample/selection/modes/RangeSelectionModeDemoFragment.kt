@@ -55,6 +55,10 @@ class RangeSelectionModeDemoFragment : BaseFragment() {
             selectionMode = CalendarView.SelectionMode.RANGE,
             selectedDates = listOf(preselectedRangeStart, preselectedRangeEnd)
         )
+
+        // Uncomment to set custom drawables and tint colors for date cells
+        //viewBinding.calendarView.setDateCellBackgroundRes(R.drawable.custom_calendar_drawable)
+        //viewBinding.calendarView.setDateCellBackgroundTintRes(R.color.custom_date_cell_background_color)
     }
 
     private fun updateSelectedDatesView() {

@@ -2,6 +2,7 @@ package ru.cleverpumpkin.calendar.selection
 
 import android.os.Bundle
 import ru.cleverpumpkin.calendar.CalendarDate
+import ru.cleverpumpkin.calendar.DateCellSelectedState
 import ru.cleverpumpkin.calendar.adapter.manager.AdapterDataManager
 import ru.cleverpumpkin.calendar.utils.DateInfoProvider
 
@@ -53,8 +54,8 @@ internal class SingleDateSelectionStrategy(
         }
     }
 
-    override fun isDateSelected(date: CalendarDate): Boolean {
-        return selectedDate == date
+    override fun getDateCellSelectedState(date: CalendarDate): DateCellSelectedState {
+        return if(selectedDate == date) DateCellSelectedState.SINGLE else DateCellSelectedState.NOT_SELECTED
     }
 
     override fun saveSelectedDates(bundle: Bundle) {

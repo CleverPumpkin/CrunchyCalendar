@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import androidx.recyclerview.widget.RecyclerView
 import ru.cleverpumpkin.calendar.CalendarDateView
+import ru.cleverpumpkin.calendar.DateCellSelectedState
 import ru.cleverpumpkin.calendar.style.CalendarStyleAttributes
 import ru.cleverpumpkin.calendar.extension.dpToPix
 
@@ -25,7 +26,7 @@ internal class GridDividerItemDecoration(
             val child = parent.getChildAt(i)
 
             if (child is CalendarDateView) {
-                if (child.isDateSelected && styleAttributes.drawGridOnSelectedDates.not()) {
+                if (child.cellSelectionState != DateCellSelectedState.NOT_SELECTED && styleAttributes.drawGridOnSelectedDates.not()) {
                     continue
                 }
 
