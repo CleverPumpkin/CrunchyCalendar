@@ -34,7 +34,11 @@ internal class DaysBarView @JvmOverloads constructor(
 
         for (i in 0..childCount) {
             val dayView = getChildAt(i) as? TextView
-            dayView?.setTextColor(styleAttributes.daysBarTextColor)
+            if (i > 4) {
+                dayView?.setTextColor(styleAttributes.daysBarWeekendTextColor)
+            } else {
+                dayView?.setTextColor(styleAttributes.daysBarTextColor)
+            }
         }
     }
 

@@ -474,7 +474,7 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Sets the days of week bar text color.
+     * Set text color of days on week bar.
      */
     fun setDaysBarTextColor(@ColorInt color: Int) {
         calendarStyleAttributes.daysBarTextColor = color
@@ -482,10 +482,25 @@ class CalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Sets the days of week bar text color resources.
+     * Set text color of the weekend days on week bar.
+     */
+    fun setDaysBarWeekendTextColor(@ColorInt color: Int) {
+        calendarStyleAttributes.daysBarWeekendTextColor = color
+        daysBarView.applyStyle(calendarStyleAttributes)
+    }
+
+    /**
+     * Set text color of days on week bar.
      */
     fun setDaysBarTextColorRes(@ColorRes colorRes: Int) {
         setDaysBarTextColor(getColorInt(colorRes))
+    }
+
+    /**
+     * Set text color of the weekend days on week bar.
+     */
+    fun setDaysBarWeekendTextColorRes(@ColorRes colorRes: Int) {
+        setDaysBarWeekendTextColor(getColorInt(colorRes))
     }
 
     /**
@@ -557,6 +572,14 @@ class CalendarView @JvmOverloads constructor(
     fun setDateCellTextColorRes(@ColorRes colorRes: Int) {
         val colorStateList = requireNotNull(ContextCompat.getColorStateList(context, colorRes))
         setDateCellTextColor(colorStateList)
+    }
+
+    /**
+     * Sets
+     */
+    fun useSeparateWeekendDaysBarTextColor(used: Boolean){
+        calendarStyleAttributes.useSeparateColorForWeekendDays = used
+        daysBarView.applyStyle(calendarStyleAttributes)
     }
 
     /**

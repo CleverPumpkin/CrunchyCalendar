@@ -50,6 +50,18 @@ internal class CalendarStyleAttributes(
         ContextCompat.getColorStateList(context, R.color.calendar_date_text_selector)
     ),
 
-    var dateCellBackgroundShapeForm: Int = R.drawable.calendar_date_shape_form
+    var dateCellBackgroundShapeForm: Int = R.drawable.calendar_date_shape_form,
 
-)
+    var useSeparateColorForWeekendDays: Boolean = false
+
+) {
+
+    @ColorInt
+    var daysBarWeekendTextColor: Int = 0
+        get() = if (field == 0) {
+            daysBarTextColor
+        } else {
+            field
+        }
+    
+}

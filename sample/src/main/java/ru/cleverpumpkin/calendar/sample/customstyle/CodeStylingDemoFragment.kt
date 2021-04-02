@@ -41,6 +41,7 @@ class CodeStylingDemoFragment : BaseFragment() {
 
             setDaysBarBackgroundColorRes(R.color.custom_calendar_days_bar_background)
             setDaysBarTextColorRes(R.color.custom_calendar_days_bar_text_color)
+            setDaysBarWeekendTextColorRes(R.color.custom_calendar_weekend_days_bar_text_color)
 
             setMonthTextColorRes(R.color.custom_calendar_month_text_color)
 

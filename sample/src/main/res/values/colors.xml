@@ -13,6 +13,7 @@
 
     <color name="custom_calendar_days_bar_background">#0f6c52</color>
     <color name="custom_calendar_days_bar_text_color">#f2e81a</color>
+    <color name="custom_calendar_weekend_days_bar_text_color">@android:color/holo_red_dark</color>
 
     <color name="custom_calendar_date_text_color">#AD000000</color>
     <color name="custom_calendar_date_background">#FFFFFF</color>
