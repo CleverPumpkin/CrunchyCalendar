@@ -32,7 +32,7 @@ class CodeStylingDemoFragment : BaseFragment() {
         }
 
         with(viewBinding.calendarView) {
-            setDrawGridOnSelectedDates(drawGrid = true)
+            setDrawGridOnSelectedDates(drawGrid = false)
             setGridColorRes(R.color.custom_calendar_grid_color)
 
             setYearSelectionBarBackgroundColorRes(R.color.custom_calendar_year_selection_background)
@@ -45,12 +45,13 @@ class CodeStylingDemoFragment : BaseFragment() {
 
             setMonthTextColorRes(R.color.custom_calendar_month_text_color)
 
-            setDateCellBackgroundRes(R.drawable.custom_date_bg_selector)
+            setDateCellBackgroundRes(R.drawable.custom_calendar_drawable)
+            setDateCellBackgroundTintRes(R.color.custom_date_cell_background_color)
             setDateCellTextColorRes(R.color.custom_date_text_selector)
         }
 
         if (savedInstanceState == null) {
-            viewBinding.calendarView.setupCalendar(selectionMode = SelectionMode.MULTIPLE)
+            viewBinding.calendarView.setupCalendar(selectionMode = SelectionMode.RANGE)
         }
     }
 
