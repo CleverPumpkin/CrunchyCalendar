@@ -1,77 +1,67 @@
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
 group = groupId
 version = libraryVersion
 
-task sourceJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    archiveClassifier.set("source")
+signing {
+    sign publishing.publications
 }
 
-task javadoc(type: Javadoc) {
-    source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    destinationDir = file("../javadoc/")
-    failOnError false
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    archiveClassifier.set("javadoc")
-    from tasks.javadoc.destinationDir
-}
-
-//Creating sources with comments
-task androidSourcesJar(type: Jar) {
-    archiveClassifier.set("sources")
-    from android.sourceSets.main.java.srcDirs
-}
-
-artifacts {
-    archives javadocJar
-    archives androidSourcesJar
-}
-
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-            repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(userName: sonatypeUsername, password: sonatypePassword)
+afterEvaluate {
+    publishing {
+        repositories {
+            maven {
+                name = "mavenCentral"
+                url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+                credentials {
+                    username(sonatypeUsername)
+                    password(sonatypePassword)
+                }
             }
-            pom.project {
-                name libraryName
-                packaging 'aar'
-                description libraryDescription
-                artifactId artifactId
-                url siteUrl
-                scm {
-                    url gitUrl
-                    connection gitUrl
-                    developerConnection gitUrl
-                }
-                licenses {
-                    license {
-                        name licenseName
-                        url licenseUrl
-                        distribution 'repo'
+        }
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication) {
+                // Applies the component for the release build variant.
+                from components.release
+
+                // You can then customize attributes of the publication as shown below.
+                groupId = groupId
+                artifactId = artifactId
+                version = libraryVersion
+
+                pom {
+                    name = libraryName
+                    description = libraryDescription
+                    url = siteUrl
+                    licenses {
+                        license {
+                            name = licenseName
+                            url = licenseUrl
+                        }
                     }
-                }
-                developers {
-                    developer {
-                        id 'alexsurinov'
-                        name 'Alexander Surinov'
-                        organization 'clverpumpkin'
+                    developers {
+                        developer {
+                            id = 'alexsurinov'
+                            name = 'Alexander Surinov'
+                            organization = 'clverpumpkin'
+                        }
+                        developer {
+                            id = 'Limanskaya'
+                            name = 'Anastasiya Stroganova'
+                            organization = 'clverpumpkin'
+                        }
+                        developer {
+                            id = 'itolianezzz'
+                            name = 'Anatoly Shulipov'
+                            organization = 'clverpumpkin'
+                        }
                     }
-                    developer {
-                        id 'Limanskaya'
-                        name 'Anastasiya Stroganova'
-                        organization 'clverpumpkin'
-                    }
-                    developer {
-                        id 'itolianezzz'
-                        name 'Anatoly Shulipov'
-                        organization 'clverpumpkin'
+                    scm {
+                        connection = gitUrl
+                        developerConnection = gitUrl
+                        url = siteUrl
                     }
                 }
             }
