@@ -9,7 +9,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name="ru.cleverpumpkin.calendar.sample.MainActivity">
+        <activity android:name="ru.cleverpumpkin.calendar.sample.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
