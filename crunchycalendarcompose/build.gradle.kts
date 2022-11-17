@@ -1,12 +1,13 @@
-import buildconfig.AppModuleBuildConfiguration
+import buildconfig.LibraryModuleBuildConfiguration
 
 plugins {
-    id("com.android.application")
+    id("com.android.library")
     id("kotlin-android")
+    id("kotlin-kapt")
 }
 
 android {
-    AppModuleBuildConfiguration(project, appExtension = this).configure()
+    LibraryModuleBuildConfiguration(project, libraryEtension = this).configure()
 
     buildFeatures.compose = true
 
@@ -19,14 +20,6 @@ dependencies {
     coreLibraryDesugaring(Tools.DESUGAR_JDK_LIBS)
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
-    // Core modules
-    implementation(project(":crunchycalendar"))
-    implementation(project(":crunchycalendarcompose"))
-    implementation(KotlinLibs.STDLIB)
-    implementation(AndroidX.APPCOMPAT)
-    implementation(AndroidX.RECYCLER_VIEW)
-    implementation(UI.VIEWBINDING_PROPERTY_DELEGATE)
-
     //Compose
     implementation(Compose.FOUNDATION)
     implementation(Compose.UI)
@@ -37,5 +30,5 @@ dependencies {
     implementation(Compose.VIEWMODELS)
     implementation(Compose.TOOLING)
     implementation(Compose.CONSTRAINT)
-}
 
+}

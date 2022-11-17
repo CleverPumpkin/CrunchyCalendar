@@ -33,6 +33,12 @@ android {
 
     // Use resource prefix to avoid collisions with resources from other modules.
     resourcePrefix  = "calendar_"
+
+    buildFeatures.compose = true
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = Compose.VERSION
+    }
 }
 
 dependencies {
@@ -41,9 +47,19 @@ dependencies {
     implementation(KotlinLibs.STDLIB)
     implementation(AndroidX.RECYCLER_VIEW)
     implementation(Testing.JUNIT)
-//    implementation(Testing.MOCKITO_ALL)
     implementation(Testing.POWERMOCK_API)
     implementation(Testing.POWERMOCK_MODULE_JUNIT)
+
+    //Compose
+    implementation(Compose.FOUNDATION)
+    implementation(Compose.UI)
+    implementation(Compose.ACTIVITY)
+    implementation(Compose.MATERIAL_YOU)
+    implementation(Compose.ANIMATIONS)
+    implementation(Compose.RUNTIME)
+    implementation(Compose.VIEWMODELS)
+    implementation(Compose.TOOLING)
+    implementation(Compose.CONSTRAINT)
 
 }
 

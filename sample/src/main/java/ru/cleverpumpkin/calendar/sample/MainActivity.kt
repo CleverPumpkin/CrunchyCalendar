@@ -10,6 +10,7 @@ import ru.cleverpumpkin.calendar.sample.demolist.DemoListFragment
 import ru.cleverpumpkin.calendar.sample.dialog.DialogDemoFragment
 import ru.cleverpumpkin.calendar.sample.events.EventListDemoFragment
 import ru.cleverpumpkin.calendar.sample.selection.SelectionModesDemoFragment
+import ru.cleverpumpkin.calendar.sample.selection.modes.ComposeModeDemoFragment
 
 class MainActivity : AppCompatActivity(), DemoListFragment.OnDemoItemSelectionListener {
 
@@ -31,6 +32,7 @@ class MainActivity : AppCompatActivity(), DemoListFragment.OnDemoItemSelectionLi
             DemoItem.STYLING -> CodeStylingDemoFragment()
             DemoItem.EVENTS -> EventListDemoFragment()
             DemoItem.DIALOG -> DialogDemoFragment()
+            DemoItem.COMPOSE -> ComposeModeDemoFragment()
         }
 
         if (demoFragment is DialogDemoFragment) {

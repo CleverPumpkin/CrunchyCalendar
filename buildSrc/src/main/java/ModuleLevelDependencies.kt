@@ -24,6 +24,57 @@ object Tools {
 
 }
 
+object Compose {
+    const val VERSION = "1.2.0-beta03"
+
+    //UI
+    const val UI = "androidx.compose.ui:ui:$VERSION"
+
+    // Foundation (Border, Background, Box, Image, Scroll, shapes, animations, etc.)
+    const val FOUNDATION = "androidx.compose.foundation:foundation:$VERSION"
+
+    // Material design icons
+    const val ICONS_CORE = "androidx.compose.material:material-icons-core:$VERSION"
+    const val ICONS_EXTENDED = "androidx.compose.material:material-icons-extended:$VERSION"
+
+    //ConstraintLayout
+    const val CONSTRAINT = "androidx.constraintlayout:constraintlayout-compose:1.0.0"
+
+    // Integration with activities
+    const val ACTIVITY = "androidx.activity:activity-compose:1.4.0"
+
+    // Compose Material Design
+    const val MATERIAL = "androidx.compose.material:material:$VERSION"
+    const val MATERIAL_YOU = "androidx.compose.material3:material3:1.0.0-alpha12"
+
+    // Animations
+    const val ANIMATIONS = "androidx.compose.animation:animation:$VERSION"
+
+    //CODE
+    const val RUNTIME = "androidx.compose.runtime:runtime:$VERSION"
+
+    // Integration with observables
+    const val RUNTIME_LIVEDATA = "androidx.compose.runtime:runtime-livedata:$VERSION"
+    const val RUNTIME_RXJAVA = "androidx.compose.runtime:runtime-rxjava2:$VERSION"
+
+    // Tooling support (Previews, etc.)
+    const val TOOLING = "androidx.compose.ui:ui-tooling:$VERSION"
+
+    // Integration with ViewModels
+    const val VIEWMODELS = "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1"
+
+    // Accompanist
+    object ACCOMPANIST {
+        private const val VERSION = "0.24.9-beta"
+
+        const val SWIPE_REFRESH = "com.google.accompanist:accompanist-swiperefresh:$VERSION"
+        const val PAGER = "com.google.accompanist:accompanist-pager:$VERSION"
+        const val PAGER_INDICATORS = "com.google.accompanist:accompanist-pager-indicators:$VERSION"
+    }
+
+    const val LOTTIE_COMPOSE = "com.airbnb.android:lottie-compose:5.2.0"
+}
+
 object Testing {
     private const val JUNIT_VERSION = "4.13.2"
     private const val MOCKITO_VERSION = "1.10.19"

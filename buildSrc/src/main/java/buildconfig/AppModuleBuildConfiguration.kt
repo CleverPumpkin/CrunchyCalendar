@@ -61,18 +61,35 @@ class AppModuleBuildConfiguration(
         }
     }
 
+//    override fun configureSigningConfigs(signingConfigs: NamedDomainObjectContainer<SigningConfig>) {
+//        val path = project.rootDir
+//
+//        val keystorePropertiesFile = File("$path/keystore.properties")
+//        val keystoreProperties = Properties()
+//        keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+//
+//        signingConfigs.maybeCreate(SigningConfigs.Release.NAME)
+//            .setStoreFile(File(keystoreProperties.getProperty("uploadStoreFile")))
+//            .setStorePassword(keystoreProperties.getProperty("uploadStorePassword"))
+//            .setKeyAlias(keystoreProperties.getProperty("uploadKeyAlias"))
+//            .setKeyPassword(keystoreProperties.getProperty("uploadKeyPassword"))
+//
+//    }
+
     override fun configureSigningConfigs(signingConfigs: NamedDomainObjectContainer<SigningConfig>) {
         val path = project.rootDir
 
-        val keystorePropertiesFile = File("$path/keystore.properties")
-        val keystoreProperties = Properties()
-        keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+//        signingConfigs.maybeCreate(SigningConfigs.Debug.NAME)
+//            .setStoreFile(File("$path/${SigningConfigs.Debug.KEYSTORE_FILE}"))
+//            .setStorePassword((SigningConfigs.Debug.KEYSTORE_FILE_PASSWORD))
+//            .setKeyAlias(SigningConfigs.Debug.KEY_ALIAS)
+//            .setKeyPassword(SigningConfigs.Debug.KEY_PASSWORD)
 
-        signingConfigs.maybeCreate(SigningConfigs.Release.NAME)
-            .setStoreFile(File(keystoreProperties.getProperty("uploadStoreFile")))
-            .setStorePassword(keystoreProperties.getProperty("uploadStorePassword"))
-            .setKeyAlias(keystoreProperties.getProperty("uploadKeyAlias"))
-            .setKeyPassword(keystoreProperties.getProperty("uploadKeyPassword"))
+        signingConfigs.maybeCreate("upload")
+            .setStoreFile(File("$path/keystore/keystore.jks"))
+            .setStorePassword("Polo4321")
+            .setKeyAlias("release")
+            .setKeyPassword("Polo4321")
 
     }
 
@@ -80,7 +97,7 @@ class AppModuleBuildConfiguration(
         val rulesFile = File("proguard-rules.pro")
         val defaultFile =
             com.android.build.gradle.ProguardFiles.getDefaultProguardFile(
-                "proguard-android.txt",
+                "proguard-android-optimize.txt",
                 project.layout.buildDirectory
             )
         return ProguardFiles(

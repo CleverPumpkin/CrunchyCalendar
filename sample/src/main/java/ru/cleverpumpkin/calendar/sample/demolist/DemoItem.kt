@@ -11,5 +11,6 @@ enum class DemoItem(@StringRes val titleRes: Int) {
     DATE_BOUNDARIES(titleRes = R.string.demo_date_boundaries),
     STYLING(titleRes = R.string.demo_styling),
     EVENTS(titleRes = R.string.demo_events),
-    DIALOG(titleRes = R.string.demo_dialog)
+    DIALOG(titleRes = R.string.demo_dialog),
+    COMPOSE(titleRes = R.string.demo_compose)
 }
