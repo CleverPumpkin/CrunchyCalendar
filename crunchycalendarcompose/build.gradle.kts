@@ -4,6 +4,7 @@ plugins {
     id("com.android.library")
     id("kotlin-android")
     id("kotlin-kapt")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -30,5 +31,8 @@ dependencies {
     implementation(Compose.VIEWMODELS)
     implementation(Compose.TOOLING)
     implementation(Compose.CONSTRAINT)
+    implementation(Compose.ACCOMPANIST.PAGER)
+    implementation(Compose.ACCOMPANIST.PAGER_INDICATORS)
+    implementation(Compose.COIL_COMPOSE)
 
 }

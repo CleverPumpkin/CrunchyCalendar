@@ -65,7 +65,7 @@ object Compose {
 
     // Accompanist
     object ACCOMPANIST {
-        private const val VERSION = "0.24.9-beta"
+        private const val VERSION = "0.27.1"
 
         const val SWIPE_REFRESH = "com.google.accompanist:accompanist-swiperefresh:$VERSION"
         const val PAGER = "com.google.accompanist:accompanist-pager:$VERSION"
@@ -73,6 +73,8 @@ object Compose {
     }
 
     const val LOTTIE_COMPOSE = "com.airbnb.android:lottie-compose:5.2.0"
+
+    const val COIL_COMPOSE = "io.coil-kt:coil-compose:2.2.2"
 }
 
 object Testing {

@@ -3,19 +3,23 @@ package ru.cleverpumpkin.crunchycalendar.calendarcompose
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import ru.cleverpumpkin.crunchycalendar.calendarcompose.CalendarConst.DAYS_IN_WEEK
-import ru.cleverpumpkin.crunchycalendar.calendarcompose.CalendarConst.ELEMENTS_RANGE_FOR_TRIGGER
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.VerticalPager
+import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
 import ru.cleverpumpkin.crunchycalendar.calendarcompose.CalendarConst.MONTHS_PER_PAGE
-import ru.cleverpumpkin.crunchycalendar.calendarcompose.item.CalendarItem
-import ru.cleverpumpkin.crunchycalendar.calendarcompose.item.DateItem
-import ru.cleverpumpkin.crunchycalendar.calendarcompose.item.EmptyItem
-import ru.cleverpumpkin.crunchycalendar.calendarcompose.item.MonthTitleItem
+import ru.cleverpumpkin.crunchycalendar.calendarcompose.compose.MonthContent
+import ru.cleverpumpkin.crunchycalendar.calendarcompose.compose.WeekDaysContent
+import ru.cleverpumpkin.crunchycalendar.calendarcompose.compose.YearContent
+import ru.cleverpumpkin.crunchycalendar.calendarcompose.item.*
 import ru.cleverpumpkin.crunchycalendar.calendarcompose.utils.*
+import ru.cleverpumpkin.crunchycalendar.calendarcompose.utils.selectionStategies.*
 import java.util.*
 
 /**
@@ -44,18 +48,10 @@ enum class SelectionMode {
 }
 
 private lateinit var calendarItemsGenerator: CalendarItemsGenerator
-
-private val defaultFirstDayOfWeek: Int
-    get() = Calendar.getInstance().firstDayOfWeek
-
-private var firstDayOfWeeks: Int? = null
-    set(value) {
-        field = value
-        calendarItemsGenerator = CalendarItemsGenerator(firstDayOfWeeks ?: defaultFirstDayOfWeek)
-    }
-
 private var displayedDatesRange = DatesRange.emptyRange()
 private var minMaxDatesRange = NullableDatesRange()
+private val dateInfoProvider = DefaultDateInfoProvider()
+private var dateSelectionStrategy: DateSelectionStrategy = NoDateSelectionStrategy()
 
 /**
  * Filter that is used to determine whether a date available for selection or not.
@@ -68,6 +64,48 @@ var dateSelectionFilter: ((CalendarDate) -> Boolean)? = null
 var weekendFilter: (CalendarDate) -> Boolean = { date ->
     date.dayOfWeek == Calendar.SUNDAY || date.dayOfWeek == Calendar.SATURDAY
 }
+
+private var settedSelectionMode: SelectionMode = SelectionMode.NONE
+    set(value) {
+        field = value
+
+        dateSelectionStrategy = when (value) {
+            SelectionMode.NONE -> {
+                NoDateSelectionStrategy()
+            }
+
+            SelectionMode.SINGLE -> {
+                SingleDateSelectionStrategy(dateInfoProvider)
+            }
+
+            SelectionMode.MULTIPLE -> {
+                MultipleDateSelectionStrategy(dateInfoProvider)
+            }
+
+            SelectionMode.RANGE -> {
+                RangeDateSelectionStrategy(dateInfoProvider)
+            }
+        }
+    }
+
+private val defaultFirstDayOfWeek: Int
+    get() = Calendar.getInstance().firstDayOfWeek
+
+private var firstWeekDay: Int? = null
+    set(value) {
+        field = value
+        calendarItemsGenerator = CalendarItemsGenerator(firstWeekDay ?: defaultFirstDayOfWeek)
+    }
+
+val selectedDates: List<CalendarDate>
+    get() = dateSelectionStrategy.getSelectedDates()
+
+/**
+ * Returns selected date or null according to the [settedSelectionMode].
+ */
+val selectedDate: CalendarDate?
+    get() = dateSelectionStrategy.getSelectedDates()
+        .firstOrNull()
 
 
 @Composable
@@ -90,7 +128,8 @@ fun CalendarScreen(
             throw IllegalArgumentException("Incorrect value of firstDayOfWeek: $firstDayOfWeek")
         }
     }
-    firstDayOfWeeks = firstDayOfWeek
+    settedSelectionMode = selectionMode
+    firstWeekDay = firstDayOfWeek
     minMaxDatesRange = NullableDatesRange(dateFrom = minDate, dateTo = maxDate)
 
     displayedDatesRange = DisplayedDatesRangeFactory.getDisplayedDatesRange(
@@ -99,157 +138,107 @@ fun CalendarScreen(
         maxDate = maxDate
     )
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = MaterialTheme.colorScheme.background)
-                .navigationBarsPadding(),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Calendar(listItems = generateCalendarItems(displayedDatesRange), initialDate)
-        }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = MaterialTheme.colorScheme.background)
+            .navigationBarsPadding(),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Calendar(
+            listItems = generateCalendarItems(displayedDatesRange),
+            initialDate = initialDate,
+            initialSelectedDates = selectedDates,
+            showYearSelectionView = showYearSelectionView
+        )
     }
 
 }
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun Calendar(
-    listItems: List<CalendarItem>,
-    initialDate: CalendarDate
+    listItems: List<MonthItem>,
+    initialDate: CalendarDate,
+    initialSelectedDates: List<CalendarDate>,
+    showYearSelectionView: Boolean
 ) {
-    val firstElement = findMonthPosition(listItems, initialDate)
-    var itemsListState by remember { mutableStateOf(listItems) }
-    val lazyGridState = rememberLazyGridState(firstElement)
+    val firstElement = listItems.findMonthPosition(initialDate)
+    val pagerState = rememberPagerState(firstElement)
+    val coroutineScope = rememberCoroutineScope()
+    val selectedDates = remember { mutableStateOf(initialSelectedDates) }
+    val displayedDate = remember { mutableStateOf(initialDate) }
+    var itemsListState by rememberSaveable { mutableStateOf(listItems) }
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(DAYS_IN_WEEK),
-        state = lazyGridState,
-        contentPadding = PaddingValues(horizontal = 0.dp, vertical = 0.dp)
-    ) {
-        items(
-            itemsListState,
-            key = { it.id },
-            span = {
-                if (it is MonthTitleItem) {
-                    GridItemSpan(maxLineSpan)
-                } else {
-                    GridItemSpan(1)
-                }
-            }
-        ) {
-            when (it) {
-                is MonthTitleItem -> {
-                    MonthDateView(
-                        date = it.date
-                    )
-                }
-                is EmptyItem -> {
-                    EmptyCalendarDateView()
-                }
-                is DateItem -> {
-                    ComposeCalendarDateView(
-                        dateInfoProvider = DefaultDateInfoProvider(),
-                        date = it.date
-                    )
-                }
-            }
+    Column {
+        if (showYearSelectionView) {
+            YearContent(
+                minMaxDatesRange = minMaxDatesRange,
+                displayedDate = displayedDate.value,
+                onClick = {
+                    displayedDate.value = it
+                    val newItems = moveToDate(it)
+                    itemsListState = newItems.ifEmpty {
+                        itemsListState
+                    }
 
-            if (it == itemsListState[ELEMENTS_RANGE_FOR_TRIGGER]) {
-                itemsListState = generatePrevCalendarItems() + itemsListState
+                    val dateMonthPosition = itemsListState.findMonthPosition(it)
+                    coroutineScope.launch {
+                        pagerState.scrollToPage(dateMonthPosition)
+                    }
+                }
+            )
+        }
+
+        WeekDaysContent(firstDayOfWeek = firstWeekDay ?: defaultFirstDayOfWeek)
+
+        VerticalPager(
+            count = itemsListState.size,
+            state = pagerState,
+        ) { page ->
+            MonthContent(
+                dateInfoProvider = dateInfoProvider,
+                item = itemsListState[page],
+                selectedItems = selectedDates.value,
+                onClick = { date ->
+                    dateSelectionStrategy.onDateSelected(date)
+                    selectedDates.value = dateSelectionStrategy.getSelectedDates()
+                }
+            )
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        snapshotFlow {
+            pagerState.currentPage == 0
+        }.filter { it }
+            .collect {
+                val newItems = generatePrevCalendarItems()
+                itemsListState = newItems + itemsListState
+                pagerState.scrollToPage(newItems.size)
             }
-            if (it == itemsListState[itemsListState.size - ELEMENTS_RANGE_FOR_TRIGGER]) {
+    }
+
+    LaunchedEffect(Unit) {
+        snapshotFlow {
+            pagerState.currentPage == itemsListState.size - 1
+        }.filter { it }
+            .collect {
                 itemsListState = itemsListState + generateNextCalendarItems()
             }
-        }
     }
 
-    /**
-     * method with "infiniteList"
-     */
-//    lazyGridState.OnTopReached(ELEMENTS_RANGE_FOR_TRIGGER) {
-//        itemsListState = generatePrevCalendarItems() + itemsListState
-//    }
-//
-//    lazyGridState.OnBottomReached(ELEMENTS_RANGE_FOR_TRIGGER) {
-//        itemsListState = itemsListState + generateNextCalendarItems()
-//    }
-
-}
-
-@Composable
-fun LazyGridState.OnTopReached(
-    // tells how many items before we reach the top of the list
-    // to call onLoadMore function
-    buffer : Int = 0,
-    onLoadMore : () -> Unit
-) {
-    // Buffer must be positive.
-    // Or our list will never reach the top.
-    require(buffer >= 0) { "buffer cannot be negative, but was $buffer" }
-
-    val shouldLoadMore = remember {
-        derivedStateOf {
-            val firstVisibleItem = layoutInfo.visibleItemsInfo.firstOrNull()
-                ?:
-                return@derivedStateOf true
-
-            // increase buffer to the total items
-            firstVisibleItem.index >= layoutInfo.totalItemsCount + buffer
-        }
-    }
-
-    LaunchedEffect(shouldLoadMore){
-        snapshotFlow { shouldLoadMore.value }
-            .collect { if (it) onLoadMore() }
-    }
-}
-
-@Composable
-fun LazyGridState.OnBottomReached(
-    // tells how many items before we reach the bottom of the list
-    // to call onLoadMore function
-    buffer : Int = 0,
-    onLoadMore : () -> Unit
-) {
-    // Buffer must be positive.
-    // Or our list will never reach the bottom.
-    require(buffer >= 0) { "buffer cannot be negative, but was $buffer" }
-
-    val shouldLoadMore = remember {
-        derivedStateOf {
-            val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()
-                ?:
-                return@derivedStateOf true
-
-            // subtract buffer from the total items
-            lastVisibleItem.index >= layoutInfo.totalItemsCount - 1 - buffer
-        }
-    }
-
-    LaunchedEffect(shouldLoadMore){
-        snapshotFlow { shouldLoadMore.value }
-            .collect { if (it) onLoadMore() }
-    }
-}
-
-fun findMonthPosition(listItems: List<CalendarItem>, date: CalendarDate): Int {
-    val year = date.year
-    val month = date.month
-
-    return listItems.indexOfFirst { item ->
-        if (item is MonthTitleItem) {
-            if (item.date.year == year && item.date.month == month) {
-                return@indexOfFirst true
+    if (showYearSelectionView) {
+        LaunchedEffect(pagerState) {
+            snapshotFlow { pagerState.currentPage }.collect { page ->
+                displayedDate.value = itemsListState[page].monthTitle.date
             }
         }
-
-        return@indexOfFirst false
     }
 }
 
-private fun generateCalendarItems(datesRange: DatesRange): List<CalendarItem> {
+private fun generateCalendarItems(datesRange: DatesRange): List<MonthItem> {
     if (datesRange.isEmptyRange) {
         return emptyList()
     }
@@ -260,7 +249,7 @@ private fun generateCalendarItems(datesRange: DatesRange): List<CalendarItem> {
     )
 }
 
-private fun generatePrevCalendarItems(): List<CalendarItem> {
+private fun generatePrevCalendarItems(): List<MonthItem> {
     val minDate = minMaxDatesRange.dateFrom
     if (minDate != null && minDate.monthsBetween(displayedDatesRange.dateFrom) == 0) {
         return emptyList()
@@ -290,7 +279,7 @@ private fun generatePrevCalendarItems(): List<CalendarItem> {
     )
 }
 
-private fun generateNextCalendarItems(): List<CalendarItem> {
+private fun generateNextCalendarItems(): List<MonthItem> {
     val maxDate = minMaxDatesRange.dateTo
     if (maxDate != null && displayedDatesRange.dateTo.monthsBetween(maxDate) == 0) {
         return emptyList()
@@ -316,6 +305,30 @@ private fun generateNextCalendarItems(): List<CalendarItem> {
         dateFrom = generateDatesFrom,
         dateTo = generateDatesTo
     )
+}
+
+fun moveToDate(date: CalendarDate): List<MonthItem> {
+    val (minDate, maxDate) = minMaxDatesRange
+
+    if ((minDate != null && date < minDate.monthBeginning()) ||
+        (maxDate != null && date > maxDate.monthEnd())
+    ) {
+        return emptyList()
+    }
+
+    val (displayDatesFrom, displayDatesTo) = displayedDatesRange
+
+    if (date.isBetween(dateFrom = displayDatesFrom, dateTo = displayDatesTo).not()) {
+        displayedDatesRange = DisplayedDatesRangeFactory.getDisplayedDatesRange(
+            initialDate = date,
+            minDate = minDate,
+            maxDate = maxDate
+        )
+
+        return generateCalendarItems(displayedDatesRange)
+    }
+
+    return emptyList()
 }
 
 private class DefaultDateInfoProvider : DateInfoProvider {

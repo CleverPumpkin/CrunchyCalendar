@@ -3,6 +3,7 @@ package configuration
 import java.io.FileInputStream
 import java.util.*
 
+
 object ApplicationVersions {
 
     const val FILENAME = "app_version.properties"

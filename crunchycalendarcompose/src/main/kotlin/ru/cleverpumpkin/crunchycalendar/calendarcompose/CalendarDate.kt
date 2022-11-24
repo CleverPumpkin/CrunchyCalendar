@@ -109,6 +109,22 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
         return CalendarDate(tmpCalendar.time)
     }
 
+    fun minusDays(daysCount: Int): CalendarDate {
+        val tmpCalendar = Calendar.getInstance()
+        tmpCalendar.time = _calendar.time
+        tmpCalendar.add(Calendar.DAY_OF_YEAR, daysCount.unaryMinus())
+
+        return CalendarDate(tmpCalendar.time)
+    }
+
+    fun plusDays(daysCount: Int): CalendarDate {
+        val tmpCalendar = Calendar.getInstance()
+        tmpCalendar.time = _calendar.time
+        tmpCalendar.add(Calendar.DAY_OF_YEAR, daysCount)
+
+        return CalendarDate(tmpCalendar.time)
+    }
+
     fun plusMonths(monthsCount: Int): CalendarDate {
         val tmpCalendar = Calendar.getInstance()
         tmpCalendar.time = _calendar.time

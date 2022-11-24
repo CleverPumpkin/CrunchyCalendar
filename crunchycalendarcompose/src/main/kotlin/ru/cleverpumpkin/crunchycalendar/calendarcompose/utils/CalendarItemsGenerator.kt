@@ -1,11 +1,8 @@
 package ru.cleverpumpkin.crunchycalendar.calendarcompose.utils
 
-import ru.cleverpumpkin.crunchycalendar.calendarcompose.item.CalendarItem
-import ru.cleverpumpkin.crunchycalendar.calendarcompose.item.DateItem
-import ru.cleverpumpkin.crunchycalendar.calendarcompose.item.EmptyItem
-import ru.cleverpumpkin.crunchycalendar.calendarcompose.item.MonthTitleItem
 import ru.cleverpumpkin.crunchycalendar.calendarcompose.CalendarConst
 import ru.cleverpumpkin.crunchycalendar.calendarcompose.CalendarDate
+import ru.cleverpumpkin.crunchycalendar.calendarcompose.item.*
 
 import java.util.*
 
@@ -30,22 +27,21 @@ class CalendarItemsGenerator(private val firstDayOfWeek: Int) {
     /**
      * Generate calendar items for months between [dateFrom] and [dateTo]
      */
-    fun generateCalendarItems(dateFrom: CalendarDate, dateTo: CalendarDate): List<CalendarItem> {
+    fun generateCalendarItems(dateFrom: CalendarDate, dateTo: CalendarDate): List<MonthItem> {
         val calendar = Calendar.getInstance()
         calendar.time = dateFrom.date
 
-        val calendarItems = mutableListOf<CalendarItem>()
+        val calendarItems = mutableListOf<MonthItem>()
         val monthsBetween = dateFrom.monthsBetween(dateTo)
 
         repeat(monthsBetween.inc()) {
             val year = calendar.get(Calendar.YEAR)
             val month = calendar.get(Calendar.MONTH)
 
-            val monthTitleItem = MonthTitleItem(UUID.randomUUID(), CalendarDate(calendar.time))
-            calendarItems += monthTitleItem
-
+            val monthTitleItem = MonthTitleItem(CalendarDate(calendar.time))
             val itemsForMonth = generateCalendarItemsForMonth(year, month)
-            calendarItems += itemsForMonth
+
+            calendarItems.add(MonthItem(UUID.randomUUID(), monthTitleItem, itemsForMonth))
 
             calendar.add(Calendar.MONTH, 1)
         }
@@ -70,19 +66,19 @@ class CalendarItemsGenerator(private val firstDayOfWeek: Int) {
         val endOffset = CalendarConst.DAYS_IN_WEEK.dec() - daysOfWeek.indexOf(lastDayOfMonth)
 
         // Add empty items for start offset
-        repeat(startOffset) { itemsForMonth += EmptyItem(UUID.randomUUID()) }
+        repeat(startOffset) { itemsForMonth += EmptyItem() }
 
         calendar.set(year, month, 1)
 
         // Add date items
         repeat(daysInMonth) {
             val date = CalendarDate(calendar.time)
-            itemsForMonth += DateItem(UUID.randomUUID(), date)
+            itemsForMonth += DateItem(date)
             calendar.add(Calendar.DAY_OF_MONTH, 1)
         }
 
         // Add empty items for end offset
-        repeat(endOffset) { itemsForMonth += EmptyItem(UUID.randomUUID()) }
+        repeat(endOffset) { itemsForMonth += EmptyItem() }
 
         return itemsForMonth
     }
