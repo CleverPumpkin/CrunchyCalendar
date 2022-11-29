@@ -2,13 +2,14 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:bottom="2dp"
-        android:right="4dp"
         android:top="2dp">
         <shape android:shape="rectangle">
-            <solid android:color="?colorPrimary" />
+            <solid android:color="@color/calendar_date_selected_background_single" />
             <corners
-                android:bottomRightRadius="8dp"
-                android:topRightRadius="8dp" />
+                android:bottomLeftRadius="16dp"
+                android:bottomRightRadius="16dp"
+                android:topLeftRadius="16dp"
+                android:topRightRadius="16dp" />
         </shape>
     </item>
 </layer-list>

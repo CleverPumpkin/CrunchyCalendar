@@ -44,6 +44,7 @@ dependencies {
 //    implementation(Testing.MOCKITO_ALL)
     implementation(Testing.POWERMOCK_API)
     implementation(Testing.POWERMOCK_MODULE_JUNIT)
+    implementation(MaterialComponents.LIBRARY)
 
 }
 

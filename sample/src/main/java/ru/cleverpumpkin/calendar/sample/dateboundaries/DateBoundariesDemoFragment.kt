@@ -3,6 +3,7 @@ package ru.cleverpumpkin.calendar.sample.dateboundaries
 import android.os.Bundle
 import android.view.View
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.google.android.material.elevation.SurfaceColors
 import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarView
 import ru.cleverpumpkin.calendar.sample.BaseFragment
@@ -26,12 +27,20 @@ class DateBoundariesDemoFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         with(viewBinding.toolbarView) {
+            val colorSurface2 = SurfaceColors.SURFACE_2.getColor(requireContext())
+            setBackgroundColor(colorSurface2)
             setTitle(R.string.demo_date_boundaries)
             setNavigationIcon(R.drawable.ic_arrow_back_24dp)
             setNavigationOnClickListener { activity?.onBackPressed() }
         }
 
+
+        val colorSurface2 = SurfaceColors.SURFACE_2.getColor(requireContext())
         if (savedInstanceState == null) {
+            with(viewBinding.calendarView) {
+                setDaysBarBackgroundColor(colorSurface2)
+                setYearSelectionBarBackgroundColor(colorSurface2)
+            }
             setupCalendar()
         }
     }

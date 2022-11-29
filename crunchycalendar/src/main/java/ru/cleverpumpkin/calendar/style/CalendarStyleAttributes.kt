@@ -37,6 +37,12 @@ internal class CalendarStyleAttributes(
     var daysBarTextColor: Int = context.getColorInt(R.color.calendar_days_bar_text_color),
 
     @ColorInt
+    var defaultDaysBarWeekendTextColor: Int = context.getColorInt(R.color.calendar_date_weekend_text_color),
+
+    @ColorInt
+    var eventIndicatorsAreaColor: Int = context.getColorInt(R.color.calendar_date_background),
+
+    @ColorInt
     var monthTextColor: Int = context.getColorInt(R.color.calendar_month_text_color),
 
     var monthTextSize: Float = context.resources.getDimension(R.dimen.calendar_month_text_size),
@@ -47,7 +53,7 @@ internal class CalendarStyleAttributes(
     var dateCellBackgroundShapeForm: Int = R.drawable.calendar_date_shape_form,
 
     @ColorRes
-    var dateCellBackgroundColorRes: Int = R.color.calendar_date_bg_selector,
+    var dateCellBackgroundColorRes: Int? = null,
 
     var dateCellTextColorStateList: ColorStateList = requireNotNull(
         ContextCompat.getColorStateList(context, R.color.calendar_date_text_selector)
@@ -58,7 +64,7 @@ internal class CalendarStyleAttributes(
     @ColorInt
     var daysBarWeekendTextColor: Int = 0
         get() = if (field == 0) {
-            daysBarTextColor
+            defaultDaysBarWeekendTextColor
         } else {
             field
         }

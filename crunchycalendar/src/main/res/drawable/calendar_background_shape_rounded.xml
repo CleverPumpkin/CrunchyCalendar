@@ -3,13 +3,8 @@
     <item
         android:bottom="2dp"
         android:top="2dp">
-        <shape
-            android:shape="rectangle">
-
-            <solid
-                android:color="?android:colorPrimary"
-                android:width="1dp" />
-
+        <shape android:shape="rectangle">
+            <solid android:color="@color/calendar_date_selected_background" />
         </shape>
     </item>
 </layer-list>

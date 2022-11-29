@@ -1,12 +1,14 @@
 package ru.cleverpumpkin.calendar.sample.dialog
 
+import android.annotation.SuppressLint
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import androidx.fragment.app.DialogFragment
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.elevation.SurfaceColors
 import ru.cleverpumpkin.calendar.CalendarView
 import ru.cleverpumpkin.calendar.sample.R
 import ru.cleverpumpkin.calendar.sample.databinding.FragmentDemoDemoBinding
@@ -16,7 +18,7 @@ import ru.cleverpumpkin.calendar.sample.databinding.FragmentDemoDemoBinding
  *
  * Created by Alexander Surinov on 2018-06-13.
  */
-class DialogDemoFragment : DialogFragment() {
+class DialogDemoFragment : BottomSheetDialogFragment() {
 
     private val viewBinding: FragmentDemoDemoBinding by viewBinding(FragmentDemoDemoBinding::bind)
 
@@ -24,16 +26,25 @@ class DialogDemoFragment : DialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)
-        return inflater.inflate(R.layout.fragment_demo_demo, container, false)
+    ): View {
+        return FragmentDemoDemoBinding.inflate(inflater, container, false).root
     }
 
+    @SuppressLint("ResourceType")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val colorSurface2 = SurfaceColors.SURFACE_2.getColor(requireContext())
+        val colorSurface1 = SurfaceColors.SURFACE_1.getColor(requireContext())
+        viewBinding.dialog.backgroundTintList = ColorStateList.valueOf(colorSurface2)
+
         if (savedInstanceState == null) {
-            viewBinding.calendarView.setupCalendar(selectionMode = CalendarView.SelectionMode.SINGLE)
+            with(viewBinding.calendarView) {
+                setDaysBarBackgroundColor(colorSurface2)
+                setYearSelectionBarBackgroundColor(colorSurface2)
+
+                setupCalendar(selectionMode = CalendarView.SelectionMode.SINGLE)
+            }
         }
     }
 

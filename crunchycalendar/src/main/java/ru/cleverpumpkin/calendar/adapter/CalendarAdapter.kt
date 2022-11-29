@@ -105,7 +105,8 @@ internal class CalendarAdapter(
     }
 
     private fun createMonthItemViewHolder(parent: ViewGroup): MonthItemViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.calendar_item_month, parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.calendar_item_month, parent, false)
         return MonthItemViewHolder(view as TextView)
     }
 
@@ -150,14 +151,19 @@ internal class CalendarAdapter(
         dateView.dayNumber = dayFormatter.format(date.date)
 
         dateView.textColorStateList = styleAttributes.dateCellTextColorStateList
+        dateView.indicatorAreaColor = styleAttributes.eventIndicatorsAreaColor
         dateView.setBackgroundResource(styleAttributes.dateCellBackgroundShapeForm)
-        val bgColorStateList = ContextCompat.getColorStateList(dateView.context, styleAttributes.dateCellBackgroundColorRes)
-        ViewCompat.setBackgroundTintList(dateView, bgColorStateList)
+        styleAttributes.dateCellBackgroundColorRes?.let {
+            val bgColorStateList = ContextCompat.getColorStateList(dateView.context, it)
+            ViewCompat.setBackgroundTintList(dateView, bgColorStateList)
+        }
     }
 
     private fun bindMonthItemViewHolder(holder: MonthItemViewHolder, monthItem: MonthItem) {
         val monthName = monthFormatter.format(monthItem.date.date)
-        holder.textView.text = monthName.capitalize(Locale.ROOT)
+        holder.textView.text = monthName.replaceFirstChar {
+            if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString()
+        }
         holder.textView.setTextColor(styleAttributes.monthTextColor)
         holder.textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, styleAttributes.monthTextSize)
         holder.textView.setTypeface(Typeface.DEFAULT, styleAttributes.monthTextStyle)

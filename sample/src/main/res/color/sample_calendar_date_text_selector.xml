@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:color="?colorOnPrimary" android:state_pressed="true" />
+
+    <item android:color="?colorOnPrimaryContainer" app:calendar_state_selected="true" />
+    <item android:color="?colorOnPrimary" app:calendar_state_selected_single="true" />
+    <item android:color="?colorOnPrimary" app:calendar_state_selected_start="true" />
+    <item android:color="?colorOnPrimary" app:calendar_state_selected_end="true" />
+
+    <item android:color="?colorOnSurface" app:calendar_state_today="true" />
+
+    <item android:color="@color/calendar_date_disabled_text_color" app:calendar_state_disabled="true" app:calendar_state_weekend="true" />
+
+    <item android:color="@color/calendar_date_disabled_text_color" app:calendar_state_disabled="true" />
+
+    <item android:color="?colorError" app:calendar_state_weekend="true" />
+
+    <item android:color="?colorOnSurface" />
+
+</selector>

@@ -3,10 +3,11 @@ package ru.cleverpumpkin.calendar.sample.selection.modes
 import android.os.Bundle
 import android.view.View
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.google.android.material.elevation.SurfaceColors
 import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarView
-import ru.cleverpumpkin.calendar.sample.BaseFragment
 import ru.cleverpumpkin.calendar.sample.R
+import ru.cleverpumpkin.calendar.sample.SelectionsBaseFragment
 import ru.cleverpumpkin.calendar.sample.databinding.FragmentDemoSelectionBinding
 import java.util.*
 
@@ -16,17 +17,25 @@ import java.util.*
  *
  * Created by Alexander Surinov on 2019-05-13.
  */
-class MultipleSelectionModeDemoFragment : BaseFragment() {
+class MultipleSelectionModeDemoFragment : SelectionsBaseFragment() {
 
     override val layoutRes: Int
         get() = R.layout.fragment_demo_selection
 
-    private val viewBinding: FragmentDemoSelectionBinding by viewBinding(FragmentDemoSelectionBinding::bind)
+    private val viewBinding: FragmentDemoSelectionBinding by viewBinding(
+        FragmentDemoSelectionBinding::bind
+    )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val colorSurface2 = SurfaceColors.SURFACE_2.getColor(requireContext())
+        viewBinding.horizontalView.setBackgroundColor(colorSurface2)
         if (savedInstanceState == null) {
+            with(viewBinding.calendarView) {
+                setDaysBarBackgroundColor(colorSurface2)
+                setYearSelectionBarBackgroundColor(colorSurface2)
+            }
             setupCalendar()
         }
 
@@ -65,6 +74,10 @@ class MultipleSelectionModeDemoFragment : BaseFragment() {
     private fun updateSelectedDatesView() {
         val selectedDates = "Selected dates = ${viewBinding.calendarView.selectedDates}"
         viewBinding.selectedDatesView.text = selectedDates
+    }
+
+    override fun moveToToday() {
+        viewBinding.calendarView.moveToDate(CalendarDate.today)
     }
 
 }
