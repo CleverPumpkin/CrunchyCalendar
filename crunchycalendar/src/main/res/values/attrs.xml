@@ -24,6 +24,7 @@
         <attr name="calendar_date_background" format="reference" />
         <attr name="calendar_date_background_tint" format="reference"/>
         <attr name="calendar_date_text_color" format="reference" />
+        <attr name="calendar_event_indicators_area" format="color" />
     </declare-styleable>
 
     <declare-styleable name="CalendarDateStates">

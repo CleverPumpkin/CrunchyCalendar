@@ -3,7 +3,8 @@ object KotlinLibs {
 
     const val STDLIB = "org.jetbrains.kotlin:kotlin-stdlib:${GradlePluginsVersions.KOTLIN_PLUGIN}"
     const val COROUTINES_CORE = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$COROUTINES_VERSION"
-    const val COROUTINES_ANDROID = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$COROUTINES_VERSION"
+    const val COROUTINES_ANDROID =
+        "org.jetbrains.kotlinx:kotlinx-coroutines-android:$COROUTINES_VERSION"
 }
 
 object AndroidX {
@@ -15,8 +16,13 @@ object AndroidX {
     const val RECYCLER_VIEW = "androidx.recyclerview:recyclerview:1.2.1"
 }
 
+object MaterialComponents {
+    const val LIBRARY = "com.google.android.material:material:1.6.1"
+}
+
 object UI {
-    const val VIEWBINDING_PROPERTY_DELEGATE = "com.github.kirich1409:viewbindingpropertydelegate-noreflection:1.4.6"
+    const val VIEWBINDING_PROPERTY_DELEGATE =
+        "com.github.kirich1409:viewbindingpropertydelegate-noreflection:1.4.6"
 }
 
 object Tools {

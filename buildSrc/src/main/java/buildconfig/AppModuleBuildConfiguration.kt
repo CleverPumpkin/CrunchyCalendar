@@ -49,6 +49,11 @@ class AppModuleBuildConfiguration(
                 isMinifyEnabled = false
                 applicationIdSuffix = ".debug"
                 versionNameSuffix = ApplicationVersions.VERSION_NAME_SUFFIX
+                setManifestPlaceholders(
+                    mapOf(
+                        "appIconRes" to "@mipmap/ic_launcher_debug"
+                    )
+                )
             }
 
             getByName(BuildTypes.RELEASE.name).apply {
@@ -57,6 +62,11 @@ class AppModuleBuildConfiguration(
                 signingConfig = appExtension.signingConfigs.getByName(SigningConfigs.Release.NAME)
                 proguardFiles(*projectProguardFiles)
                 setMatchingFallbacks(BuildTypes.RELEASE.name)
+                setManifestPlaceholders(
+                    mapOf(
+                        "appIconRes" to "@mipmap/ic_launcher"
+                    )
+                )
             }
         }
     }

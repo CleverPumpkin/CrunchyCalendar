@@ -1,17 +1,17 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="BottomSheetDialog" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomSheet</item>
+        <item name="android:colorBackground">@color/calendar_date_background</item>
+    </style>
 
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    <style name="BottomSheet" parent="Widget.MaterialComponents.BottomSheet.Modal">
+        <item name="backgroundTint">@android:color/transparent</item>
     </style>
 
     <style name="CalendarViewCustomStyle">
         <item name="android:background">@android:color/white</item>
-        <item name="calendar_date_background">@drawable/custom_date_bg_selector</item>
+        <item name="calendar_date_background">@drawable/sample_custom_date_bg_selector</item>
         <item name="calendar_date_text_color">@color/custom_date_text_selector</item>
         <item name="calendar_day_bar_background">@color/custom_calendar_days_bar_background</item>
         <item name="calendar_day_bar_text_color">@color/custom_calendar_days_bar_text_color</item>
@@ -27,6 +27,18 @@
         <item name="calendar_year_selection_text_color">
             @color/custom_calendar_year_selection_text_color
         </item>
+    </style>
+
+    <style name="CalendarStyle">
+        <item name="android:background">?colorSurface</item>
+        <item name="calendar_date_background">@drawable/sample_custom_calendar_drawable</item>
+        <item name="calendar_date_text_color">@color/sample_calendar_date_text_selector</item>
+        <item name="calendar_day_bar_text_color">?colorOnSurfaceVariant</item>
+        <item name="calendar_month_text_color">?colorOnSurface</item>
+        <item name="calendar_year_selection_arrows_color">?colorOnSurface</item>
+        <item name="calendar_year_selection_text_color">?colorOnSurface</item>
+        <item name="calendar_event_indicators_area">?colorSurface</item>
+        <item name="calendar_day_bar_weekend_text_color">?colorError</item>
     </style>
 
 </resources>

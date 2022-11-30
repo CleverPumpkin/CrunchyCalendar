@@ -22,7 +22,7 @@ internal class DaysBarView @JvmOverloads constructor(
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
     companion object {
-        private const val DAY_OF_WEEK_FORMAT = "EE"
+        private const val DAY_OF_WEEK_FORMAT = "E"
     }
 
     init {
@@ -51,6 +51,7 @@ internal class DaysBarView @JvmOverloads constructor(
         for (i in 0 until childCount) {
             val dayView = getChildAt(i) as TextView
             dayView.text = dayOfWeekFormatter.format(calendar.time)
+                .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
             calendar.add(Calendar.DAY_OF_WEEK, 1)
         }
     }

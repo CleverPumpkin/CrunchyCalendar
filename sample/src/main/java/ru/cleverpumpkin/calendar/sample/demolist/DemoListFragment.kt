@@ -5,9 +5,11 @@ import android.view.View
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.google.android.material.elevation.SurfaceColors
 import ru.cleverpumpkin.calendar.sample.BaseFragment
 import ru.cleverpumpkin.calendar.sample.R
 import ru.cleverpumpkin.calendar.sample.databinding.FragmentDemoListBinding
+
 
 class DemoListFragment : BaseFragment() {
 
@@ -23,6 +25,9 @@ class DemoListFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val colorSurface2 = SurfaceColors.SURFACE_2.getColor(requireContext())
+        viewBinding.toolbar.setBackgroundColor(colorSurface2)
 
         val demoListAdapter = DemoListAdapter(
             onDemoItemClickListener = { demoItem ->

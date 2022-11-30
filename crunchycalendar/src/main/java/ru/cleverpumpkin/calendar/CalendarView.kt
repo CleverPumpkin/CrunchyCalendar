@@ -591,6 +591,14 @@ class CalendarView @JvmOverloads constructor(
     /**
      * Returns list of indicators for the specific date.
      */
+    fun setDateIndicatorsAreaColor(@ColorInt color: Int) {
+        calendarStyleAttributes.eventIndicatorsAreaColor = color
+        calendarAdapter.notifyDataSetChanged()
+    }
+
+    /**
+     * Returns list of indicators for the specific date.
+     */
     fun getDateIndicators(date: CalendarDate): List<DateIndicator> {
         return groupedDatesIndicators[date] ?: emptyList()
     }

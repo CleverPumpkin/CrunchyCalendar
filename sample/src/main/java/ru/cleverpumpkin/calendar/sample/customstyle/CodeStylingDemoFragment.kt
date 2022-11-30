@@ -3,6 +3,7 @@ package ru.cleverpumpkin.calendar.sample.customstyle
 import android.os.Bundle
 import android.view.View
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.google.android.material.elevation.SurfaceColors
 import ru.cleverpumpkin.calendar.CalendarView
 import ru.cleverpumpkin.calendar.CalendarView.SelectionMode
 import ru.cleverpumpkin.calendar.sample.BaseFragment
@@ -26,6 +27,8 @@ class CodeStylingDemoFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         with(viewBinding.toolbarView) {
+            val colorSurface2 = SurfaceColors.SURFACE_2.getColor(requireContext())
+            setBackgroundColor(colorSurface2)
             setTitle(R.string.demo_styling)
             setNavigationIcon(R.drawable.ic_arrow_back_24dp)
             setNavigationOnClickListener { activity?.onBackPressed() }
@@ -45,7 +48,7 @@ class CodeStylingDemoFragment : BaseFragment() {
 
             setMonthTextColorRes(R.color.custom_calendar_month_text_color)
 
-            setDateCellBackgroundRes(R.drawable.custom_calendar_drawable)
+            setDateCellBackgroundRes(R.drawable.sample_custom_calendar_drawable)
             setDateCellBackgroundTintRes(R.color.custom_date_cell_background_color)
             setDateCellTextColorRes(R.color.custom_date_text_selector)
         }

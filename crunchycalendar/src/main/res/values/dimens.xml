@@ -4,6 +4,6 @@
     <dimen name="calendar_margin_medium">16dp</dimen>
 
     <dimen name="calendar_week_days_bar_height">24dp</dimen>
-    <dimen name="calendar_month_text_size">21sp</dimen>
+    <dimen name="calendar_month_text_size">16sp</dimen>
     <dimen name="calendar_month_view_height">70dp</dimen>
 </resources>
