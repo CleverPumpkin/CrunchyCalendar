@@ -6,8 +6,9 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.elevation.SurfaceColors
 import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarView
+import ru.cleverpumpkin.calendar.sample.BaseFragment
 import ru.cleverpumpkin.calendar.sample.R
-import ru.cleverpumpkin.calendar.sample.SelectionsBaseFragment
+import ru.cleverpumpkin.calendar.sample.SelectionFragmentsAction
 import ru.cleverpumpkin.calendar.sample.databinding.FragmentDemoSelectionBinding
 import java.util.*
 
@@ -17,7 +18,7 @@ import java.util.*
  *
  * Created by Alexander Surinov on 2019-05-13.
  */
-class SingleSelectionModeDemoFragment : SelectionsBaseFragment() {
+class SingleSelectionModeDemoFragment : BaseFragment(), SelectionFragmentsAction {
 
     override val layoutRes: Int
         get() = R.layout.fragment_demo_selection

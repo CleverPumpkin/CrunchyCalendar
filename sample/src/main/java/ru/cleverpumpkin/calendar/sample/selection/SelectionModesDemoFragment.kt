@@ -6,7 +6,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.elevation.SurfaceColors
 import ru.cleverpumpkin.calendar.sample.BaseFragment
 import ru.cleverpumpkin.calendar.sample.R
-import ru.cleverpumpkin.calendar.sample.SelectionsBaseFragment
+import ru.cleverpumpkin.calendar.sample.SelectionFragmentsAction
 import ru.cleverpumpkin.calendar.sample.databinding.FragmentSelectionModesBinding
 import ru.cleverpumpkin.calendar.sample.selection.modes.*
 
@@ -34,7 +34,7 @@ class SelectionModesDemoFragment : BaseFragment() {
 
             setOnMenuItemClickListener { item ->
                 if (item.itemId == R.id.move_to_today) {
-                    (childFragmentManager.fragments.first() as SelectionsBaseFragment).moveToToday()
+                    (childFragmentManager.fragments.first() as SelectionFragmentsAction).moveToToday()
                 } else {
                     changeSelectionModeDemoFragment(item.itemId)
                 }
