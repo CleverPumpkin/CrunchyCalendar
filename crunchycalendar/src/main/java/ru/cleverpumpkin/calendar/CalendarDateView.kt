@@ -28,9 +28,10 @@ internal class CalendarDateView @JvmOverloads constructor(
 
     companion object {
         private const val DEFAULT_TEXT_SIZE = 14.0f
-        private const val INDICATOR_RADIUS = 3.5f
-        private const val SPACE_BETWEEN_INDICATORS = 4.0f
+        private const val INDICATOR_RADIUS = 3f
+        private const val SPACE_BETWEEN_INDICATORS = 2.0f
         private const val MAX_INDICATORS_COUNT = 4
+        private const val INDICATORS_AREA_CORNER_RADIUS = 16f
 
         private val stateToday = intArrayOf(R.attr.calendar_state_today)
         private val stateDateSelected = intArrayOf(R.attr.calendar_state_selected)
@@ -43,6 +44,7 @@ internal class CalendarDateView @JvmOverloads constructor(
 
     private val radiusPx = context.dpToPix(INDICATOR_RADIUS)
     private val spacePx = context.dpToPix(SPACE_BETWEEN_INDICATORS)
+    private val indicatorsAreaCornerRadius = context.dpToPix(INDICATORS_AREA_CORNER_RADIUS)
 
     private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
         textSize = context.spToPix(DEFAULT_TEXT_SIZE)
@@ -54,6 +56,7 @@ internal class CalendarDateView @JvmOverloads constructor(
 
     private var dayNumberCalculatedWidth = 0.0f
     private var currentStateTextColor: Int = getColorInt(R.color.calendar_date_text_color)
+    var indicatorAreaColor: Int = getColorInt(R.color.calendar_date_background)
 
     var textColorStateList: ColorStateList? = null
 
@@ -125,7 +128,9 @@ internal class CalendarDateView @JvmOverloads constructor(
         val drawableAreaWidth = radiusPx * 2.0f * indicatorsCount + spacePx * (indicatorsCount - 1)
 
         var xPos = ((width - drawableAreaWidth) / 2.0f) + radiusPx
-        val yPos = height - height / 6.0f
+        val yPos = height - height / 4.0f
+
+        drawIndicatorsBackground(drawableAreaWidth, yPos)
 
         dateIndicators.forEach { indicator ->
             indicatorPaint.color = indicator.color
@@ -133,6 +138,28 @@ internal class CalendarDateView @JvmOverloads constructor(
 
             xPos += radiusPx * 2.0f + spacePx
         }
+    }
+
+    private fun Canvas.drawIndicatorsBackground(
+        drawableAreaWidth: Float,
+        yPos: Float
+    ) {
+        val drawedIndicatorsArea = drawableAreaWidth + spacePx + spacePx
+        val left = (width - drawedIndicatorsArea) / 2
+        val right = drawedIndicatorsArea + left
+        val top = yPos - radiusPx - spacePx
+        val bottom = yPos + radiusPx + spacePx
+
+        indicatorPaint.color = indicatorAreaColor
+        drawRoundRect(
+            left,
+            top,
+            right,
+            bottom,
+            indicatorsAreaCornerRadius,
+            indicatorsAreaCornerRadius,
+            indicatorPaint
+        )
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -147,7 +174,7 @@ internal class CalendarDateView @JvmOverloads constructor(
             mergeDrawableStates(drawableState, stateToday)
         }
 
-        when(cellSelectionState){
+        when (cellSelectionState) {
             DateCellSelectedState.NOT_SELECTED -> {
 
             }

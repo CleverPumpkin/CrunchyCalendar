@@ -56,6 +56,11 @@ internal object CalendarStyleAttributesReader {
                     daysBarTextColor
                 )
 
+                eventIndicatorsAreaColor = typedArray.getColor(
+                    R.styleable.CalendarView_calendar_event_indicators_area,
+                    eventIndicatorsAreaColor
+                )
+
                 daysBarWeekendTextColor = typedArray.getColor(
                     R.styleable.CalendarView_calendar_day_bar_weekend_text_color,
                     daysBarWeekendTextColor
@@ -81,10 +86,12 @@ internal object CalendarStyleAttributesReader {
                     dateCellBackgroundShapeForm
                 )
 
-                dateCellBackgroundColorRes = typedArray.getResourceId(
-                    R.styleable.CalendarView_calendar_date_background_tint,
-                    dateCellBackgroundColorRes
-                )
+                dateCellBackgroundColorRes = dateCellBackgroundColorRes?.let {
+                    typedArray.getResourceId(
+                        R.styleable.CalendarView_calendar_date_background_tint,
+                        it
+                    )
+                }
 
                 dateCellTextColorStateList = typedArray.getColorStateList(
                     R.styleable.CalendarView_calendar_date_text_color

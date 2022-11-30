@@ -1,9 +1,12 @@
 package ru.cleverpumpkin.calendar.sample
 
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentTransaction
+import com.google.android.material.elevation.SurfaceColors
 import ru.cleverpumpkin.calendar.sample.customstyle.CodeStylingDemoFragment
+import ru.cleverpumpkin.calendar.sample.customstyle.CodeStylingSecondDemoFragment
 import ru.cleverpumpkin.calendar.sample.dateboundaries.DateBoundariesDemoFragment
 import ru.cleverpumpkin.calendar.sample.demolist.DemoItem
 import ru.cleverpumpkin.calendar.sample.demolist.DemoListFragment
@@ -17,6 +20,10 @@ class MainActivity : AppCompatActivity(), DemoListFragment.OnDemoItemSelectionLi
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val colorSurface2 = SurfaceColors.SURFACE_2.getColor(this)
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.statusBarColor = colorSurface2
+
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .add(R.id.fragmentContainer, DemoListFragment())
@@ -29,6 +36,7 @@ class MainActivity : AppCompatActivity(), DemoListFragment.OnDemoItemSelectionLi
             DemoItem.SELECTION -> SelectionModesDemoFragment()
             DemoItem.DATE_BOUNDARIES -> DateBoundariesDemoFragment()
             DemoItem.STYLING -> CodeStylingDemoFragment()
+            DemoItem.STYLING_SECOND -> CodeStylingSecondDemoFragment()
             DemoItem.EVENTS -> EventListDemoFragment()
             DemoItem.DIALOG -> DialogDemoFragment()
         }

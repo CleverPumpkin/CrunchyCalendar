@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ru.cleverpumpkin.calendar.YearSelectionView
         android:id="@+id/calendar_year_selection_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#FFFFFF" />
+        android:layout_height="wrap_content" />
 
     <ru.cleverpumpkin.calendar.DaysBarView
         android:id="@+id/calendar_days_bar_view"

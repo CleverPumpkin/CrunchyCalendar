@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@drawable/sample_calendar_background_shape_fill_selected" app:calendar_state_selected ="true"/>
+
+    <item android:drawable="@drawable/sample_calendar_background_shape_fill_rounded_start" app:calendar_state_selected_start ="true"/>
+    <item android:drawable="@drawable/sample_calendar_background_shape_fill_rounded_end" app:calendar_state_selected_end ="true"/>
+    <item android:drawable="@drawable/sample_calendar_background_shape_fill_rounded_single" app:calendar_state_selected_single ="true"/>
+
+    <item android:drawable="@drawable/sample_calendar_background_shape_rounded_today" app:calendar_state_today="true" />
+    <item android:drawable="@drawable/sample_calendar_background_shape_fill" />
+
+</selector>

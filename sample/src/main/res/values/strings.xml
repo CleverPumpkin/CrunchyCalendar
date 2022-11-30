@@ -4,6 +4,8 @@
     <string name="demo_selection">Selection modes sample</string>
     <string name="demo_date_boundaries">Date boundaries sample</string>
     <string name="demo_styling">Styling sample</string>
+    <string name="demo_styling_second">Second Styling sample</string>
+    <string name="demo_select_date">Select date</string>
     <string name="demo_events">Displayable events sample</string>
     <string name="demo_dialog">Calendar dialog sample</string>
 
