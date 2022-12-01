@@ -21,4 +21,10 @@
 
     <string name="move_to_date">Move to today</string>
 
+    <!-- Info Card -->
+    <string name="info_card_title">About</string>
+    <string name="info_card_description">This is a sample app with functionality of library CrunchyCalendar.</string>
+    <string name="info_card_to_github_btn">Go to GitHub</string>
+    <string name="info_card_to_site_btn">Go to СleverPumpkin</string>
+
 </resources>
