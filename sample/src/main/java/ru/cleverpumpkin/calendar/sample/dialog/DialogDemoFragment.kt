@@ -1,6 +1,5 @@
 package ru.cleverpumpkin.calendar.sample.dialog
 
-import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,7 +9,6 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.elevation.SurfaceColors
 import ru.cleverpumpkin.calendar.CalendarView
-import ru.cleverpumpkin.calendar.sample.R
 import ru.cleverpumpkin.calendar.sample.databinding.FragmentDemoDemoBinding
 
 /**
@@ -30,12 +28,10 @@ class DialogDemoFragment : BottomSheetDialogFragment() {
         return FragmentDemoDemoBinding.inflate(inflater, container, false).root
     }
 
-    @SuppressLint("ResourceType")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val colorSurface2 = SurfaceColors.SURFACE_2.getColor(requireContext())
-        val colorSurface1 = SurfaceColors.SURFACE_1.getColor(requireContext())
         viewBinding.dialog.backgroundTintList = ColorStateList.valueOf(colorSurface2)
 
         if (savedInstanceState == null) {
