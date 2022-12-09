@@ -53,4 +53,4 @@ tasks.withType<Javadoc> {
 }
 
 // This is the ready-to-use scripts to make uploading to mavenCentral easy.
-//apply from: '../mavenCentral/mavenCentral.gradle'
+apply(from = "../mavenCentral/mavenCentral.gradle")
