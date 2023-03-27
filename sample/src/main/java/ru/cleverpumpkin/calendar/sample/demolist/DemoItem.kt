@@ -12,5 +12,6 @@ enum class DemoItem(@StringRes val titleRes: Int) {
     STYLING(titleRes = R.string.demo_styling),
     STYLING_SECOND(titleRes = R.string.demo_styling_second),
     EVENTS(titleRes = R.string.demo_events),
+    ADDITIONAL_TEXTS(titleRes = R.string.demo_additional_texts),
     DIALOG(titleRes = R.string.demo_dialog)
 }

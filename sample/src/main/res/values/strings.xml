@@ -8,6 +8,7 @@
     <string name="demo_select_date">Select date</string>
     <string name="demo_events">Displayable events sample</string>
     <string name="demo_dialog">Calendar dialog sample</string>
+    <string name="demo_additional_texts">Additional date texts sample</string>
 
     <string name="selection_mode_none">None</string>
     <string name="selection_mode_single">Single</string>

@@ -22,4 +22,6 @@ internal interface DateInfoProvider {
 
     fun getDateIndicators(date: CalendarDate): List<CalendarView.DateIndicator>
 
+    fun getDateAdditionalTexts(date: CalendarDate): List<CalendarView.AdditionalText>
+
 }

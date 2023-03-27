@@ -28,9 +28,11 @@ internal class CalendarDateView @JvmOverloads constructor(
 
     companion object {
         private const val DEFAULT_TEXT_SIZE = 14.0f
+        private const val DEFAULT_ADDITIONAL_TEXT_SIZE = 11.0f
         private const val INDICATOR_RADIUS = 3f
         private const val SPACE_BETWEEN_INDICATORS = 2.0f
         private const val MAX_INDICATORS_COUNT = 4
+        private const val MAX_ADDITIONAL_TEXT_COUNT = 1
         private const val INDICATORS_AREA_CORNER_RADIUS = 16f
 
         private val stateToday = intArrayOf(R.attr.calendar_state_today)
@@ -105,9 +107,15 @@ internal class CalendarDateView @JvmOverloads constructor(
             field = indicators.take(MAX_INDICATORS_COUNT)
         }
 
+    var additionalTexts: List<CalendarView.AdditionalText> = emptyList()
+        set(texts) {
+            field = texts.take(MAX_ADDITIONAL_TEXT_COUNT)
+        }
+
     override fun onDraw(canvas: Canvas) {
         canvas.drawDayNumber()
         canvas.drawIndicators()
+        canvas.drawAdditionalTexts()
     }
 
     private fun Canvas.drawDayNumber() {
@@ -138,6 +146,25 @@ internal class CalendarDateView @JvmOverloads constructor(
 
             xPos += radiusPx * 2.0f + spacePx
         }
+    }
+
+    private fun Canvas.drawAdditionalTexts() {
+        if (additionalTexts.isEmpty()) {
+            return
+        }
+
+        val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+            textSize = context.spToPix(DEFAULT_ADDITIONAL_TEXT_SIZE)
+        }
+
+        val xPos = width / 2.0f
+        val yPos = height / 1.3f - (textPaint.descent() + textPaint.ascent()) / 1.3f
+
+        additionalTexts.forEach { additionalText ->
+            textPaint.color = additionalText.color
+            drawText(additionalText.text, xPos - (textPaint.measureText(additionalText.text) / 2.0f), yPos, textPaint)
+        }
+
     }
 
     private fun Canvas.drawIndicatorsBackground(
