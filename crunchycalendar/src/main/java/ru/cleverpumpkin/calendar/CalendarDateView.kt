@@ -34,6 +34,8 @@ internal class CalendarDateView @JvmOverloads constructor(
         private const val MAX_INDICATORS_COUNT = 4
         private const val MAX_ADDITIONAL_TEXT_COUNT = 1
         private const val INDICATORS_AREA_CORNER_RADIUS = 16f
+        //value to place additional text between dayNumber an dateCell's bottom
+        private const val ADDITIONAL_TEXT_Y_POS_MODIFIER = 1.3f
 
         private val stateToday = intArrayOf(R.attr.calendar_state_today)
         private val stateDateSelected = intArrayOf(R.attr.calendar_state_selected)
@@ -158,7 +160,7 @@ internal class CalendarDateView @JvmOverloads constructor(
         }
 
         val xPos = width / 2.0f
-        val yPos = height / 1.3f - (textPaint.descent() + textPaint.ascent()) / 1.3f
+        val yPos = height / ADDITIONAL_TEXT_Y_POS_MODIFIER - (textPaint.descent() + textPaint.ascent()) / ADDITIONAL_TEXT_Y_POS_MODIFIER
 
         additionalTexts.forEach { additionalText ->
             textPaint.color = additionalText.color
