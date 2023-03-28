@@ -250,7 +250,7 @@ calendarView.setupCalendar()
 
 val additionalTexts: List<AdditionalText> = generateAdditionalTexts()
 
-// Set List of indicators that will be displayed on the calendar 
+// Set List of additional texts that will be displayed on the calendar 
 calendarView.datesAdditionalTexts = additionalTexts
 
 
