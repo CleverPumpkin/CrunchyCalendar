@@ -5,6 +5,7 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.elevation.SurfaceColors
+import ru.cleverpumpkin.calendar.sample.additionaltexts.AdditionalTextsDemoFragment
 import ru.cleverpumpkin.calendar.sample.customstyle.CodeStylingDemoFragment
 import ru.cleverpumpkin.calendar.sample.customstyle.CodeStylingSecondDemoFragment
 import ru.cleverpumpkin.calendar.sample.dateboundaries.DateBoundariesDemoFragment
@@ -39,6 +40,7 @@ class MainActivity : AppCompatActivity(), DemoListFragment.OnDemoItemSelectionLi
             DemoItem.STYLING_SECOND -> CodeStylingSecondDemoFragment()
             DemoItem.EVENTS -> EventListDemoFragment()
             DemoItem.DIALOG -> DialogDemoFragment()
+            DemoItem.ADDITIONAL_TEXTS -> AdditionalTextsDemoFragment()
         }
 
         if (demoFragment is DialogDemoFragment) {

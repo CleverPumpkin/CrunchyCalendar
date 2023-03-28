@@ -148,6 +148,7 @@ internal class CalendarAdapter(
 
         dateView.isWeekend = dateInfoProvider.isWeekend(date)
         dateView.dateIndicators = dateInfoProvider.getDateIndicators(date)
+        dateView.additionalTexts = dateInfoProvider.getDateAdditionalTexts(date)
         dateView.dayNumber = dayFormatter.format(date.date)
 
         dateView.textColorStateList = styleAttributes.dateCellTextColorStateList

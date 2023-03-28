@@ -62,6 +62,12 @@ class CalendarView @JvmOverloads constructor(
         val color: Int
     }
 
+    interface AdditionalText {
+        val date: CalendarDate
+        val text: String
+        val color: Int
+    }
+
     companion object {
         private const val MAX_RECYCLED_DAY_VIEWS = 90
         private const val MAX_RECYCLED_EMPTY_VIEWS = 20
@@ -179,6 +185,8 @@ class CalendarView @JvmOverloads constructor(
      */
     private val groupedDatesIndicators = ArrayMap<CalendarDate, MutableList<DateIndicator>>()
 
+    private val groupedDatesAdditionalTexts = ArrayMap<CalendarDate, MutableList<AdditionalText>>()
+
     /**
      * List of indicators that are displayed on the Calendar.
      */
@@ -187,6 +195,14 @@ class CalendarView @JvmOverloads constructor(
             field = value
             groupedDatesIndicators.clear()
             value.groupByTo(groupedDatesIndicators) { it.date }
+            recyclerView.adapter?.notifyDataSetChanged()
+        }
+
+    var datesAdditionalTexts: List<AdditionalText> = emptyList()
+        set(value) {
+            field = value
+            groupedDatesAdditionalTexts.clear()
+            value.groupByTo(groupedDatesAdditionalTexts) { it.date }
             recyclerView.adapter?.notifyDataSetChanged()
         }
 
@@ -603,6 +619,10 @@ class CalendarView @JvmOverloads constructor(
         return groupedDatesIndicators[date] ?: emptyList()
     }
 
+    fun getDateAdditionalTexts(date: CalendarDate): List<AdditionalText> {
+        return groupedDatesAdditionalTexts[date] ?: emptyList()
+    }
+
     /**
      * Update currently selected dates.
      */
@@ -836,6 +856,10 @@ class CalendarView @JvmOverloads constructor(
 
         override fun getDateIndicators(date: CalendarDate): List<DateIndicator> {
             return this@CalendarView.getDateIndicators(date)
+        }
+
+        override fun getDateAdditionalTexts(date: CalendarDate): List<AdditionalText> {
+            return this@CalendarView.getDateAdditionalTexts(date)
         }
     }
 
