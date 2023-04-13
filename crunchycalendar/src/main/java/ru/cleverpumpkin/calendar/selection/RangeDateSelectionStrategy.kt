@@ -62,7 +62,8 @@ internal class RangeDateSelectionStrategy(
         return if (dateFrom != null && dateTo != null) {
 
             if (adapterDataManager.findDatePosition(dateFrom) != -1 &&
-                adapterDataManager.findDatePosition(dateTo) != -1) {
+                adapterDataManager.findDatePosition(dateTo) != -1
+            ) {
 
                 return adapterDataManager.getDatesRange(dateFrom = dateFrom, dateTo = dateTo)
                     .filter(dateInfoProvider::isDateSelectable)
@@ -105,13 +106,13 @@ internal class RangeDateSelectionStrategy(
                         DateCellSelectedState.SINGLE
                     }
                     date == dateFrom -> {
-                        DateCellSelectedState.SELECTION_START
+                        checkStartDate(date, dateTo)
                     }
                     date == dateTo -> {
-                        DateCellSelectedState.SELECTION_END
+                        checkEndDate(date, dateFrom)
                     }
                     date.isBetween(dateFrom, dateTo) -> {
-                        DateCellSelectedState.SELECTED
+                        checkMiddleDate(date)
                     }
                     else -> {
                         DateCellSelectedState.NOT_SELECTED
@@ -128,6 +129,48 @@ internal class RangeDateSelectionStrategy(
                         DateCellSelectedState.NOT_SELECTED
                     }
                 }
+            }
+        }
+    }
+
+    private fun checkStartDate(date: CalendarDate, dateTo: CalendarDate): DateCellSelectedState {
+        return when {
+            date.lastDayOfMonths || date.lastDayOfWeek -> {
+                DateCellSelectedState.SINGLE
+            }
+            dateTo == date.plusDay(1) -> {
+                DateCellSelectedState.SELECTION_START_WITHOUT_MIDDLE
+            }
+            else -> {
+                DateCellSelectedState.SELECTION_START
+            }
+        }
+    }
+
+    private fun checkEndDate(date: CalendarDate, dateFrom: CalendarDate): DateCellSelectedState {
+        return when {
+            date.firstDayOfMonths || date.firstDayOfWeek -> {
+                DateCellSelectedState.SINGLE
+            }
+            dateFrom == date.minusDay(1) -> {
+                DateCellSelectedState.SELECTION_END_WITHOUT_MIDDLE
+            }
+            else -> {
+                DateCellSelectedState.SELECTION_END
+            }
+        }
+    }
+
+    private fun checkMiddleDate(date: CalendarDate): DateCellSelectedState {
+        return when {
+            date.firstDayOfMonths || date.firstDayOfWeek -> {
+                DateCellSelectedState.SELECTED_FIRST_IN_LINE
+            }
+            date.lastDayOfMonths || date.lastDayOfWeek -> {
+                DateCellSelectedState.SELECTED_LAST_IN_LINE
+            }
+            else -> {
+                DateCellSelectedState.SELECTED
             }
         }
     }

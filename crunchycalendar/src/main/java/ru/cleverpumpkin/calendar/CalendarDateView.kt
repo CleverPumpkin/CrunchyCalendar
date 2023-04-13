@@ -39,9 +39,13 @@ internal class CalendarDateView @JvmOverloads constructor(
 
         private val stateToday = intArrayOf(R.attr.calendar_state_today)
         private val stateDateSelected = intArrayOf(R.attr.calendar_state_selected)
+        private val stateDateSelectedFirstInLine = intArrayOf(R.attr.calendar_state_selected_first_in_line)
+        private val stateDateSelectedLastInLine = intArrayOf(R.attr.calendar_state_selected_last_in_line)
         private val stateDateSelectedSingle = intArrayOf(R.attr.calendar_state_selected_single)
         private val stateDateSelectedStart = intArrayOf(R.attr.calendar_state_selected_start)
         private val stateDateSelectedEnd = intArrayOf(R.attr.calendar_state_selected_end)
+        private val stateDateSelectedStartWithoutMiddle = intArrayOf(R.attr.calendar_state_selected_start_without_middle)
+        private val stateDateSelectedEndWithoutMiddle = intArrayOf(R.attr.calendar_state_selected_end_without_middle)
         private val stateDateDisabled = intArrayOf(R.attr.calendar_state_disabled)
         private val stateWeekend = intArrayOf(R.attr.calendar_state_weekend)
     }
@@ -218,6 +222,18 @@ internal class CalendarDateView @JvmOverloads constructor(
             }
             DateCellSelectedState.SELECTION_END -> {
                 mergeDrawableStates(drawableState, stateDateSelectedEnd)
+            }
+            DateCellSelectedState.SELECTED_FIRST_IN_LINE -> {
+                mergeDrawableStates(drawableState, stateDateSelectedFirstInLine)
+            }
+            DateCellSelectedState.SELECTED_LAST_IN_LINE -> {
+                mergeDrawableStates(drawableState, stateDateSelectedLastInLine)
+            }
+            DateCellSelectedState.SELECTION_START_WITHOUT_MIDDLE -> {
+                mergeDrawableStates(drawableState, stateDateSelectedStartWithoutMiddle)
+            }
+            DateCellSelectedState.SELECTION_END_WITHOUT_MIDDLE -> {
+                mergeDrawableStates(drawableState, stateDateSelectedEndWithoutMiddle)
             }
         }
 

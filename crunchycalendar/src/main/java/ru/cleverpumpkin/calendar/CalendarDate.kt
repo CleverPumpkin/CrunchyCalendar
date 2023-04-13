@@ -47,7 +47,20 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
 
     val dayOfMonth: Int get() = _calendar.get(Calendar.DAY_OF_MONTH)
 
+    val firstDayOfMonths: Boolean get() = _calendar.getActualMinimum(Calendar.DAY_OF_MONTH) == _calendar.get(Calendar.DAY_OF_MONTH)
+
+    val lastDayOfMonths: Boolean get() = _calendar.getActualMaximum(Calendar.DAY_OF_MONTH) == _calendar.get(Calendar.DAY_OF_MONTH)
+
     val dayOfWeek: Int get() = _calendar.get(Calendar.DAY_OF_WEEK)
+
+    val firstDayOfWeek: Boolean get() = _calendar.firstDayOfWeek == _calendar.get(Calendar.DAY_OF_WEEK)
+
+    val lastDayOfWeek: Boolean get() {
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.DAY_OF_WEEK, calendar.firstDayOfWeek)
+        calendar.add(Calendar.DAY_OF_WEEK, 6)
+        return calendar.get(Calendar.DAY_OF_WEEK) == _calendar.get(Calendar.DAY_OF_WEEK)
+    }
 
     val date: Date get() = _calendar.time
 
@@ -113,6 +126,22 @@ class CalendarDate(date: Date) : Parcelable, Comparable<CalendarDate> {
         val tmpCalendar = Calendar.getInstance()
         tmpCalendar.time = _calendar.time
         tmpCalendar.add(Calendar.MONTH, monthsCount)
+
+        return CalendarDate(tmpCalendar.time)
+    }
+
+    fun minusDay(daysCount: Int): CalendarDate {
+        val tmpCalendar = Calendar.getInstance()
+        tmpCalendar.time = _calendar.time
+        tmpCalendar.add(Calendar.DAY_OF_WEEK, daysCount.unaryMinus())
+
+        return CalendarDate(tmpCalendar.time)
+    }
+
+    fun plusDay(daysCount: Int): CalendarDate {
+        val tmpCalendar = Calendar.getInstance()
+        tmpCalendar.time = _calendar.time
+        tmpCalendar.add(Calendar.DAY_OF_WEEK, daysCount)
 
         return CalendarDate(tmpCalendar.time)
     }

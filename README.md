@@ -24,7 +24,7 @@ This library is available on [Maven Central](https://search.maven.org/artifact/r
 #### Gradle
 
 ```
-implementation 'ru.cleverpumpkin:crunchycalendar:2.3.0'
+implementation 'ru.cleverpumpkin:crunchycalendar:2.4.0'
 ```
 
 #### Maven
@@ -33,7 +33,7 @@ implementation 'ru.cleverpumpkin:crunchycalendar:2.3.0'
 <dependency>
   <groupId>ru.cleverpumpkin</groupId>
   <artifactId>crunchycalendar</artifactId>
-  <version>2.3.0</version>
+  <version>2.4.0</version>
   <type>pom</type>
 </dependency>
 ```
@@ -224,6 +224,37 @@ calendarView.onDateClickListener = { date ->
 }
 
 ```
+
+## Additional text on date cell
+The Calendar is able to display additional text on the date cell.
+
+Additional text represents as simple interface, which you can implement in your classes.
+
+```kotlin
+
+interface AdditionalText {
+    val date: CalendarDate // text's date
+    val text: String // text to display
+    val color: Int // text's color
+}
+
+```
+
+Here's an example of setting additional text to display on the Calendar.
+
+```kotlin
+
+// Set up calendar
+calendarView.setupCalendar()
+
+
+val additionalTexts: List<AdditionalText> = generateAdditionalTexts()
+
+// Set List of additional texts that will be displayed on the calendar 
+calendarView.datesAdditionalTexts = additionalTexts
+
+
+````
 
 ## View Customization
 Calendar appearance open for customization.
