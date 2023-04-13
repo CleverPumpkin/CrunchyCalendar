@@ -6,7 +6,9 @@
     <item android:color="?colorOnPrimaryContainer" app:calendar_state_selected="true" />
     <item android:color="?colorOnPrimary" app:calendar_state_selected_single="true" />
     <item android:color="?colorOnPrimary" app:calendar_state_selected_start="true" />
+    <item android:color="?colorOnPrimary" app:calendar_state_selected_start_without_middle="true" />
     <item android:color="?colorOnPrimary" app:calendar_state_selected_end="true" />
+    <item android:color="?colorOnPrimary" app:calendar_state_selected_end_without_middle="true" />
 
     <item android:color="?colorOnSurface" app:calendar_state_today="true" />
 

@@ -34,6 +34,10 @@
         <attr name="calendar_state_selected_single" format="boolean" />
         <attr name="calendar_state_selected_start" format="boolean" />
         <attr name="calendar_state_selected_end" format="boolean" />
+        <attr name="calendar_state_selected_first_in_line" format="boolean" />
+        <attr name="calendar_state_selected_last_in_line" format="boolean" />
+        <attr name="calendar_state_selected_start_without_middle" format="boolean" />
+        <attr name="calendar_state_selected_end_without_middle" format="boolean" />
 
         <attr name="calendar_state_disabled" format="boolean" />
         <attr name="calendar_state_weekend" format="boolean" />

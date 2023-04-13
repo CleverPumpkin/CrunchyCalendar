@@ -2,9 +2,13 @@
 <selector xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:drawable="@drawable/sample_calendar_background_shape_fill_selected" app:calendar_state_selected ="true"/>
+    <item android:drawable="@drawable/sample_calendar_background_shape_fill_selected_first_in_line" app:calendar_state_selected_first_in_line ="true"/>
+    <item android:drawable="@drawable/sample_calendar_background_shape_fill_selected_last_in_line" app:calendar_state_selected_last_in_line ="true"/>
 
     <item android:drawable="@drawable/sample_calendar_background_shape_fill_rounded_start" app:calendar_state_selected_start ="true"/>
+    <item android:drawable="@drawable/sample_calendar_background_shape_fill_rounded_start_without_middle" app:calendar_state_selected_start_without_middle ="true"/>
     <item android:drawable="@drawable/sample_calendar_background_shape_fill_rounded_end" app:calendar_state_selected_end ="true"/>
+    <item android:drawable="@drawable/sample_calendar_background_shape_fill_rounded_end_without_middle" app:calendar_state_selected_end_without_middle ="true"/>
     <item android:drawable="@drawable/sample_calendar_background_shape_fill_rounded_single" app:calendar_state_selected_single ="true"/>
 
     <item android:drawable="@drawable/sample_calendar_background_shape_rounded_today" app:calendar_state_today="true" />
