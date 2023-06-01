@@ -1,5 +1,6 @@
 package ru.cleverpumpkin.calendar.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Typeface
 import android.util.TypedValue
@@ -42,7 +43,8 @@ internal class CalendarAdapter(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
-        const val MONTH_FORMAT = "LLLL yyyy"
+        const val MONTH_FORMAT = "LLLL"
+        const val YEAR_FORMAT = "yyyy"
         const val DAY_FORMAT = "d"
         const val DATE_VIEW_TYPE = 0
         const val MONTH_VIEW_TYPE = 1
@@ -52,7 +54,8 @@ internal class CalendarAdapter(
     private val calendarItems = mutableListOf<CalendarItem>()
 
     private val monthFormatter = SimpleDateFormat(MONTH_FORMAT, Locale.getDefault())
-    private val dayFormatter = SimpleDateFormat(DAY_FORMAT, Locale.getDefault())
+    private val yearFormatter = SimpleDateFormat(YEAR_FORMAT, Locale.ROOT)
+    private val dayFormatter = SimpleDateFormat(DAY_FORMAT, Locale.ROOT)
 
     override fun getItemViewType(position: Int): Int {
         return when (calendarItems[position]) {
@@ -160,11 +163,15 @@ internal class CalendarAdapter(
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun bindMonthItemViewHolder(holder: MonthItemViewHolder, monthItem: MonthItem) {
-        val monthName = monthFormatter.format(monthItem.date.date)
-        holder.textView.text = monthName.replaceFirstChar {
+        val month = monthFormatter.format(monthItem.date.date)
+        val monthName = month.replaceFirstChar {
             if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString()
         }
+        val yearName = yearFormatter.format(monthItem.date.date)
+
+        holder.textView.text = "$monthName $yearName"
         holder.textView.setTextColor(styleAttributes.monthTextColor)
         holder.textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, styleAttributes.monthTextSize)
         holder.textView.setTypeface(Typeface.DEFAULT, styleAttributes.monthTextStyle)

@@ -40,7 +40,7 @@ internal class YearSelectionView @JvmOverloads constructor(
     private val slideOutBottomAnim = context.loadAnim(R.anim.calendar_slide_out_bottom)
     private val slideOutTopAnim = context.loadAnim(R.anim.calendar_slide_out_top)
 
-    private val yearFormatter = SimpleDateFormat(YEAR_FORMAT, Locale.getDefault())
+    private val yearFormatter = SimpleDateFormat(YEAR_FORMAT, Locale.ROOT)
     private var minMaxDatesRange = NullableDatesRange()
 
     var displayedDate: CalendarDate = CalendarDate.today

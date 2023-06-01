@@ -14,6 +14,7 @@
         android:paddingVertical="12dp"
         android:text="@string/demo_select_date"
         android:textSize="16sp"
+        android:textDirection="locale"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ru.cleverpumpkin.calendar.CalendarView
