@@ -57,7 +57,9 @@ internal class CalendarStyleAttributes(
 
     var dateCellTextColorStateList: ColorStateList = requireNotNull(
         ContextCompat.getColorStateList(context, R.color.calendar_date_text_selector)
-    )
+    ),
+
+    var useRootLocale: Boolean = false
 
 ) {
 
