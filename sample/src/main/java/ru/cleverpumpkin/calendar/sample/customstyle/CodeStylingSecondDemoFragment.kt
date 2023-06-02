@@ -52,10 +52,14 @@ class CodeStylingSecondDemoFragment : BaseFragment() {
             // Do not set Date Cell Background TintRes for separate start and end of range selection
             // setDateCellBackgroundTintRes(R.color.custom_date_cell_background_color)
             setDateCellTextColorRes(R.color.custom_date_text_selector)
+
+            setUseRootLocale(true)
         }
 
         if (savedInstanceState == null) {
-            viewBinding.calendarView.setupCalendar(selectionMode = SelectionMode.RANGE)
+            viewBinding.calendarView.setupCalendar(
+                selectionMode = SelectionMode.RANGE
+            )
         }
     }
 

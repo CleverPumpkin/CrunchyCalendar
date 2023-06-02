@@ -40,7 +40,7 @@ internal class YearSelectionView @JvmOverloads constructor(
     private val slideOutBottomAnim = context.loadAnim(R.anim.calendar_slide_out_bottom)
     private val slideOutTopAnim = context.loadAnim(R.anim.calendar_slide_out_top)
 
-    private val yearFormatter = SimpleDateFormat(YEAR_FORMAT, Locale.getDefault())
+    private var yearFormatter = SimpleDateFormat(YEAR_FORMAT, Locale.getDefault())
     private var minMaxDatesRange = NullableDatesRange()
 
     var displayedDate: CalendarDate = CalendarDate.today
@@ -66,7 +66,6 @@ internal class YearSelectionView @JvmOverloads constructor(
         arrowNextView = findViewById(R.id.arrow_next)
         textSwitcher = findViewById(R.id.text_switcher)
 
-        textSwitcher.setText(yearFormatter.format(displayedDate.date))
         textSwitcher.setOnClickListener {
             onYearClickListener?.invoke(displayedDate.year)
         }
@@ -154,6 +153,9 @@ internal class YearSelectionView @JvmOverloads constructor(
             val textView = textSwitcher.getChildAt(i) as? TextView
             textView?.setTextColor(styleAttributes.yearSelectionTextColor)
         }
+
+        if (styleAttributes.useRootLocale) yearFormatter = SimpleDateFormat(YEAR_FORMAT, Locale.ROOT)
+        textSwitcher.setText(yearFormatter.format(displayedDate.date))
     }
 
 }

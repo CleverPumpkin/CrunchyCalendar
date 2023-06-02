@@ -24,7 +24,7 @@ This library is available on [Maven Central](https://search.maven.org/artifact/r
 #### Gradle
 
 ```
-implementation 'ru.cleverpumpkin:crunchycalendar:2.5.0'
+implementation 'ru.cleverpumpkin:crunchycalendar:2.6.0'
 ```
 
 #### Maven
@@ -33,7 +33,7 @@ implementation 'ru.cleverpumpkin:crunchycalendar:2.5.0'
 <dependency>
   <groupId>ru.cleverpumpkin</groupId>
   <artifactId>crunchycalendar</artifactId>
-  <version>2.5.0</version>
+  <version>2.6.0</version>
   <type>pom</type>
 </dependency>
 ```
@@ -253,6 +253,19 @@ val additionalTexts: List<AdditionalText> = generateAdditionalTexts()
 // Set List of additional texts that will be displayed on the calendar 
 calendarView.datesAdditionalTexts = additionalTexts
 
+
+````
+
+## Using default or root locale on digits
+The Calendar is able to display digits using default or root locale.
+
+```kotlin
+
+// Set true for root locale or false for default locale. If nothing is set default locale will be used.
+setUseRootLocale(true)
+
+// Then set up calendar
+calendarView.setupCalendar()
 
 ````
 

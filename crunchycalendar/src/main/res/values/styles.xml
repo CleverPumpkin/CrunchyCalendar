@@ -31,7 +31,6 @@
     <style name="CalendarClickableView.YearSelectionArrow">
         <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:padding">@dimen/calendar_margin_small</item>
-        <item name="android:rotationY">@integer/calendar_arrow_icon_angle</item>
         <item name="android:tint">@color/calendar_date_today_text_color</item>
     </style>
 
