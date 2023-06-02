@@ -354,6 +354,7 @@ class CalendarView @JvmOverloads constructor(
         this.selectionMode = selectionMode
         this.firstDayOfWeek = firstDayOfWeek
         this.showYearSelectionView = showYearSelectionView
+//        this.useRootLocale = useRootLocale
         minMaxDatesRange = NullableDatesRange(dateFrom = minDate, dateTo = maxDate)
 
         yearSelectionView.setupYearSelectionView(
@@ -588,6 +589,12 @@ class CalendarView @JvmOverloads constructor(
     fun setDateCellTextColorRes(@ColorRes colorRes: Int) {
         val colorStateList = requireNotNull(ContextCompat.getColorStateList(context, colorRes))
         setDateCellTextColor(colorStateList)
+    }
+
+    fun setUseRootLocale(useRootLocale: Boolean) {
+        calendarStyleAttributes.useRootLocale = useRootLocale
+        yearSelectionView.applyStyle(calendarStyleAttributes)
+        calendarAdapter.notifyDataSetChanged()
     }
 
     /**

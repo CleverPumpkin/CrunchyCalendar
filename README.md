@@ -256,6 +256,19 @@ calendarView.datesAdditionalTexts = additionalTexts
 
 ````
 
+## Using default or root locale on digits
+The Calendar is able to display digits using default or root locale.
+
+```kotlin
+
+// Set true for root locale or false for default locale. If nothing is set default locale will be used.
+setUseRootLocale(true)
+
+// Then set up calendar
+calendarView.setupCalendar()
+
+````
+
 ## View Customization
 Calendar appearance open for customization.
 

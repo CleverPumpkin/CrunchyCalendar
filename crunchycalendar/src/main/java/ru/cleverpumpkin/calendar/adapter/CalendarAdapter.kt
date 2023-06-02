@@ -53,10 +53,6 @@ internal class CalendarAdapter(
 
     private val calendarItems = mutableListOf<CalendarItem>()
 
-    private val monthFormatter = SimpleDateFormat(MONTH_FORMAT, Locale.getDefault())
-    private val yearFormatter = SimpleDateFormat(YEAR_FORMAT, Locale.ROOT)
-    private val dayFormatter = SimpleDateFormat(DAY_FORMAT, Locale.ROOT)
-
     override fun getItemViewType(position: Int): Int {
         return when (calendarItems[position]) {
             is DateItem -> DATE_VIEW_TYPE
@@ -152,6 +148,9 @@ internal class CalendarAdapter(
         dateView.isWeekend = dateInfoProvider.isWeekend(date)
         dateView.dateIndicators = dateInfoProvider.getDateIndicators(date)
         dateView.additionalTexts = dateInfoProvider.getDateAdditionalTexts(date)
+
+        val digitsLocale = if (styleAttributes.useRootLocale) Locale.ROOT else Locale.getDefault()
+        val dayFormatter = SimpleDateFormat(DAY_FORMAT, digitsLocale)
         dateView.dayNumber = dayFormatter.format(date.date)
 
         dateView.textColorStateList = styleAttributes.dateCellTextColorStateList
@@ -165,9 +164,17 @@ internal class CalendarAdapter(
 
     @SuppressLint("SetTextI18n")
     private fun bindMonthItemViewHolder(holder: MonthItemViewHolder, monthItem: MonthItem) {
+        val digitsLocale = if (styleAttributes.useRootLocale) Locale.ROOT else Locale.getDefault()
+        val monthFormatter = SimpleDateFormat(MONTH_FORMAT, Locale.getDefault())
+        val yearFormatter = SimpleDateFormat(YEAR_FORMAT, digitsLocale)
+
         val month = monthFormatter.format(monthItem.date.date)
         val monthName = month.replaceFirstChar {
-            if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString()
+            if (it.isLowerCase()) {
+                it.titlecase(digitsLocale)
+            } else {
+                it.toString()
+            }
         }
         val yearName = yearFormatter.format(monthItem.date.date)
 
