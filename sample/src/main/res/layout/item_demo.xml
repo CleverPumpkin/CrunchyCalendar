@@ -8,4 +8,5 @@
     android:focusable="true"
     android:padding="16dp"
     android:textSize="16sp"
+    android:textDirection="locale"
     tools:text="@string/demo_selection" />

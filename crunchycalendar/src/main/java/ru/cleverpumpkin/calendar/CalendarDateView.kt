@@ -5,6 +5,7 @@ import android.content.res.ColorStateList
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.text.TextPaint
+import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.AttrRes
@@ -29,6 +30,7 @@ internal class CalendarDateView @JvmOverloads constructor(
     companion object {
         private const val DEFAULT_TEXT_SIZE = 14.0f
         private const val DEFAULT_ADDITIONAL_TEXT_SIZE = 11.0f
+        private const val DEFAULT_ADDITIONAL_TEXT_HORIZONTAL_PADDING = 20
         private const val INDICATOR_RADIUS = 3f
         private const val SPACE_BETWEEN_INDICATORS = 2.0f
         private const val MAX_INDICATORS_COUNT = 4
@@ -166,9 +168,13 @@ internal class CalendarDateView @JvmOverloads constructor(
         val xPos = width / 2.0f
         val yPos = height / ADDITIONAL_TEXT_Y_POS_MODIFIER - (textPaint.descent() + textPaint.ascent()) / ADDITIONAL_TEXT_Y_POS_MODIFIER
 
+        val bounds = clipBounds
+        val width = bounds.width() - DEFAULT_ADDITIONAL_TEXT_HORIZONTAL_PADDING
+
         additionalTexts.forEach { additionalText ->
             textPaint.color = additionalText.color
-            drawText(additionalText.text, xPos - (textPaint.measureText(additionalText.text) / 2.0f), yPos, textPaint)
+            val txt = TextUtils.ellipsize(additionalText.text, textPaint, width.toFloat(), TextUtils.TruncateAt.END).toString()
+            drawText(txt, xPos - (textPaint.measureText(txt) / 2.0f), yPos, textPaint)
         }
 
     }
