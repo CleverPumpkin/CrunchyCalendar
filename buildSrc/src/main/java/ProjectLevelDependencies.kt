@@ -2,8 +2,8 @@ import GradlePluginsVersions.GRADLE_PLUGIN
 import GradlePluginsVersions.KOTLIN_PLUGIN
 
 internal object GradlePluginsVersions {
-    const val GRADLE_PLUGIN = "7.0.4"
-    const val KOTLIN_PLUGIN = "1.6.10"
+    const val GRADLE_PLUGIN = "8.2.2"
+    const val KOTLIN_PLUGIN = "1.9.22"
 }
 
 object GradlePlugins {

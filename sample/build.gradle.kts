@@ -4,10 +4,11 @@ import com.project.starter.easylauncher.plugin.EasyLauncherConfig
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    id("com.starter.easylauncher") version "5.1.2"
+    id("com.starter.easylauncher") version "6.2.0"
 }
 
 android {
+    namespace = "ru.cleverpumpkin.calendar.sample"
     AppModuleBuildConfiguration(project, appExtension = this).configure()
 }
 
