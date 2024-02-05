@@ -29,6 +29,7 @@ ext {
 }
 
 android {
+    namespace = "ru.cleverpumpkin.calendar"
     LibraryModuleBuildConfiguration(project, libraryEtension = this).configure()
 
     // Use resource prefix to avoid collisions with resources from other modules.
@@ -40,11 +41,12 @@ dependencies {
 
     implementation(KotlinLibs.STDLIB)
     implementation(AndroidX.RECYCLER_VIEW)
+    implementation(MaterialComponents.LIBRARY)
+    implementation(KotlinLibs.COROUTINES_CORE)
     implementation(Testing.JUNIT)
 //    implementation(Testing.MOCKITO_ALL)
     implementation(Testing.POWERMOCK_API)
     implementation(Testing.POWERMOCK_MODULE_JUNIT)
-    implementation(MaterialComponents.LIBRARY)
 
 }
 

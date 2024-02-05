@@ -50,16 +50,18 @@ class AdditionalTextsDemoFragment : BaseFragment() {
     private fun generateAdditionalTextsItems(): List<AdditionalTextsItem> {
         val calendar = Calendar.getInstance()
 
+        val random = Random()
+
         val additionalTextsItem = mutableListOf<AdditionalTextsItem>()
 
-        repeat(10) {
+        repeat(random.nextInt(20)) {
             additionalTextsItem += AdditionalTextsItem(
                 date = CalendarDate(calendar.time),
-                text = "14 000",
+                text = "text ${random.nextInt(1000)}",
                 color = Color.BLUE
             )
 
-            calendar.add(Calendar.DAY_OF_MONTH, 5)
+            calendar.add(Calendar.DAY_OF_MONTH, random.nextInt(5))
         }
 
         return additionalTextsItem

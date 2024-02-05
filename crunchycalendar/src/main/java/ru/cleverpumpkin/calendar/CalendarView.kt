@@ -5,6 +5,7 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
@@ -201,9 +202,10 @@ class CalendarView @JvmOverloads constructor(
     var datesAdditionalTexts: List<AdditionalText> = emptyList()
         set(value) {
             field = value
+            val oldMap = groupedDatesAdditionalTexts.toMap()
             groupedDatesAdditionalTexts.clear()
             value.groupByTo(groupedDatesAdditionalTexts) { it.date }
-            recyclerView.adapter?.notifyDataSetChanged()
+            calendarAdapter.notifyAdditionalTextsChanged(oldMap, groupedDatesAdditionalTexts)
         }
 
     /**

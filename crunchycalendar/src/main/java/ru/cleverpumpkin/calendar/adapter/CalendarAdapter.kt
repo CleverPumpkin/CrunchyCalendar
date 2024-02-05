@@ -10,9 +10,21 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.cleverpumpkin.calendar.CalendarDate
 import ru.cleverpumpkin.calendar.CalendarDateView
+import ru.cleverpumpkin.calendar.CalendarView
 import ru.cleverpumpkin.calendar.R
 import ru.cleverpumpkin.calendar.adapter.CalendarAdapter.Companion.DATE_VIEW_TYPE
 import ru.cleverpumpkin.calendar.adapter.CalendarAdapter.Companion.EMPTY_VIEW_TYPE
@@ -22,6 +34,7 @@ import ru.cleverpumpkin.calendar.adapter.item.DateItem
 import ru.cleverpumpkin.calendar.adapter.item.EmptyItem
 import ru.cleverpumpkin.calendar.adapter.item.MonthItem
 import ru.cleverpumpkin.calendar.style.CalendarStyleAttributes
+import ru.cleverpumpkin.calendar.utils.AdditionalTextsDiffUtilCallback
 import ru.cleverpumpkin.calendar.utils.DateInfoProvider
 import java.text.SimpleDateFormat
 import java.util.*
@@ -50,6 +63,19 @@ internal class CalendarAdapter(
         const val MONTH_VIEW_TYPE = 1
         const val EMPTY_VIEW_TYPE = 2
     }
+
+    private val additionalTextsUpdateChannel by lazy {
+        Channel<TextPairs>(capacity = Channel.CONFLATED)
+    }
+
+    private val additionalTextsUpdateFlow by lazy {
+        additionalTextsUpdateChannel
+            .receiveAsFlow()
+            .onEach(::updateAdditionalTextsInternal)
+            .flowOn(Dispatchers.IO)
+    }
+
+    private val additionalTextUpdateJob: Job? = null
 
     private val calendarItems = mutableListOf<CalendarItem>()
 
@@ -232,6 +258,39 @@ internal class CalendarAdapter(
             }
     }
 
+
+    // region Additional texts
+
+
+    fun notifyAdditionalTextsChanged(
+        oldMap: Map<CalendarDate, List<CalendarView.AdditionalText>>,
+        newMap: Map<CalendarDate, List<CalendarView.AdditionalText>>
+    ) {
+        if (additionalTextUpdateJob?.isActive != true) {
+            additionalTextsUpdateFlow
+                .launchIn(CoroutineScope(Dispatchers.Default))
+        }
+
+        additionalTextsUpdateChannel.trySend(Pair(oldMap, newMap))
+    }
+
+    private suspend fun updateAdditionalTextsInternal(textPairs: TextPairs) {
+        val oldList = calendarItems.toList()
+        val newList = calendarItems
+
+        val oldMap = textPairs.first
+        val newMap = textPairs.second
+
+        val callback = AdditionalTextsDiffUtilCallback(oldList, newList, oldMap, newMap)
+        val result = DiffUtil.calculateDiff(callback)
+
+        withContext(Dispatchers.Main) {
+            result.dispatchUpdatesTo(this@CalendarAdapter)
+        }
+    }
+
+    // endregion
+
     fun setCalendarItems(calendarItems: List<CalendarItem>) {
         this.calendarItems.clear()
         this.calendarItems.addAll(calendarItems)
@@ -255,3 +314,7 @@ internal class CalendarAdapter(
     class EmptyItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
 }
+
+private typealias Texts = Map<CalendarDate, List<CalendarView.AdditionalText>>
+
+private typealias TextPairs = Pair<Texts, Texts>
