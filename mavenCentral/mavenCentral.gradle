@@ -45,17 +45,22 @@ afterEvaluate {
                         developer {
                             id = 'alexsurinov'
                             name = 'Alexander Surinov'
-                            organization = 'clverpumpkin'
+                            organization = 'cleverpumpkin'
                         }
                         developer {
                             id = 'Limanskaya'
                             name = 'Anastasiya Stroganova'
-                            organization = 'clverpumpkin'
+                            organization = 'cleverpumpkin'
                         }
                         developer {
                             id = 'itolianezzz'
                             name = 'Anatoly Shulipov'
-                            organization = 'clverpumpkin'
+                            organization = 'cleverpumpkin'
+                        }
+                        developer {
+                            id = 'crabgore'
+                            name = 'Mikhail Dorofeev'
+                            organization = 'cleverpumpkin'
                         }
                     }
                     scm {
