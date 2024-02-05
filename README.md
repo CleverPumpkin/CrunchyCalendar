@@ -24,7 +24,7 @@ This library is available on [Maven Central](https://search.maven.org/artifact/r
 #### Gradle
 
 ```
-implementation 'ru.cleverpumpkin:crunchycalendar:2.6.0'
+implementation 'ru.cleverpumpkin:crunchycalendar:2.6.1'
 ```
 
 #### Maven
@@ -33,7 +33,7 @@ implementation 'ru.cleverpumpkin:crunchycalendar:2.6.0'
 <dependency>
   <groupId>ru.cleverpumpkin</groupId>
   <artifactId>crunchycalendar</artifactId>
-  <version>2.6.0</version>
+  <version>2.6.1</version>
   <type>pom</type>
 </dependency>
 ```
